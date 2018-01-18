@@ -1,0 +1,29 @@
+<resources>
+
+    <string name="app_name">Eco Survey</string>
+
+
+    <!-- Login Page -->
+    <string name="txtAuthID">Email</string>
+    <string name="txtAuthPassword">Kata Laluan</string>
+
+
+    <!-- Pop Box -->
+    <string name="succ_title">Bateriku</string>
+    <string name="err_title">Error</string>
+    <string name="err_email">Please enter valid email address</string>
+    <string name="err_location">Location Error</string>
+
+    <!-- Comic Slide -->
+
+    <string name="home_close">Close</string>
+
+
+    <!-- Settting -->
+
+    <string name="base_connection_error">Connection Error</string>
+    <string name="base_connection_server">Unable to connect to the server</string>
+    <string name="base_no_internet">No Internet Connection</string>
+
+
+</resources>

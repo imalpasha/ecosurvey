@@ -1,0 +1,22 @@
+<resources>
+
+
+    <!-- Latest Theme -->
+    <style name="MyCustomTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
+        <item name="android:windowBackground">@color/default_background</item>
+        <item name="android:windowDisablePreview">true</item>
+        <!--<item name="colorAccent">@color/bright_green</item>-->
+    </style>
+
+    <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/default_theme_colour</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="NoActionBar" parent="android:Theme.Holo.NoActionBar">
+        <item name="android:windowBackground">@color/default_theme_colour</item>
+    </style>
+    <!-- Base application theme. -->
+
+</resources>

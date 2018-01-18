@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:animateLayoutChanges="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/login_aab_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="TODO"
+            android:gravity="center"
+            android:scaleType="centerInside"
+            android:src="@mipmap/logo_black" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/login_box_1"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtAuthIDHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:paddingTop="2dp"
+                android:text="Email"
+                android:textSize="10sp"
+                android:visibility="invisible" />
+
+            <com.app.ecosurvey.utils.FontStyle.PlayEditText
+                android:id="@+id/txtAuthID"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:background="@color/white"
+                android:drawableLeft="@mipmap/email"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/email"
+                android:gravity="center|left"
+                android:hint="@string/txtAuthID"
+                android:inputType="textFilter"
+                android:paddingBottom="2dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:textSize="16sp"
+                app:met_floatingLabel="normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtPasswordHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:paddingTop="2dp"
+                android:text="@string/txtAuthPassword"
+                android:textSize="10sp"
+                android:visibility="invisible" />
+
+            <com.app.ecosurvey.utils.FontStyle.PlayEditText
+                android:id="@+id/txtAuthPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:background="@color/white"
+                android:drawableLeft="@mipmap/email"
+                android:drawablePadding="5dp"
+                android:drawableStart="@mipmap/email"
+                android:gravity="center|left"
+                android:hint="@string/txtAuthPassword"
+                android:inputType="textPassword"
+                android:paddingBottom="2dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:textSize="16sp"
+                app:met_floatingLabel="normal" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="25dp"
+            android:background="@color/dark_blue"
+            android:clickable="true"
+            android:focusable="true"
+            android:text="Log Masuk"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold">
+
+        </Button>
+
+        <!--Black box-->
+
+    </LinearLayout>
+
+    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+        android:id="@+id/footer_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.3"
+        android:paddingBottom="10dp"
+        android:text="In-person Survey &amp; Offline feedback collection app with unlimited responses Real-time Survey Results · Advanced Survey Branding · Setup in Minutes · Powerful Survey Analytics"
+        android:textSize="12sp" />
+
+
+</RelativeLayout>

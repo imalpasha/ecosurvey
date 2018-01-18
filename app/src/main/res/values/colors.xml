@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="grey">#d3d3d3</color>
+
+
+    <!-- SEAT -->
+
+
+    <!-- HomePage Firefly UI -->
+
+
+    <!-- Login -->
+
+
+    <!-- Register -->
+
+    <!-- BookingFlight -->
+
+    <!-- Boarding Pass -->
+
+
+    <!-- TBD THEME -->
+    <!-- Header -->
+    <color name="default_theme_colour">#E43117</color>
+    <color name="default_background">#FFFFFF</color>
+
+    <!-- Tab Colour -->
+
+
+    <!-- Search Flight -->
+    <!--Date Picker -->
+
+    <color name="dark_blue">#101621</color>
+
+    <color name="need_payment">#ECA823</color>
+
+    <!-- TESTING START-->
+    <color name="red_text">#E21512</color>
+    <color name="space">#EDEDED</color>
+    <color name="grey_light">#EEEEEE</color>
+    <color name="onclick_my_profile">#f2f2f2</color>
+
+    <color name="tier_soft_grey">#F0F0F0</color>
+
+    <!-- TESTING END-->
+
+    <color name="selected_flight">#E6F3D9</color>
+
+    <color name="primary_green">#80B540</color>
+    <color name="bright_green">#57F900</color>
+    <color name="green_tick">#41AD49</color>
+    <color name="dark_gray">#333333</color>
+
+
+    <color name="title">#434343</color>
+    <color name="button_pay">#EB332E</color>
+    <color name="field">#D9D9D9</color>
+
+    <color name="theme1_drawer_bg">#362f2d</color>
+
+    <color name="white">#ffffff</color>
+    <color name="trans_white">#B3FFFFFF</color>
+
+    <color name="black">#000000</color>
+
+    <color name="grey_background">#aaaaaa</color>
+    <color name="red">#ee4d34</color>
+    <color name="pink">#FCE7E6</color>
+
+
+    <color name="bright_red">#FD0620</color>
+
+    <color name="desired_seat">#95C94A</color>
+    <color name="preferred_seat">#FFFF00</color>
+    <color name="standard_seat">#FFA500</color>
+
+    <!-- SEAT -->
+    <color name="test">#40000000</color>
+
+    <!-- HomePage UI -->
+    <color name="dark_lvl0">#f2f2f2</color>
+
+    <color name="red_profile">#DD1810</color>
+
+    <color name="dark_lvl1">#E6E6E6</color>
+    <color name="dark_lvl2">#d9d9d9</color>
+    <color name="dark_lvl3">#cccccc</color>
+    <color name="dark_lvl4">#b3b3b3</color>
+
+
+    <color name="dark_lvl5">#444444</color>
+    <color name="sign_in_button_click">#666666</color>
+
+    <color name="dark_lvl6">#333333</color>
+    <color name="red_lvl6">#FF8566</color>
+
+
+    <!-- Login -->
+    <color name="loginFontTxt">#A8A8A8</color>
+    <color name="main_border">#808080</color>
+
+
+    <!-- Register -->
+
+    <!-- BookingFlight -->
+
+    <!-- Boarding Pass -->
+
+    <color name="test1">#E6E6E6</color>
+
+    <!-- TBD THEME -->
+
+    <color name="red_button_force">#EE2D24</color>
+    <color name="default_colour">#e4170e</color>
+    <color name="grey_lock">#999999</color>
+    <!-- Header -->
+    <color name="default_theme_colour_gray_th">#666666</color>
+
+    <color name="default_theme_colour_selected">#f13127</color>
+    <color name="home_bar">#E11C1E</color>
+
+    <color name="background">#D4D4D4</color>
+
+    <!-- Tab Colour -->
+
+    <color name="theme1_tab_bg_1_click">#774964</color>
+
+    <color name="theme1_tab_bg_2_click">#FFCD6C</color>
+
+    <color name="theme1_tab_bg_4">#ff0000</color>
+    <color name="theme1_tab_bg_4_click">#77DDC1</color>
+
+    <color name="theme1_tab_bg_5">#e60000</color>
+
+
+    <!-- Search Flight -->
+    <color name="zeroClick_departFlight">#E43117</color>
+    <color name="onClick_departFlight">#ED5C45</color>
+    <!--Date Picker -->
+    <color name="mdtp_accent_color">#E43117</color>
+    <color name="mdtp_accent_color_dark">#ED5C45</color>
+
+    <color name="textLinkColor">#FF0000</color>
+    <color name="light_pink">#FAD1CF</color>
+
+    <!--Traveller's Info-->
+    <color name="light_yellow">#FFF59E</color>
+    <color name="medium_grey">#808080</color>
+
+    <!--Big Point-->
+    <color name="grey_666666">#666666</color>
+
+    <!--flight_detail_list-->
+    <color name="grey_999999">#999999</color>
+
+    <color name="grey_flight_initianery">#989898</color>
+
+
+    <!-- times-square calendar colour -->
+
+    <!-- Btn Search Flight -->
+    <color name="btn_search_flight">#00cc5b</color>
+    <color name="btn_seekbar">#1FA329</color>
+
+
+    <!-- calendar -->
+    <color name="calendar_active_month_bg">#ffffff</color>
+    <color name="calendar_bg">#ffffffff</color>
+    <color name="calendar_divider">#ffffff</color>
+    <color name="calendar_inactive_month_bg">#ffffff</color>
+    <color name="calendar_selected_day_bg">#191919</color>
+    <color name="calendar_highlighted_day_bg">#ccffcc</color>
+    <color name="calendar_text_inactive">#FFFFFF</color>
+    <color name="calendar_text_active">#191919</color>
+    <color name="calendar_text_active_pts">#7f778088</color>
+    <color name="calendar_text_selected">#ffffff</color>
+    <color name="calendar_text_unselectable">#7f778088</color>
+    <color name="calendar_text_highlighted">#ff778088</color>
+    <color name="calendar_text_pts">#ECC8C9</color>
+
+
+    <!-- New Flight Search UI -->
+    <color name="new_flight_search_label">#808080</color>
+    <color name="light_grey_background">#eeeeee</color>
+    <color name="light_grey">#7A7A7A</color>
+    <color name="charcoal_start">#191919</color>
+    <color name="charcoal_end">#444444</color>
+    <color name="insurance_text">#E63E39</color>
+    <color name="new_ui_green">#1FA329</color>
+    <color name="blackv5">#262626</color>
+    <color name="grey_lvl5">#DCD9D4</color>
+
+    <!-- Selection New Tab -->
+    <color name="search_date_unfocus_tab">#A6110B</color>
+    <color name="grey_box">#E8E8E8</color>
+    <color name="new_red">#EE2D24</color>
+
+    <color name="back_member_card">#DEDEDE</color>
+
+    <color name="home_grey">#929396</color>
+    <color name="grey_text">#A5A5A5</color>
+    <color name="home_gold">#cb9933</color>
+
+    <color name="white_trans">#80FFFFFF</color>
+
+    <color name="transparent_">#00FFFFFF</color>
+
+    <color name="blue_btn_bg_color">#ef332a</color>
+    <color name="blue_btn_bg_pressed_color">#EE2D24</color>
+
+    <color name="screen_background_dark_transparent">#80000000</color>
+    <color name="screen_background_dark_transparent_2">#CC000000</color>
+
+</resources>
+
+    <!--
+    //transparent_colour
+    100% — FF
+    95% — F2
+    90% — E6
+    85% — D9
+    80% — CC
+    75% — BF
+    70% — B3
+    65% — A6
+    60% — 99
+    55% — 8C
+    50% — 80
+    45% — 73
+    40% — 66
+    35% — 59
+    30% — 4D
+    25% — 40
+    20% — 33
+    15% — 26
+    10% — 1A
+    5%  — 0D
+    0% —  00
+
+    -->

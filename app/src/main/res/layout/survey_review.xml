@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="false"
+        android:scrollbars="none"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/block1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="1"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/block2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="2"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/block3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="3"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/block4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="4"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/block5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="5"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="1dp"
+                    android:background="#c0c0c0" />
+
+                <LinearLayout
+                    android:id="@+id/block6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/circle_border_white"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="15dp"
+                        android:layout_height="16dp"
+                        android:gravity="center|top"
+                        android:text="6"
+                        android:textColor="@color/grey_666666"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/playTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="Survey consist of parlimen category,Survey consist of parlimen category,Survey consist of parlimen category,Survey consist of parlimen category"
+                android:textSize="13sp" />
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Parlimen"
+                android:textColor="@color/grey_666666"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtParlimen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="ParlimenName (ParlimenCode)"
+                    android:textColor="@color/grey_666666"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Kategori"
+                android:textColor="@color/grey_666666"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtKategori"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="1dp"
+                    android:background="@color/white"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="KategoriName (KategoriCode)"
+                    android:textColor="@color/grey_666666"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Issue"
+                android:textColor="@color/grey_666666"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/grey"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtSurveyIssue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:lineSpacingMultiplier="1"
+                    android:paddingRight="8dp"
+                    android:paddingTop="8dp"
+                    android:text="Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. Display issue here. "
+                    android:textColor="@color/grey_666666"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/wishlistTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="Wishlist"
+                android:textColor="@color/grey_666666"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/wishlistBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:background="@color/grey"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtSurveyWishlist"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:paddingRight="8dp"
+                    android:paddingTop="8dp"
+                    android:text="Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here.Display wishlist here."
+                    android:textColor="@color/grey_666666"
+                    android:textColorHint="@color/grey"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/surveySaveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="2dp"
+        android:background="@color/green_tick"
+        android:gravity="center"
+        android:text="Save Survey"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/surveySubmitBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/default_theme_colour"
+        android:gravity="center"
+        android:text="Submit Survey"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

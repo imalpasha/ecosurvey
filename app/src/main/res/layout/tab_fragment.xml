@@ -1,0 +1,85 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_light"
+    android:orientation="vertical">
+
+    <!-- <include
+         android:id="@+id/tool_bar"
+         layout="@layout/toolbar"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" /> -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/charcoal_end"
+        android:elevation="1dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="0.8"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_launcher" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="0.2"
+                android:gravity="center|left"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                    android:id="@+id/txtName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Imal Pasha Bin Zainal"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                    android:id="@+id/txtID"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="A90000912"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.app.ecosurvey.ui.Activity.homepage.SlidePage.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/charcoal_end" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+
+</LinearLayout>

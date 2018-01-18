@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:orientation="horizontal">
+
+    <!--GONE : TAB without back icon | with message bubble + points + exit icon-->
+
+    <!--GONE : TAB back icon | with message bubble + points + exit icon-->
+    <LinearLayout
+        android:id="@+id/actionbar_normal_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/charcoal_start"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:visibility="visible">
+
+        <!--TITLE-->
+        <LinearLayout
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="38dp"
+                android:layout_height="27dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/back" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="-10dp"
+            android:gravity="left"
+            android:paddingBottom="10dp"
+            android:visibility="visible">
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/mainTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="TITLE"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <!--MESSAGE BUBBLE + POINTS-->
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,20 @@
+<resources>
+
+    <string name="app_name">Eco Survey</string>
+
+    <!-- Passcode -->
+
+    <!-- Homepage -->
+
+
+    <!-- Comic Slide -->
+
+    <string name="home_close">Tutup</string>
+
+    <!-- Settting -->
+
+    <string name="base_no_internet">Tiada Sambungan Internet</string>
+    <string name="base_connection_server">Tidak dapat melakukan sambungan ke pelayan</string>
+    <string name="base_connection_error">Ralat Sambungan</string>
+
+</resources>

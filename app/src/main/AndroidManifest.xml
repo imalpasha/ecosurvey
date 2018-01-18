@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.app.ecosurvey">
+
+    <uses-sdk
+        android:minSdkVersion="2"
+        android:targetSdkVersion="16"
+        tools:overrideLibrary="dmax.dialog" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:protectionLevel="normal" />
+
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.CAMERA"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="andoid.permission.READ_EXTERNAL_STORAGE"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="android.permission.CAMERA"
+        android:protectionLevel="normal" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- GCM requires a Google account. -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+
+
+    <application
+        android:name="com.app.ecosurvey.application.MainApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/quick"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:launchMode="singleTop"
+        android:theme="@style/MyCustomTheme"
+        android:vmSafeMode="true"
+        tools:replace="android:icon">
+
+        <activity android:name="com.app.ecosurvey.ui.Activity.login.LoginActivity">
+
+        </activity>
+
+        <activity android:name="com.app.ecosurvey.ui.Activity.homepage.TabActivity"></activity>
+
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity"></activity>
+        <activity
+            android:name="com.app.ecosurvey.ui.Activity.survey.SurveyIssueActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity
+            android:name="com.app.ecosurvey.ui.Activity.survey.SurveyWishlistActivity"
+            android:windowSoftInputMode="adjustPan"></activity>
+
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyPhotoActivity"></activity>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyVideoActivity"></activity>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyReviewActivity"></activity>
+        <activity android:name="com.tangxiaolv.telegramgallery.GalleryActivity" />
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.GalleryActivityV2" android:theme="@style/NoActionBar" />
+        <activity android:name="com.app.ecosurvey.ui.Activity.splash.SplashActivity" android:theme="@style/NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>
