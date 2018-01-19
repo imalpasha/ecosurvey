@@ -3,6 +3,7 @@ package com.app.ecosurvey.ui.Activity.survey;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
@@ -27,6 +29,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class CategoryParlimenFragment extends BaseFragment {
 
@@ -56,6 +59,7 @@ public class CategoryParlimenFragment extends BaseFragment {
     TextView txtKategori;
 
     private String randomID;
+    private String status;
 
     private ArrayList<DropDownItem> parlimenList = new ArrayList<>();
     private ArrayList<DropDownItem> kategoriList = new ArrayList<>();
@@ -83,7 +87,9 @@ public class CategoryParlimenFragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
+        autoFill();
         setData();
         setupBlock(getActivity(), block1);
 
@@ -102,6 +108,7 @@ public class CategoryParlimenFragment extends BaseFragment {
                     Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                     intent.putExtra("LocalSurveyID",randomID);
+                    intent.putExtra("Status",status);
                     getActivity().startActivity(intent);
                 }
 
@@ -136,6 +143,27 @@ public class CategoryParlimenFragment extends BaseFragment {
 
 
         return view;
+    }
+
+    public void autoFill(){
+
+        if (status != null){
+            if (status.equalsIgnoreCase("EDIT")){
+
+                //try fetch realm data.
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                    txtParlimen.setText(survey.getSurveyParliment());
+                    txtKategori.setText(survey.getSurveyCategory());
+
+                } finally {
+                    realm.close();
+                }
+            }
+        }
+
     }
 
     public Boolean manualValidation() {

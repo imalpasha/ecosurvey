@@ -1,14 +1,17 @@
 package com.app.ecosurvey.ui.Activity.survey;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,7 @@ import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Activity.adapter.ImageListAdapter;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.Utils;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 import com.tangxiaolv.telegramgallery.GalleryConfig;
@@ -82,6 +86,7 @@ public class SurveyPhotoFragment extends BaseFragment {
     LinearLayout setImageBlock2;
 
     private String randomID;
+    private String status;
 
     private AlertDialog dialog;
     private String userChoosenTask;
@@ -116,6 +121,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
         setupBlock(getActivity(), block4);
 
@@ -127,6 +133,7 @@ public class SurveyPhotoFragment extends BaseFragment {
             Log.e("SurveyParliment", survey.getSurveyParliment());
             Log.e("SurveyIssue", survey.getSurveyIssue());
             Log.e("SurveyWishlist", survey.getSurveyWishlist());
+            Log.e("SurveyLocalProgress", survey.getSurveyLocalProgress());
 
         } finally {
             realm.close();
@@ -137,17 +144,21 @@ public class SurveyPhotoFragment extends BaseFragment {
             public void onClick(View v) {
 
                 //save list of photo
-                try{
+                /*try{
 
-                    rController.surveyLocalStorageS4(context, randomID, list);
+                    Gson gsonUserInfo = new Gson();
+                    String gsonImage = gsonUserInfo.toJson(list);
+
+                    rController.surveyLocalStorageS4(context, randomID, gsonImage);
                 }catch (Exception e){
                     Log.e("SaveImage","Error: "+e.getMessage());
                 }
-                finally{
+                finally{*/
                     Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                     intent.putExtra("LocalSurveyID",randomID);
+                    intent.putExtra("Status",status);
                     getActivity().startActivity(intent);
-                }
+                //}
 
                 /*initiateLoading(getActivity());
                 LoginRequest loginRequest = new LoginRequest();
@@ -365,43 +376,46 @@ public class SurveyPhotoFragment extends BaseFragment {
         Log.e("RequestCode", Integer.toString(requestCode));
         Log.e("ResultCode", Integer.toString(resultCode));
 
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE) {
+                //list of photos of seleced
 
-        if (requestCode == SELECT_FILE) {
-            //list of photos of seleced
+                List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
 
-            List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
+                //insert path to object
+                for (int x = 0; x < photos.size(); x++) {
+                    SelectedImagePath selectedImagePath = new SelectedImagePath();
+                    selectedImagePath.setImagePath(photos.get(x));
+                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                    list.add(selectedImagePath);
+                }
 
-            //insert path to object
-            for (int x = 0; x < photos.size(); x++) {
+                if (true) {
+                    initiateImageAdapter(list);
+                }
+
+                //list of videos of seleced
+                //List<String> vides = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+            } else if (requestCode == CHANGE_FILE) {
+
+                List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
+                Log.e("xxxxx", "a" + photos.get(0));
+
                 SelectedImagePath selectedImagePath = new SelectedImagePath();
-                selectedImagePath.setImagePath(photos.get(x));
-                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                list.add(selectedImagePath);
+                selectedImagePath.setImagePath(photos.get(0));
+                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(0));
+
+                //list.remove(changeImagePosition);
+                list.get(changeImagePosition).setImagePath(photos.get(0));
+                list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
+
+                adapter.retrieveNewObject(changeImagePosition, list);
+
+            } else if (requestCode == REQUEST_CAMERA) {
+                onCaptureCamera(data);
             }
-
-            if (true) {
-                initiateImageAdapter(list);
-            }
-
-            //list of videos of seleced
-            //List<String> vides = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
-        } else if (requestCode == CHANGE_FILE) {
-
-            List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
-            Log.e("xxxxx", "a" + photos.get(0));
-
-            SelectedImagePath selectedImagePath = new SelectedImagePath();
-            selectedImagePath.setImagePath(photos.get(0));
-            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(0));
-
-            //list.remove(changeImagePosition);
-            list.get(changeImagePosition).setImagePath(photos.get(0));
-            list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
-
-            adapter.retrieveNewObject(changeImagePosition, list);
-
-        } else if (requestCode == REQUEST_CAMERA) {
-            onCaptureCamera(data);
+        } else {
+            Log.e("STATUS UPLOAD", "Image not uploaded");
         }
 
     }
@@ -449,6 +463,21 @@ public class SurveyPhotoFragment extends BaseFragment {
 
 
     }
+
+    //-----------------------------------CONVERT IMAGE TO 64BASE--------------------------------------//
+
+
+    public String changeImage(Bitmap bitmap) {
+        /*BitmapDrawable drawable = (BitmapDrawable) myImgUserDP.getDrawable();
+        Bitmap bitmap = drawable.getBitmap();*/
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+        byte[] bb = bos.toByteArray();
+
+        return Base64.encodeToString(bb, 0);
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

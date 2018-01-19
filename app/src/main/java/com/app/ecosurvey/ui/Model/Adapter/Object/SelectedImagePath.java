@@ -6,7 +6,15 @@ public class SelectedImagePath extends RealmObject{
 
     private String imagePath;
     private String randomPathCode;
+    private String imageString;
 
+    public String getImageString() {
+        return imageString;
+    }
+
+    public void setImageString(String imageString) {
+        this.imageString = imageString;
+    }
 
     public String getImagePath() {
         return imagePath;

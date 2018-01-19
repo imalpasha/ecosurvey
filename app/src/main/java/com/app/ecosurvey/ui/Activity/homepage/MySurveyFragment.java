@@ -4,26 +4,41 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.adapter.SurveyListAdapter;
+import com.app.ecosurvey.ui.Model.Adapter.Object.SurveyList;
+import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.squareup.otto.Bus;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MySurveyFragment extends BaseFragment {
 
@@ -47,6 +62,19 @@ public class MySurveyFragment extends BaseFragment {
     @Bind(R.id.createSurveyBtn)
     Button createSurveyBtn;
 
+
+    @Bind(R.id.listview)
+    ListView mListView;
+
+    @Bind(R.id.no_list)
+    LinearLayout no_list;
+
+    @Bind(R.id.have_list)
+    LinearLayout have_list;
+
+    @Bind(R.id.swipeContainer)
+    SwipeRefreshLayout swipeContainer;
+
     View view;
     SharedPrefManager pref;
 
@@ -69,15 +97,24 @@ public class MySurveyFragment extends BaseFragment {
         view = inflater.inflate(R.layout.my_survey, container, false);
         ButterKnife.bind(this, view);
 
+        getData();
+
+        Calendar calendar = Calendar.getInstance();
+        System.out.println("Current time => "+calendar.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        final String formattedDate = df.format(calendar.getTime());
+
         createSurveyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 String randomID = UUID.randomUUID().toString();
-                rController.surveyLocalStorageS0(context, randomID, "local_progress");
+                rController.surveyLocalStorageS0(context, randomID, "local_progress", formattedDate);
 
                 Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
                 intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status","CREATE");
                 getActivity().startActivity(intent);
 
                 /*initiateLoading(getActivity());
@@ -90,9 +127,69 @@ public class MySurveyFragment extends BaseFragment {
             }
         });
 
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                getData();
+                swipeContainer.setRefreshing(false);
+
+            }
+        });
+
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_red_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_green_light,
+                android.R.color.holo_blue_bright);
+
         return view;
     }
 
+    public void editData(String randomID){
+        Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
+        intent.putExtra("LocalSurveyID",randomID);
+        intent.putExtra("Status","EDIT");
+        getActivity().startActivity(intent);
+    }
+
+    public void getData(){
+        //call from Realm
+        Realm realm = rController.getRealmInstanceContext(context);
+        final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
+
+        if (result2.size() != 0) {
+
+            //convert
+            List<SurveyList> surveyLists = new ArrayList<SurveyList>();
+
+            for (int position = 0; position < result2.size(); position++) {
+                SurveyList info = new SurveyList();
+                info.setLocalSurveyID(result2.get(position).getLocalSurveyID());
+                info.setSurveyCategory(result2.get(position).getSurveyCategory());
+                info.setSurveyParliment(result2.get(position).getSurveyParliment());
+                info.setSurveyLocalProgress(result2.get(position).getSurveyLocalProgress());
+                info.setSurveyIssue(result2.get(position).getSurveyIssue());
+                info.setSurveyWishlist(result2.get(position).getSurveyWishlist());
+                info.setImageString(result2.get(position).getImageString());
+                info.setSurveyStatus(result2.get(position).getSurveyStatus());
+                info.setStatusCreated(result2.get(position).getStatusCreated());
+                info.setStatusUpdated(result2.get(position).getStatusUpdated());
+                surveyLists.add(info);
+            }
+
+            //Collections.reverse(notificationInfo);
+            SurveyListAdapter mAdapter = new SurveyListAdapter(getActivity(), this, surveyLists);
+            mListView.setAdapter(mAdapter);
+            /*mAdapter.setMode(Attributes.Mode.Single);*/
+
+        } else {
+            have_list.setVisibility(View.GONE);
+            no_list.setVisibility(View.VISIBLE);
+        }
+    }
 
     /*@Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {

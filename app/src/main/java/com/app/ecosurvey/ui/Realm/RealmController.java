@@ -85,13 +85,15 @@ public class RealmController {
 
     }
 
-    public void surveyLocalStorageS0(Context context, String surveyID, String progress) {
+    public void surveyLocalStorageS0(Context context, String surveyID, String progress, String date) {
 
         Realm realm = getRealmInstanceContext(context);
         realm.beginTransaction();
         LocalSurvey realmObject = realm.createObject(LocalSurvey.class);
         realmObject.setLocalSurveyID(surveyID);
         realmObject.setSurveyLocalProgress(progress);
+        realmObject.setSurveyStatus("Local");
+        realmObject.setStatusCreated(date);
         realm.commitTransaction();
         realm.close();
 
@@ -139,29 +141,40 @@ public class RealmController {
 
     }
 
-    public void surveyLocalStorageS4(Context context, String id, List<SelectedImagePath> imageList) {
-
+    public void surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList,*/ String image) {
 
         //move to realm list
-        RealmList<Image> realmList = new RealmList<Image>();
+        /*RealmList<Image> realmList = new RealmList<Image>();
         for(int y = 0 ; y < imageList.size() ; y++){
             Image image = new Image();
             image.setImagePath(imageList.get(y).toString());
             realmList.add(image);
-        }
+            Log.e("IMAGE_PATH", image.getImagePath());
+        }*/
 
         Realm realm = getRealmInstanceContext(context);
 
         realm.beginTransaction();
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setImagePath(realmList);
+        survey.setImageString(image);
+
         realm.commitTransaction();
 
         realm.close();
 
     }
 
+    public void surveyLocalStorageS5(Context context, String id, String time){
 
+        Realm realm = getRealmInstanceContext(context);
+
+        realm.beginTransaction();
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        survey.setSurveyLocalProgress("Completed");
+        survey.setStatusUpdated(time);
+        realm.commitTransaction();
+        realm.close();
+    }
 
     public static <E extends RealmObject> void clearCachedList(Realm realm, Class<E> clazz) {
 

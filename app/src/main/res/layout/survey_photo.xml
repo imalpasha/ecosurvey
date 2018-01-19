@@ -262,7 +262,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
+    <com.app.ecosurvey.utils.FontStyle.PlayButtonText
         android:id="@+id/photoBtnNext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

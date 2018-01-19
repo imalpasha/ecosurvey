@@ -54,6 +54,7 @@ public class SurveyWishlistFragment extends BaseFragment {
     TextView txtWishlistIssue;
 
     private String randomID;
+    private String status;
 
     public static SurveyWishlistFragment newInstance(Bundle bundle) {
 
@@ -76,8 +77,11 @@ public class SurveyWishlistFragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
         setupBlock(getActivity(), block3);
+
+        autoFill();
 
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);
@@ -102,6 +106,7 @@ public class SurveyWishlistFragment extends BaseFragment {
 
                 Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
                 intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
                 getActivity().startActivity(intent);
 
                 /*initiateLoading(getActivity());
@@ -117,6 +122,27 @@ public class SurveyWishlistFragment extends BaseFragment {
         return view;
     }
 
+    public void autoFill(){
+
+        if (status != null){
+            if (status.equalsIgnoreCase("EDIT")){
+
+                //try fetch realm data.
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                    if(!survey.getSurveyWishlist().equalsIgnoreCase("") || survey.getSurveyWishlist() != null){
+                        txtWishlistIssue.setText(survey.getSurveyWishlist());
+                    }
+
+                } finally {
+                    realm.close();
+                }
+            }
+        }
+
+    }
 
     @Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {

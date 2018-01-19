@@ -1,18 +1,12 @@
-package com.app.ecosurvey.ui.Model.Realm.Object;
+package com.app.ecosurvey.ui.Model.Adapter.Object;
 
-import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
-
-import java.util.List;
-
-import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by imalpasha on 13/1/2018.
+ * Created by User on 1/19/2018.
  */
 
-public class LocalSurvey extends RealmObject {
+public class SurveyList {
 
     @PrimaryKey
     private String localSurveyID;
@@ -21,7 +15,6 @@ public class LocalSurvey extends RealmObject {
     private String surveyLocalProgress;
     private String surveyIssue;
     private String surveyWishlist;
-    private RealmList<Image> imagePath;
     private String imageString;
     private String surveyStatus;
     private String statusAPI;
@@ -66,14 +59,6 @@ public class LocalSurvey extends RealmObject {
 
     public void setImageString(String imageString) {
         this.imageString = imageString;
-    }
-
-    public RealmList<Image> getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(RealmList<Image> imagePath) {
-        this.imagePath = imagePath;
     }
 
     public String getSurveyWishlist() {

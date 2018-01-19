@@ -1,17 +1,21 @@
 package com.app.ecosurvey.ui.Activity.survey;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -19,6 +23,9 @@ import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.inject.Inject;
 
@@ -63,6 +70,12 @@ public class SurveyReviewFragment extends BaseFragment {
     @Bind(R.id.wishlistBlock)
     LinearLayout wishlistBlock;
 
+    @Bind(R.id.surveySaveBtn)
+    Button surveySaveBtn;
+
+    @Bind(R.id.surveySubmitBtn)
+    Button surveySubmitBtn;
+
     private String randomID;
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
@@ -88,7 +101,32 @@ public class SurveyReviewFragment extends BaseFragment {
 
         Log.e("localID",bundle.getString("LocalSurveyID"));
         setupBlock(getActivity(), block6);
+
         setData();
+
+        Calendar calendar = Calendar.getInstance();
+        System.out.println("Current time => "+calendar.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        final String formattedDate = df.format(calendar.getTime());
+
+        surveySaveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                rController.surveyLocalStorageS5(context, randomID, formattedDate);
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                getActivity().startActivity(intent);
+
+            }
+        });
+
+        surveySubmitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateStatusData();
+            }
+        });
 
         return view;
     }
@@ -117,6 +155,22 @@ public class SurveyReviewFragment extends BaseFragment {
             for(int x = 0 ; x < survey.getImagePath().size() ; x++){
                 Log.e("SurveyImagePath",survey.getImagePath().get(x).toString());
             }
+
+        } finally {
+            realm.close();
+        }
+
+    }
+
+    public void updateStatusData(){
+
+        //try fetch realm data.
+        Realm realm = rController.getRealmInstanceContext(context);
+        try {
+            LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+            String status = survey.getSurveyLocalProgress();
+            Log.e("SurveyLocalProgress", status);
 
         } finally {
             realm.close();
