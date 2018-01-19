@@ -67,6 +67,9 @@ public class SurveyListAdapter  extends BaseAdapter {
 
         @Bind(R.id.survey_status)
         TextView survey_status;
+
+        @Bind(R.id.survey_updated)
+        TextView survey_updated;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class SurveyListAdapter  extends BaseAdapter {
         String i = obj.get(position).getSurveyIssue();
         String s = obj.get(position).getSurveyStatus();
         String d = obj.get(position).getStatusCreated();
+        String u = obj.get(position).getStatusUpdated();
 
         vh.survey_category.setText(c);
         vh.survey_issue.setText(i);
@@ -96,6 +100,8 @@ public class SurveyListAdapter  extends BaseAdapter {
         String formattedDate = df.format(calendar.getTime());*/
 
         vh.survey_created.setText("Created on " + d);
+        vh.survey_updated.setText("Updated on " + u);
+
 
         vh.survey_layout.setOnClickListener(new View.OnClickListener() {
             @Override
