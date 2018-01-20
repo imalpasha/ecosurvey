@@ -1,5 +1,6 @@
 package com.app.ecosurvey.ui.Activity.splash;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,12 +11,15 @@ import android.view.ViewGroup;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Activity.login.LoginActivity;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
+import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
@@ -37,6 +41,11 @@ public class SplashFragment extends BaseFragment {
     @Inject
     SharedPreferences preferences;
 
+    @Inject
+    RealmController rController;
+
+    @Inject
+    Context context;
 
     View view;
     SharedPrefManager pref;
@@ -62,16 +71,16 @@ public class SplashFragment extends BaseFragment {
 
         //get_token
 
-        //initiateLoading(getActivity());
-        //TokenRequest tokenRequest = new TokenRequest();
-        //presenter.onTokenRequest(tokenRequest);
+        initiateLoading(getActivity());
+        TokenRequest tokenRequest = new TokenRequest();
+        presenter.onTokenRequest(tokenRequest);
 
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        getActivity().startActivity(intent);
+        //Intent intent = new Intent(getActivity(), LoginActivity.class);
+        //getActivity().startActivity(intent);
 
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("temp_token", "12345");
-        editor.apply();
+        //SharedPreferences.Editor editor = preferences.edit();
+        //editor.putString("temp_token", "12345");
+        //editor.apply();
 
         return view;
     }
@@ -80,7 +89,6 @@ public class SplashFragment extends BaseFragment {
     @Subscribe
     public void onTokenReceive(TokenReceive tokenReceive) {
 
-        dismissLoading();
 
         if (tokenReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
@@ -91,13 +99,53 @@ public class SplashFragment extends BaseFragment {
                 editor.putString("temp_token", token);
                 editor.apply();
 
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                getActivity().startActivity(intent);
-
                 //load category_daily
                 //get_categories
-                //CategoryRequest categoryRequest = new CategoryRequest();
-                //presenter.onCategoryRequest(categoryRequest);
+                CategoryRequest categoryRequest = new CategoryRequest();
+                categoryRequest.setToken(token);
+                presenter.onCategoryRequest(categoryRequest);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                dismissLoading();
+
+                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            }
+
+        } else {
+
+            String error_msg = tokenReceive.getMessage();
+            dismissLoading();
+
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+
+        }
+
+
+    }
+
+    @Subscribe
+    public void onCategoryReceive(CategoryReceive categoryReceive) {
+
+        dismissLoading();
+
+        if (categoryReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            try {
+
+                //saved_category_into_realm
+                rController.saveCategory(context, categoryReceive);
+
+                if(preferences.getBoolean("just_login", false)){
+                    Intent intent = new Intent(getActivity(), TabActivity.class);
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                }else{
+                    Intent intent = new Intent(getActivity(), LoginActivity.class);
+                    getActivity().startActivity(intent);
+                    getActivity().finish();
+                }
+
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -106,7 +154,7 @@ public class SplashFragment extends BaseFragment {
 
         } else {
 
-            String error_msg = tokenReceive.getMessage();
+            String error_msg = categoryReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
 
         }

@@ -88,6 +88,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <Button
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Button" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="15dp"
                 android:background="@color/white"
                 android:orientation="vertical"
@@ -113,10 +126,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/textView"
+                        android:id="@+id/txtName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Imal Pasha Bin Zainal"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -135,10 +147,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/txtPhoneNo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="011-31763778"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -157,10 +168,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/txtEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="imalpasha@gmail.com"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -194,9 +204,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtParlimen"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ParlimenName (ParlimenCode)"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -210,13 +220,13 @@
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PDM"
+                        android:text="Dun"
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="DunName (DunCode)"
+                        android:id="@+id/txtDun"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
 
@@ -236,10 +246,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/textView5"
+                        android:id="@+id/txtState"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Selangor Darul Ehsan"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -259,7 +268,7 @@
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PDMNAME (PDMCode)"
+                        android:id="@+id/txtPDM"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -296,7 +305,7 @@
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Parliment Surveyor"
+                        android:id="@+id/txtRole"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>

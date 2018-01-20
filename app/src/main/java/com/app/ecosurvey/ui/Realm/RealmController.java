@@ -5,9 +5,12 @@ import android.util.Log;
 
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
+import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -85,6 +88,55 @@ public class RealmController {
 
     }
 
+    //use gson first
+    public void saveCategory(Context context, final CategoryReceive data) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        //clear user info in realm first.
+        final RealmResults<CachedCategory> result = realm.where(CachedCategory.class).findAll();
+        realm.beginTransaction();
+        result.clear();
+        realm.commitTransaction();
+
+        //convert to gsom
+        Gson gson = new Gson();
+        String list = gson.toJson(data);
+
+        //add new user info in realm
+        realm.beginTransaction();
+        CachedCategory realmObject = realm.createObject(CachedCategory.class);
+        realmObject.setCategoryList(list);
+        realm.commitTransaction();
+        realm.close();
+
+
+    }
+
+    //update-later
+    /*public void saveCategory(Context context, final CategoryReceive data) {
+
+        final CachedCategory product = new CachedCategory();
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                for (int i = 0; i < data.getData().getItems().size(); i++) {
+                    product.setId(data.getData().getItems().get(i).getId());
+                    product.setTitle(data.getData().getItems().get(i).getTitle());
+                    realm.i(product);
+                }
+            }
+        });
+
+        realm.commitTransaction();
+        realm.close();
+
+
+    }*/
+
     public void surveyLocalStorageS0(Context context, String surveyID, String progress) {
 
         Realm realm = getRealmInstanceContext(context);
@@ -144,7 +196,7 @@ public class RealmController {
 
         //move to realm list
         RealmList<Image> realmList = new RealmList<Image>();
-        for(int y = 0 ; y < imageList.size() ; y++){
+        for (int y = 0; y < imageList.size(); y++) {
             Image image = new Image();
             image.setImagePath(imageList.get(y).toString());
             realmList.add(image);
@@ -160,7 +212,6 @@ public class RealmController {
         realm.close();
 
     }
-
 
 
     public static <E extends RealmObject> void clearCachedList(Realm realm, Class<E> clazz) {

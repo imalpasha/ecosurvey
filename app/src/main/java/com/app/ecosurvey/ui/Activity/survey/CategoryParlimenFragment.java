@@ -3,6 +3,7 @@ package com.app.ecosurvey.ui.Activity.survey;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +14,15 @@ import android.widget.TextView;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
+import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.DropDownItem;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -27,6 +32,8 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class CategoryParlimenFragment extends BaseFragment {
 
@@ -97,11 +104,11 @@ public class CategoryParlimenFragment extends BaseFragment {
                     String parliment = txtParlimen.getText().toString();
 
 
-                    rController.surveyLocalStorageS1(context, randomID, category, parliment,"local_progress");
+                    rController.surveyLocalStorageS1(context, randomID, category, parliment, "local_progress");
 
                     Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                    intent.putExtra("LocalSurveyID",randomID);
+                    intent.putExtra("LocalSurveyID", randomID);
                     getActivity().startActivity(intent);
                 }
 
@@ -162,8 +169,30 @@ public class CategoryParlimenFragment extends BaseFragment {
 
     public void setData() {
 
+        ArrayList<String> category = new ArrayList<String>();
+        //try fetch realm data.
+        Realm realm = rController.getRealmInstanceContext(context);
+        try {
+
+            RealmResults<CachedCategory> survey = realm.where(CachedCategory.class).findAll();
+            if (survey.size() > 0) {
+
+                Gson gson = new Gson();
+                CategoryReceive obj = gson.fromJson(survey.get(0).getCategoryList(), CategoryReceive.class);
+
+                Log.e("getSize", Integer.toString(obj.getData().getItems().size()));
+                for (int c = 0; c < obj.getData().getItems().size(); c++) {
+                    category.add(obj.getData().getItems().get(c).getTitle() + "/" + obj.getData().getItems().get(c).getId());
+                }
+
+            }
+
+
+        } finally {
+            realm.close();
+        }
+
         String[] parlimenDummy = new String[]{"Parlimen A", "Parlimen B", "Parlimen C", "Parlimen D"};
-        String[] kategoriDummy = new String[]{"Kategori A", "Kategori B", "Kategori C", "Kategori D"};
 
          /*Display Airport*/
         for (int i = 0; i < parlimenDummy.length; i++) {
@@ -174,10 +203,13 @@ public class CategoryParlimenFragment extends BaseFragment {
 
         }
 
-        for (int i = 0; i < kategoriDummy.length; i++) {
+        for (int i = 0; i < category.size(); i++) {
             DropDownItem itemFlight = new DropDownItem();
-            itemFlight.setText(kategoriDummy[i]);
-            itemFlight.setCode(Integer.toString(i));
+
+            String[] parts = category.get(i).split("/");
+
+            itemFlight.setText(parts[0]);
+            itemFlight.setCode(parts[1]);
             kategoriList.add(itemFlight);
 
         }

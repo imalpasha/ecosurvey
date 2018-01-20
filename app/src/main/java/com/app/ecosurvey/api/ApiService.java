@@ -25,7 +25,7 @@ public interface ApiService {
     Call<TokenReceive> token(@Body TokenRequest obj);
 
     @GET("/api/v1/categories")
-    Call<CategoryReceive> category(@Header("Authorization") String header,@Body CategoryRequest obj);
+    Call<CategoryReceive> category(@Header("Authorization") String header);
 
     //@GET("/api/v1/categories")
     //Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Body  obj);

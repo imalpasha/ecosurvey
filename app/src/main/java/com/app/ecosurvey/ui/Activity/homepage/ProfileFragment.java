@@ -1,6 +1,7 @@
 package com.app.ecosurvey.ui.Activity.homepage;
 
 import android.content.ContentProviderClient;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.login.LoginActivity;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -53,6 +56,37 @@ public class ProfileFragment extends BaseFragment {
     @Bind(R.id.btnToRetry)
     Button btnToRetry;
 
+    @Bind(R.id.btnLogout)
+    Button btnLogout;
+
+    @Bind(R.id.txtName)
+    TextView txtName;
+
+    @Bind(R.id.txtPhoneNo)
+    TextView txtPhoneNo;
+
+    @Bind(R.id.txtEmail)
+    TextView txtEmail;
+
+    @Bind(R.id.txtParlimen)
+    TextView txtParlimen;
+
+    @Bind(R.id.txtPDM)
+    TextView txtPDM;
+
+    @Bind(R.id.txtState)
+    TextView txtState;
+
+    @Bind(R.id.txtDun)
+    TextView txtDun;
+
+    @Bind(R.id.txtRole)
+    TextView txtRole;
+
+
+
+
+
     private View view;
     private SharedPrefManager pref;
     private String randomID;
@@ -88,10 +122,25 @@ public class ProfileFragment extends BaseFragment {
             }
         });
 
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("just_login", false);
+                editor.apply();
+
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+            }
+        });
+
         return view;
     }
 
-    public void loadProfile(){
+    public void loadProfile() {
 
         //load_user_info
         loadingSegment.setVisibility(View.VISIBLE);
@@ -99,7 +148,7 @@ public class ProfileFragment extends BaseFragment {
 
         UserInfoRequest userInfoRequest = new UserInfoRequest();
         userInfoRequest.setToken(token);
-        userInfoRequest.setUrl(ApiEndpoint.getUrl()+"/api/v1/user/"+7777);
+        userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + 7777);
         presenter.onUserInfoRequest(userInfoRequest);
 
     }
@@ -112,6 +161,27 @@ public class ProfileFragment extends BaseFragment {
             try {
 
                 profileLoading.setVisibility(View.GONE);
+                profileLayout.setVisibility(View.VISIBLE);
+
+                txtName.setText(userInfoReceive.getData().getName());
+                txtPhoneNo.setText(userInfoReceive.getData().getPhoneno());
+                txtEmail.setText(userInfoReceive.getData().getEmail());
+
+                if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)
+                    txtParlimen.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
+
+                if (userInfoReceive.getData().getDun() != null && userInfoReceive.getData().getDuncode() != null)
+                    txtDun.setText(userInfoReceive.getData().getDun() + " (" + userInfoReceive.getData().getDuncode() + ")");
+
+                if (userInfoReceive.getData().getPdm() != null && userInfoReceive.getData().getPdmcode() != null)
+                    txtPDM.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
+
+                if (userInfoReceive.getData().getState() != null)
+                    txtState.setText(userInfoReceive.getData().getState());
+
+                if (userInfoReceive.getData().getRolename() != null)
+                    txtRole.setText(userInfoReceive.getData().getRolename());
+
 
             } catch (Exception e) {
                 e.printStackTrace();

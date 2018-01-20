@@ -80,7 +80,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onLoginRequest(final LoginRequest event) {
 
-        Call<LoginReceive> call = apiService.login(event,"Bearer "+event.getToken());
+        Call<LoginReceive> call = apiService.login(event,"FrsApi "+event.getToken());
         call.enqueue(new Callback<LoginReceive>() {
 
             //succces retrieve information
@@ -116,7 +116,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onCategoryRequest(final CategoryRequest event) {
 
-        Call<CategoryReceive> call = apiService.category("Bearer "+event.getToken(),event);
+        Call<CategoryReceive> call = apiService.category("FrsApi "+event.getToken());
         call.enqueue(new Callback<CategoryReceive>() {
 
             //succces retrieve information
@@ -152,7 +152,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onUserInfoRequest(final UserInfoRequest event) {
 
-        Call<UserInfoReceive> call = apiService.userinfo("Bearer "+event.getToken(),event.getUrl());
+        Call<UserInfoReceive> call = apiService.userinfo("FrsApi "+event.getToken(),event.getUrl());
         call.enqueue(new Callback<UserInfoReceive>() {
 
             //succces retrieve information
