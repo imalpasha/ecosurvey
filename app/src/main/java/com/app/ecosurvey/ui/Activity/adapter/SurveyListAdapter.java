@@ -99,8 +99,8 @@ public class SurveyListAdapter  extends BaseAdapter {
         SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
         String formattedDate = df.format(calendar.getTime());*/
 
-        vh.survey_created.setText("Created on " + d);
-        vh.survey_updated.setText("Updated on " + u);
+        vh.survey_created.setText("Created : " + d);
+        vh.survey_updated.setText("Last Updated : " + u);
 
 
         vh.survey_layout.setOnClickListener(new View.OnClickListener() {
