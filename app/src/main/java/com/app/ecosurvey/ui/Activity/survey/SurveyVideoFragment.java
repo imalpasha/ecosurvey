@@ -50,6 +50,7 @@ public class SurveyVideoFragment extends BaseFragment {
     LinearLayout block5;
 
     private String randomID;
+    private String status;
 
     public static SurveyVideoFragment newInstance(Bundle bundle) {
 
@@ -72,6 +73,7 @@ public class SurveyVideoFragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
         setupBlock(getActivity(), block5);
 
@@ -94,6 +96,7 @@ public class SurveyVideoFragment extends BaseFragment {
 
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                 intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
                 getActivity().startActivity(intent);
 
                 /*initiateLoading(getActivity());

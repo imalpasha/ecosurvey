@@ -57,6 +57,7 @@ public class SurveyIssueFragment extends BaseFragment {
     TextView txtIssueErr;
 
     private String randomID;
+    private String status;
 
     public static SurveyIssueFragment newInstance(Bundle bundle) {
 
@@ -79,6 +80,7 @@ public class SurveyIssueFragment extends BaseFragment {
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);
@@ -90,7 +92,7 @@ public class SurveyIssueFragment extends BaseFragment {
         } finally {
             realm.close();
         }
-
+        autoFill();
         setData();
         setupBlock(getActivity(), block2);
 
@@ -106,6 +108,7 @@ public class SurveyIssueFragment extends BaseFragment {
 
                     Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                     intent.putExtra("LocalSurveyID",randomID);
+                    intent.putExtra("Status",status);
                     getActivity().startActivity(intent);
                 }
 
@@ -114,6 +117,26 @@ public class SurveyIssueFragment extends BaseFragment {
         });
 
         return view;
+    }
+
+    public void autoFill(){
+
+        if (status != null){
+            if (status.equalsIgnoreCase("EDIT")){
+
+                //try fetch realm data.
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                    txtSurveyIssue.setText(survey.getSurveyIssue());
+
+                } finally {
+                    realm.close();
+                }
+            }
+        }
+
     }
 
     //need to move to base to standardize
