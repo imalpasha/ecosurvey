@@ -9,7 +9,9 @@ import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -137,6 +139,16 @@ public class RealmController {
 
     }*/
 
+    public void saveUserInfo(Context context, String userInfoReceive) {
+
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+        UserInfoCached realmObject = realm.createObject(UserInfoCached.class);
+        realmObject.setUserInfoString(userInfoReceive);
+        realm.commitTransaction();
+        realm.close();
+
+    }
 
     public void surveyLocalStorageS0(Context context, String surveyID, String progress, String date) {
 
@@ -194,30 +206,27 @@ public class RealmController {
 
     }
 
-    public void surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList,*/ String image) {
+    public void surveyLocalStorageS4(Context context, String id, List<SelectedImagePath> imageList /*String image*/) {
 
         //move to realm list
 
-        //RealmList<Image> realmList = new RealmList<Image>();
-        //for (int y = 0; y < imageList.size(); y++) {
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
 
-        /*RealmList<Image> realmList = new RealmList<Image>();
-        for(int y = 0 ; y < imageList.size() ; y++){
->>>>>>> a63494df47d6f7dfc99a3e92c9a2d9c455e0b309
+        RealmList<Image> realmList = new RealmList<Image>();
+        for (int y = 0; y < imageList.size(); y++) {
             Image image = new Image();
             image.setImagePath(imageList.get(y).toString());
             realmList.add(image);
             Log.e("IMAGE_PATH", image.getImagePath());
-        }*/
+        }
 
-        Realm realm = getRealmInstanceContext(context);
 
-        realm.beginTransaction();
+        //realm.beginTransaction();
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setImageString(image);
+        survey.setImagePath(realmList);
 
         realm.commitTransaction();
-
         realm.close();
 
     }

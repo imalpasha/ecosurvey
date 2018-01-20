@@ -144,21 +144,23 @@ public class SurveyPhotoFragment extends BaseFragment {
             public void onClick(View v) {
 
                 //save list of photo
-                /*try{
+                try {
 
                     Gson gsonUserInfo = new Gson();
                     String gsonImage = gsonUserInfo.toJson(list);
 
-                    rController.surveyLocalStorageS4(context, randomID, gsonImage);
-                }catch (Exception e){
-                    Log.e("SaveImage","Error: "+e.getMessage());
-                }
-                finally{*/
+                    rController.surveyLocalStorageS4(context, randomID, list);
+
+                } catch (Exception e) {
+
+                    Log.e("SaveImage", "Error: " + e.getMessage());
+                } finally {
+
                     Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
-                    intent.putExtra("LocalSurveyID",randomID);
-                    intent.putExtra("Status",status);
+                    intent.putExtra("LocalSurveyID", randomID);
+                    intent.putExtra("Status", status);
                     getActivity().startActivity(intent);
-                //}
+                }
 
                 /*initiateLoading(getActivity());
                 LoginRequest loginRequest = new LoginRequest();

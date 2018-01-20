@@ -120,6 +120,7 @@ public class LoginFragment extends BaseFragment {
 
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("just_login", true);
+                editor.putString("user_id", txtAuthID.getText().toString());
                 editor.apply();
 
                 //get_categories
@@ -127,6 +128,7 @@ public class LoginFragment extends BaseFragment {
                 //presenter.onCategoryRequest(categoryRequest);
 
                 Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
                 getActivity().startActivity(intent);
                 getActivity().finish();
 

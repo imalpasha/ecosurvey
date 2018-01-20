@@ -2,6 +2,8 @@ package com.app.ecosurvey.ui.Model.Receive.CategoryReceive;
 
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 
+import io.realm.RealmObject;
+
 /**
  * Created by imalpasha on 17/01/2018.
  */
@@ -9,32 +11,32 @@ import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 public class UserInfoReceive {
 
     public UserInfoReceive(UserInfoReceive data) {
-        Message = data.getMessage();
+        message = data.getMessage();
         this.apiStatus = data.getApiStatus();
-        this.Data = data.getData();
+        this.data = data.getData();
     }
 
     public String getMessage() {
-        return Message;
+        return message;
     }
 
     public void setMessage(String message) {
-        Message = message;
+        message = message;
     }
 
-    private String Message;
+    private String message;
     private String apiStatus;
 
 
     public UserInfoReceive.Data getData() {
-        return Data;
+        return data;
     }
 
     public void setData(UserInfoReceive.Data data) {
-        Data = data;
+        data = data;
     }
 
-    private Data Data;
+    private Data data;
 
     public class Data {
 
@@ -48,10 +50,19 @@ public class UserInfoReceive {
         private String parlimen;
         private String duncode;
         private String dun;
-
-
+        private String role;
         private String pdmcode;
         private String pdm;
+
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
 
 
         public String getName() {

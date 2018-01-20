@@ -2,6 +2,7 @@ package com.app.ecosurvey.ui.Activity.survey;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,9 @@ public class SurveyReviewFragment extends BaseFragment {
 
     @Inject
     MainPresenter presenter;
+
+    @Inject
+    SharedPreferences preferences;
 
     @Inject
     Bus bus;
@@ -92,20 +96,20 @@ public class SurveyReviewFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.survey_review, container, false);
         ButterKnife.bind(this, view);
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
 
-        Log.e("localID",bundle.getString("LocalSurveyID"));
+        Log.e("localID", bundle.getString("LocalSurveyID"));
         setupBlock(getActivity(), block6);
 
         setData();
 
         Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => "+calendar.getTime());
+        System.out.println("Current time => " + calendar.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
         final String formattedDate = df.format(calendar.getTime());
@@ -115,7 +119,9 @@ public class SurveyReviewFragment extends BaseFragment {
             public void onClick(View view) {
 
                 rController.surveyLocalStorageS5(context, randomID, formattedDate);
+
                 Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", preferences.getString("user_role", ""));
                 getActivity().startActivity(intent);
 
             }
@@ -132,7 +138,7 @@ public class SurveyReviewFragment extends BaseFragment {
     }
 
 
-    public void setData(){
+    public void setData() {
 
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);
@@ -143,17 +149,17 @@ public class SurveyReviewFragment extends BaseFragment {
             txtKategori.setText(survey.getSurveyCategory());
             txtSurveyIssue.setText(survey.getSurveyIssue());
 
-            if(survey.getSurveyWishlist() == ""){
+            if (survey.getSurveyWishlist() == "") {
                 wishlistTitle.setVisibility(View.GONE);
                 wishlistBlock.setVisibility(View.GONE);
-            }else {
+            } else {
                 txtSurveyWishlist.setText(survey.getSurveyWishlist());
             }
 
             Log.e("SurveyWishlist", survey.getSurveyWishlist());
 
-            for(int x = 0 ; x < survey.getImagePath().size() ; x++){
-                Log.e("SurveyImagePath",survey.getImagePath().get(x).toString());
+            for (int x = 0; x < survey.getImagePath().size(); x++) {
+                Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
             }
 
         } finally {
@@ -162,7 +168,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
     }
 
-    public void updateStatusData(){
+    public void updateStatusData() {
 
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);

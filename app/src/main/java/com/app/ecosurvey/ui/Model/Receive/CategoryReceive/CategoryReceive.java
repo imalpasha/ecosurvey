@@ -12,14 +12,14 @@ public class CategoryReceive {
     private String message;
 
     public CategoryReceive.Data getData() {
-        return Data;
+        return data;
     }
 
     public void setData(CategoryReceive.Data data) {
-        Data = data;
+        data = data;
     }
 
-    private Data Data;
+    private Data data;
 
     public class Data {
 
@@ -83,7 +83,7 @@ public class CategoryReceive {
 
         this.message = data.getMessage();
         this.apiStatus = data.getApiStatus();
-        this.Data = data.getData();
+        this.data = data.getData();
 
     }
 }

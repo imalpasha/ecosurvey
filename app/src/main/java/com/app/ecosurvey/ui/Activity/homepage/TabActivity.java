@@ -1,14 +1,17 @@
 package com.app.ecosurvey.ui.Activity.homepage;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.app.ecosurvey.MainFragmentActivity;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.ui.Activity.homepage.SlidePage.SlidingTabLayout;
 import com.app.ecosurvey.ui.Activity.homepage.SlidePage.ViewPagerAdapter;
+import com.app.ecosurvey.ui.Realm.RealmController;
 import com.squareup.otto.Bus;
 
 import javax.inject.Inject;
@@ -18,6 +21,9 @@ public class TabActivity extends MainFragmentActivity {
     @Inject
     Bus bus;
 
+    @Inject
+    SharedPreferences preferences;
+
     // Declaring Your View and Variables
     static ViewPager pager;
     ViewPagerAdapter adapter;
@@ -26,16 +32,41 @@ public class TabActivity extends MainFragmentActivity {
     private static Boolean normalFlow = true;
 
     int Numboftabs = 3;
-    String[] title = new String[]{"Profile", "My Survey", "Checklist"};
+    String[] title;
 
     Activity act;
+    private String role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_fragment);
         normal_with_title("Eco Survey");
-        //MainApplication.component(this).inject(this);
+
+
+        try {
+            Bundle bundle = getIntent().getExtras();
+            role = bundle.getString("ROLE");
+            Log.e("Role",role);
+
+            //save to pref.
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("user_role", role);
+            editor.apply();
+
+            if (role.equalsIgnoreCase("ParlimentSurveyor")) {
+                Numboftabs = 2;
+                title = new String[]{"Profile", "My Survey"};
+            } else {
+                Numboftabs = 3;
+                title = new String[]{"Profile", "My Survey", "Checklist"};
+            }
+
+        } catch (Exception e) {
+            Log.e("Null", "Y");
+
+        }
+
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter = new ViewPagerAdapter(getSupportFragmentManager(), title, Numboftabs, getContext(), this);
