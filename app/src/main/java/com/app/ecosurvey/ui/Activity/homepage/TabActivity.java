@@ -42,7 +42,7 @@ public class TabActivity extends MainFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_fragment);
         normal_with_title("Eco Survey");
-
+//1s
 
         try {
             Bundle bundle = getIntent().getExtras();
