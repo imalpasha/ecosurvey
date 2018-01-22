@@ -10,6 +10,29 @@ public class TokenReceive {
     private String token;
     private String message;
 
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    private Data data;
+
+    public class Data{
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        private String token;
+
+    }
+
     public String getMessage() {
         return message;
     }
@@ -43,6 +66,7 @@ public class TokenReceive {
 
         this.token = data.getToken();
         this.apiStatus = data.getApiStatus();
+        this.data = data.getData();
 
     }
 }

@@ -1,22 +1,32 @@
 package com.app.ecosurvey.ui.Activity.homepage;
 
 import android.content.ContentProviderClient;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.login.LoginActivity;
+import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
+import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -24,6 +34,8 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class ProfileFragment extends BaseFragment {
 
@@ -34,6 +46,9 @@ public class ProfileFragment extends BaseFragment {
 
     @Inject
     Bus bus;
+
+    @Inject
+    RealmController rController;
 
     @Inject
     SharedPreferences preferences;
@@ -52,6 +67,36 @@ public class ProfileFragment extends BaseFragment {
 
     @Bind(R.id.btnToRetry)
     Button btnToRetry;
+
+    @Bind(R.id.btnLogout)
+    Button btnLogout;
+
+    @Bind(R.id.txtName)
+    TextView txtName;
+
+    @Bind(R.id.txtPhoneNo)
+    TextView txtPhoneNo;
+
+    @Bind(R.id.txtEmail)
+    TextView txtEmail;
+
+    @Bind(R.id.txtParlimen)
+    TextView txtParlimen;
+
+    @Bind(R.id.txtPDM)
+    TextView txtPDM;
+
+    @Bind(R.id.txtState)
+    TextView txtState;
+
+    @Bind(R.id.txtDun)
+    TextView txtDun;
+
+    @Bind(R.id.txtRole)
+    TextView txtRole;
+
+    @Inject
+    Context context;
 
     private View view;
     private SharedPrefManager pref;
@@ -78,62 +123,86 @@ public class ProfileFragment extends BaseFragment {
         ButterKnife.bind(this, view);
 
         token = preferences.getString("temp_token", "DEFAULT");
-        profileLoading.setVisibility(View.VISIBLE);
-        loadProfile();
+        profileLayout.setVisibility(View.VISIBLE);
+        profileLoading.setVisibility(View.GONE);
 
-        btnToRetry.setOnClickListener(new View.OnClickListener() {
+        /*btnToRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadProfile();
+            }
+        });*/
+        loadData();
+
+        btnLogout.setVisibility(View.GONE);
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("just_login", false);
+                editor.apply();
+
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
+                getActivity().finish();
             }
         });
 
         return view;
     }
 
-    public void loadProfile(){
 
-        //load_user_info
-        loadingSegment.setVisibility(View.VISIBLE);
-        btnRetry.setVisibility(View.GONE);
+    //@Subscribe
+    // public void onUserInfoReceive(UserInfoReceive userInfoReceive) {
 
-        UserInfoRequest userInfoRequest = new UserInfoRequest();
-        userInfoRequest.setToken(token);
-        userInfoRequest.setUrl(ApiEndpoint.getUrl()+"/api/v1/user/"+7777);
-        presenter.onUserInfoRequest(userInfoRequest);
+    //if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
+    //  try {
 
-    }
+    //    profileLoading.setVisibility(View.GONE);
+    //  profileLayout.setVisibility(View.VISIBLE);
 
+    public void loadData() {
 
-    @Subscribe
-    public void onUserInfoReceive(UserInfoReceive userInfoReceive) {
+        Realm realm = rController.getRealmInstanceContext(context);
+        try {
 
-        if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
-            try {
+            UserInfoCached survey = realm.where(UserInfoCached.class).findFirst();
+            Gson gson = new Gson();
+            UserInfoReceive userInfoReceive = gson.fromJson(survey.getUserInfoString(), UserInfoReceive.class);
 
-                profileLoading.setVisibility(View.GONE);
+            txtName.setText(userInfoReceive.getData().getName());
+            txtPhoneNo.setText(userInfoReceive.getData().getPhoneno());
+            txtEmail.setText(userInfoReceive.getData().getEmail());
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
-                loadingSegment.setVisibility(View.GONE);
-                btnRetry.setVisibility(View.VISIBLE);
+            if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)
+                txtParlimen.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
 
-            }
+            if (userInfoReceive.getData().getDun() != null && userInfoReceive.getData().getDuncode() != null)
+                txtDun.setText(userInfoReceive.getData().getDun() + " (" + userInfoReceive.getData().getDuncode() + ")");
 
-        } else {
+            if (userInfoReceive.getData().getPdm() != null && userInfoReceive.getData().getPdmcode() != null)
+                txtPDM.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
 
-            //display retry button
+            if (userInfoReceive.getData().getState() != null)
+                txtState.setText(userInfoReceive.getData().getState());
 
-            //String error_msg = userInfoReceive.getMessage();
-            //setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
-            loadingSegment.setVisibility(View.GONE);
-            btnRetry.setVisibility(View.VISIBLE);
+            if (userInfoReceive.getData().getRolename() != null)
+                txtRole.setText(userInfoReceive.getData().getRolename());
 
+        } catch (Exception e) {
+
+            Log.e("UnableToLoad", "Y");
+        } finally {
+
+            realm.close();
         }
 
 
     }
+
+
 
     /*@Override
     public void onActivityCreated(Bundle savedInstanceState) {

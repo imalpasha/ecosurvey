@@ -9,6 +9,54 @@ public class LoginReceive {
     private String status;
     private String apiStatus;
     private String message;
+    private Data data;
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public class Data {
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+
+        private String token;
+
+        public LoginUser getUser() {
+            return user;
+        }
+
+        public void setUser(LoginUser user) {
+            this.user = user;
+        }
+
+        private LoginUser user;
+    }
+
+
+    public class LoginUser {
+
+        private String role;
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
+        }
+
+    }
 
     public String getMessage() {
         return message;
@@ -41,7 +89,7 @@ public class LoginReceive {
     public LoginReceive(LoginReceive data) {
         this.status = data.getStatus();
         this.apiStatus = data.getApiStatus();
-
+        this.data = data.getData();
     }
 
 }

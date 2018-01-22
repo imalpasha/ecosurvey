@@ -15,6 +15,7 @@ import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
@@ -87,20 +88,20 @@ public class LoginFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                getActivity().startActivity(intent);
+                //Intent intent = new Intent(getActivity(), TabActivity.class);
+                //getActivity().startActivity(intent);
 
-                /*initiateLoading(getActivity());
+                initiateLoading(getActivity());
 
                 String token = preferences.getString("temp_token", "DEFAULT");
 
-                Log.e("token",token);
+                Log.e("token", token);
 
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setIcnumber(txtAuthID.getText().toString());
                 loginRequest.setPassword(txtAuthPassword.getText().toString());
                 loginRequest.setToken(token);
-                presenter.onLoginRequest(loginRequest);*/
+                presenter.onLoginRequest(loginRequest);
 
             }
         });
@@ -116,18 +117,24 @@ public class LoginFragment extends BaseFragment {
 
         if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
-                String status = loginReceive.getStatus();
 
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("just_login", true);
+                editor.putString("user_id", txtAuthID.getText().toString());
                 editor.apply();
 
+                //get_categories
+                //CategoryRequest categoryRequest = new CategoryRequest();
+                //presenter.onCategoryRequest(categoryRequest);
+
                 Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
                 getActivity().startActivity(intent);
                 getActivity().finish();
 
             } catch (Exception e) {
                 e.printStackTrace();
+
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
             }
 

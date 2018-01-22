@@ -1,6 +1,7 @@
 package com.app.ecosurvey.application;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
@@ -13,7 +14,7 @@ import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 
-public class MainApplication extends MultiDexApplication {
+public class MainApplication extends Application {
 
     private static Activity instance;
     private AppComponent mDataComponent;

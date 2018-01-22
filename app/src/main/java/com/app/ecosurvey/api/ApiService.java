@@ -25,7 +25,7 @@ public interface ApiService {
     Call<TokenReceive> token(@Body TokenRequest obj);
 
     @GET("/api/v1/categories")
-    Call<CategoryReceive> category(@Header("Authorization") String header,@Body CategoryRequest obj);
+    Call<CategoryReceive> category(@Header("Authorization") String header);
 
     //@GET("/api/v1/categories")
     //Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Body  obj);
@@ -34,6 +34,25 @@ public interface ApiService {
     Call<UserInfoReceive> userinfo(@Header("Authorization") String header,@Url String url);
 
 
+    /*@Multipart
+    @POST("user/updateprofile")
+    Observable<ResponseBody> updateProfile(@Part("user_id") RequestBody id, @Part("full_name") RequestBody fullName, @Part MultipartBody.Part image, @Part("other") RequestBody other);
+
+    //pass it like this
+    File file = new File("/storage/emulated/0/Download/Corrections 6.jpg");
+    RequestBody requestFile =
+            RequestBody.create(MediaType.parse("multipart/form-data"), file);
+
+    // MultipartBody.Part is used to send also the actual file name
+    MultipartBody.Part body =
+            MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+    // add another part within the multipart request
+    RequestBody fullName =
+            RequestBody.create(
+                    MediaType.parse("multipart/form-data"), "Your Name");
+
+service.updateProfile(id, fullName, body, other)*/
 }
 
 

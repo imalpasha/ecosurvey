@@ -1,4 +1,4 @@
-buildscript {
+/*buildscript {
     repositories {
         maven {
             url 'https://maven.fabric.io/public'
@@ -6,13 +6,13 @@ buildscript {
 
     }
 
-}
+}*/
 
 apply plugin: 'com.android.application'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
+//repositories {
+//    maven { url 'https://maven.fabric.io/public' }
+//}
 
 
 //apply plugin: 'com.google.gms.google-services'
@@ -27,7 +27,7 @@ android {
         targetSdkVersion 22
         versionCode 13
         versionName "2.1"
-        multiDexEnabled = true
+        //multiDexEnabled = true
     }
 
     buildTypes {
