@@ -49,6 +49,21 @@ public class SurveyReviewFragment extends BaseFragment {
     @Inject
     Context context;
 
+    @Bind(R.id.block1)
+    LinearLayout block1;
+
+    @Bind(R.id.block2)
+    LinearLayout block2;
+
+    @Bind(R.id.block3)
+    LinearLayout block3;
+
+    @Bind(R.id.block4)
+    LinearLayout block4;
+
+    @Bind(R.id.block5)
+    LinearLayout block5;
+
     @Bind(R.id.block6)
     LinearLayout block6;
 
@@ -77,6 +92,7 @@ public class SurveyReviewFragment extends BaseFragment {
     Button surveySubmitBtn;
 
     private String randomID;
+    private String status;
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -98,6 +114,7 @@ public class SurveyReviewFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
+        status = bundle.getString("Status");
 
         Log.e("localID",bundle.getString("LocalSurveyID"));
         setupBlock(getActivity(), block6);
@@ -125,6 +142,61 @@ public class SurveyReviewFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 updateStatusData();
+            }
+        });
+
+        block1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        block2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        block3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        block4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        block5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID",randomID);
+                intent.putExtra("Status",status);
+                getActivity().startActivity(intent);
             }
         });
 
