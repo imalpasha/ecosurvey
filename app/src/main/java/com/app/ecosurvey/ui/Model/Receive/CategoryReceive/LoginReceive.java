@@ -46,14 +46,14 @@ public class LoginReceive {
 
     public class LoginUser {
 
-        private String role;
+        private String Role;
 
         public String getRole() {
-            return role;
+            return Role;
         }
 
         public void setRole(String role) {
-            this.role = role;
+            this.Role = role;
         }
 
     }

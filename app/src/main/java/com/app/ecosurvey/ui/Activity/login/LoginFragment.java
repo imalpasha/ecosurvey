@@ -1,5 +1,6 @@
 package com.app.ecosurvey.ui.Activity.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,15 +13,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.app.ecosurvey.R;
+import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
+import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -57,6 +63,11 @@ public class LoginFragment extends BaseFragment {
     @Bind(R.id.btnLogin)
     Button btnLogin;
 
+    @Inject
+    RealmController rController;
+
+    @Inject
+    Context context;
 
     View view;
     SharedPrefManager pref;
@@ -113,7 +124,7 @@ public class LoginFragment extends BaseFragment {
     @Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {
 
-        dismissLoading();
+        //dismissLoading();
 
         if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
@@ -127,19 +138,22 @@ public class LoginFragment extends BaseFragment {
                 //CategoryRequest categoryRequest = new CategoryRequest();
                 //presenter.onCategoryRequest(categoryRequest);
 
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
-                getActivity().startActivity(intent);
-                getActivity().finish();
+                UserInfoRequest userInfoRequest = new UserInfoRequest();
+                userInfoRequest.setToken(loginReceive.getData().getToken());
+                userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + txtAuthID.getText().toString());
+                presenter.onUserInfoRequest(userInfoRequest);
+
+
 
             } catch (Exception e) {
                 e.printStackTrace();
-
+                dismissLoading();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
             }
 
         } else {
 
+            dismissLoading();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("auth_status", false);
             editor.apply();
@@ -150,6 +164,31 @@ public class LoginFragment extends BaseFragment {
         }
 
 
+    }
+
+    @Subscribe
+    public void onUserInfoReceive(UserInfoReceive userInfoReceive) {
+
+        if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            //save to realm
+            //convert to gsom
+            Gson gson = new Gson();
+            String userInfo = gson.toJson(userInfoReceive);
+
+            rController.saveUserInfo(context, userInfo);
+
+            Log.e("whaTrole",userInfoReceive.getData().getRole());
+            Intent intent = new Intent(getActivity(), TabActivity.class);
+            intent.putExtra("ROLE", userInfoReceive.getData().getRole());
+            getActivity().startActivity(intent);
+            getActivity().finish();
+
+        } else {
+
+            String error_msg = userInfoReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
     }
 
     @Override

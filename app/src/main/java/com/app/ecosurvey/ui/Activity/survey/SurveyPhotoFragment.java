@@ -161,8 +161,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //save list of photo
                 try {
 
-                    Gson gsonUserInfo = new Gson();
-                    String gsonImage = gsonUserInfo.toJson(list);
+                    //Gson gsonUserInfo = new Gson();
+                    //String gsonImage = gsonUserInfo.toJson(list);
 
                     rController.surveyLocalStorageS4(context, randomID, list);
 

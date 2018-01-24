@@ -2,6 +2,8 @@ package com.app.ecosurvey.ui.Model.Receive.CategoryReceive;
 
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 
+import java.util.List;
+
 import io.realm.RealmObject;
 
 /**
@@ -9,6 +11,10 @@ import io.realm.RealmObject;
  */
 
 public class UserInfoReceive {
+
+    private String message;
+    private String apiStatus;
+    private Data data;
 
     public UserInfoReceive(UserInfoReceive data) {
         message = data.getMessage();
@@ -24,10 +30,6 @@ public class UserInfoReceive {
         message = message;
     }
 
-    private String message;
-    private String apiStatus;
-
-
     public UserInfoReceive.Data getData() {
         return data;
     }
@@ -36,133 +38,160 @@ public class UserInfoReceive {
         data = data;
     }
 
-    private Data data;
-
     public class Data {
 
-        private String name;
-        private String email;
-        private String phoneno;
-        private String rolename;
-        private String stateid;
-        private String state;
-        private String parlimenCode;
-        private String parlimen;
-        private String duncode;
-        private String dun;
-        private String role;
-        private String pdmcode;
-        private String pdm;
+        private String Name;
+        private String Email;
+        private String Phoneno;
+        private String Rolename;
+        private String Stateid;
+        private String State;
+        private String ParlimenCode;
+        private String Parlimen;
+        private String Duncode;
+        private String Dun;
+        private String Role;
+        private String Pdmcode;
+        private String Pdm;
 
-
-        public String getRole() {
-            return role;
+        public List<Location> getLocations() {
+            return Locations;
         }
 
-        public void setRole(String role) {
-            this.role = role;
+        public void setLocations(List<Location> locations) {
+            Locations = locations;
         }
 
-
+        private List<Location> Locations;
 
         public String getName() {
-            return name;
+            return Name;
         }
 
         public void setName(String name) {
-            this.name = name;
+            Name = name;
         }
 
         public String getEmail() {
-            return email;
+            return Email;
         }
 
         public void setEmail(String email) {
-            this.email = email;
+            Email = email;
         }
 
         public String getPhoneno() {
-            return phoneno;
+            return Phoneno;
         }
 
         public void setPhoneno(String phoneno) {
-            this.phoneno = phoneno;
+            Phoneno = phoneno;
         }
 
         public String getRolename() {
-            return rolename;
+            return Rolename;
         }
 
         public void setRolename(String rolename) {
-            this.rolename = rolename;
+            Rolename = rolename;
         }
 
         public String getStateid() {
-            return stateid;
+            return Stateid;
         }
 
         public void setStateid(String stateid) {
-            this.stateid = stateid;
+            Stateid = stateid;
         }
 
         public String getState() {
-            return state;
+            return State;
         }
 
         public void setState(String state) {
-            this.state = state;
+            State = state;
         }
 
         public String getParlimenCode() {
-            return parlimenCode;
+            return ParlimenCode;
         }
 
         public void setParlimenCode(String parlimenCode) {
-            this.parlimenCode = parlimenCode;
+            ParlimenCode = parlimenCode;
         }
 
         public String getParlimen() {
-            return parlimen;
+            return Parlimen;
         }
 
         public void setParlimen(String parlimen) {
-            this.parlimen = parlimen;
+            Parlimen = parlimen;
         }
 
         public String getDuncode() {
-            return duncode;
+            return Duncode;
         }
 
         public void setDuncode(String duncode) {
-            this.duncode = duncode;
+            Duncode = duncode;
         }
 
         public String getDun() {
-            return dun;
+            return Dun;
         }
 
         public void setDun(String dun) {
-            this.dun = dun;
+            Dun = dun;
+        }
+
+        public String getRole() {
+            return Role;
+        }
+
+        public void setRole(String role) {
+            Role = role;
         }
 
         public String getPdmcode() {
-            return pdmcode;
+            return Pdmcode;
         }
 
         public void setPdmcode(String pdmcode) {
-            this.pdmcode = pdmcode;
+            Pdmcode = pdmcode;
         }
 
         public String getPdm() {
-            return pdm;
+            return Pdm;
         }
 
         public void setPdm(String pdm) {
-            this.pdm = pdm;
+            Pdm = pdm;
         }
 
     }
 
+    public class Location{
+
+        String Parlimen;
+        String ParlimenCode;
+
+        public String getParlimen() {
+            return Parlimen;
+        }
+
+        public void setParlimen(String parlimen) {
+            Parlimen = parlimen;
+        }
+
+        public String getParlimenCode() {
+            return ParlimenCode;
+        }
+
+        public void setParlimenCode(String parlimenCode) {
+            ParlimenCode = parlimenCode;
+        }
+
+    }
 
     public String getApiStatus() {
         return apiStatus;

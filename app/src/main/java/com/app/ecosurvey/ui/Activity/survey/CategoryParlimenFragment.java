@@ -16,9 +16,11 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
@@ -128,8 +130,8 @@ public class CategoryParlimenFragment extends BaseFragment {
 
                     Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                    intent.putExtra("LocalSurveyID",randomID);
-                    intent.putExtra("Status",status);
+                    intent.putExtra("LocalSurveyID", randomID);
+                    intent.putExtra("Status", status);
                     getActivity().startActivity(intent);
                 }
 
@@ -168,8 +170,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                 Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                 //intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
             }
         });
@@ -179,8 +181,8 @@ public class CategoryParlimenFragment extends BaseFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
             }
         });
@@ -190,8 +192,8 @@ public class CategoryParlimenFragment extends BaseFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
             }
         });
@@ -201,8 +203,8 @@ public class CategoryParlimenFragment extends BaseFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
             }
         });
@@ -212,8 +214,8 @@ public class CategoryParlimenFragment extends BaseFragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
             }
         });
@@ -221,10 +223,10 @@ public class CategoryParlimenFragment extends BaseFragment {
         return view;
     }
 
-    public void autoFill(){
+    public void autoFill() {
 
-        if (status != null){
-            if (status.equalsIgnoreCase("EDIT")){
+        if (status != null) {
+            if (status.equalsIgnoreCase("EDIT")) {
 
                 //try fetch realm data.
                 Realm realm = rController.getRealmInstanceContext(context);
@@ -267,6 +269,8 @@ public class CategoryParlimenFragment extends BaseFragment {
     public void setData() {
 
         ArrayList<String> category = new ArrayList<String>();
+        ArrayList<String> parlimen = new ArrayList<String>();
+
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);
         try {
@@ -289,13 +293,35 @@ public class CategoryParlimenFragment extends BaseFragment {
             realm.close();
         }
 
-        String[] parlimenDummy = new String[]{"Parlimen A", "Parlimen B", "Parlimen C", "Parlimen D"};
+        try {
 
-         /*Display Airport*/
-        for (int i = 0; i < parlimenDummy.length; i++) {
+            RealmResults<UserInfoCached> survey = realm.where(UserInfoCached.class).findAll();
+            if (survey.size() > 0) {
+
+                Gson gson = new Gson();
+                UserInfoReceive obj = gson.fromJson(survey.get(0).getUserInfoString(), UserInfoReceive.class);
+
+                Log.e("getSize", Integer.toString(obj.getData().getLocations().size()));
+                for (int c = 0; c < obj.getData().getLocations().size(); c++) {
+                    parlimen.add(obj.getData().getLocations().get(c).getParlimen() + "/" + obj.getData().getLocations().get(c).getParlimenCode());
+                }
+
+            }
+
+
+        } finally {
+            realm.close();
+        }
+
+        //String[] parlimenDummy = new String[]{"Parlimen A", "Parlimen B", "Parlimen C", "Parlimen D"};
+
+        for (int i = 0; i < parlimen.size(); i++) {
             DropDownItem itemFlight = new DropDownItem();
-            itemFlight.setText(parlimenDummy[i]);
-            itemFlight.setCode(Integer.toString(i));
+
+            String[] parts = parlimen.get(i).split("/");
+
+            itemFlight.setText(parts[0]);
+            itemFlight.setCode(parts[1]);
             parlimenList.add(itemFlight);
 
         }

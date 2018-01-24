@@ -50,9 +50,9 @@ public class TabActivity extends MainFragmentActivity {
             Log.e("Role",role);
 
             //save to pref.
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("user_role", role);
-            editor.apply();
+            //SharedPreferences.Editor editor = preferences.edit();
+            //editor.putString("user_role", role);
+            //editor.apply();
 
             if (role.equalsIgnoreCase("ParlimentSurveyor")) {
                 Numboftabs = 2;
@@ -63,7 +63,7 @@ public class TabActivity extends MainFragmentActivity {
             }
 
         } catch (Exception e) {
-            Log.e("Null", "Y");
+            Log.e("Null", e.getMessage());
 
         }
 
