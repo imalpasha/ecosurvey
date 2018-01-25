@@ -197,7 +197,7 @@ public class SplashFragment extends BaseFragment {
 
             rController.saveUserInfo(context, userInfo);
 
-            //Log.e("whaTrole",userInfoReceive.getData().getRolename());
+            Log.e("whaTrole",userInfoReceive.getData().getRole());
             Intent intent = new Intent(getActivity(), TabActivity.class);
             intent.putExtra("ROLE", userInfoReceive.getData().getRole());
             getActivity().startActivity(intent);

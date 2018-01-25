@@ -182,7 +182,6 @@ public class SurveyPhotoFragment extends BaseFragment {
                     }
 
 
-
                 } catch (Exception e) {
 
                     Log.e("SaveImage", "Error: " + e.getMessage());

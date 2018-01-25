@@ -216,7 +216,7 @@ public class RealmController {
         RealmList<Image> realmList = new RealmList<Image>();
         for (int y = 0; y < imageList.size(); y++) {
             Image image = new Image();
-            image.setImagePath(imageList.get(y).toString());
+            image.setImagePath(imageList.get(y).getImagePath());
             realmList.add(image);
             Log.e("IMAGE_PATH", image.getImagePath());
         }

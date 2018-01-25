@@ -118,7 +118,7 @@ public class SurveyVideoFragment extends BaseFragment {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
             for(int x = 0 ; x < survey.getImagePath().size() ; x++){
-                Log.e("SurveyImagePath",survey.getImagePath().get(x).toString());
+                Log.e("SurveyImagePath",survey.getImagePath().get(x).getImagePath());
             }
 
         } finally {
