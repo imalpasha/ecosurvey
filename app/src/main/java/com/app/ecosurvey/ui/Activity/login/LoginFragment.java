@@ -136,24 +136,11 @@ public class LoginFragment extends BaseFragment {
                 editor.putString("user_id", txtAuthID.getText().toString());
                 editor.apply();
 
-                //get_categories
-                //CategoryRequest categoryRequest = new CategoryRequest();
-                //presenter.onCategoryRequest(categoryRequest);
-
-/*<<<<<<< HEAD
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
-                Log.e("ROLE", loginReceive.getData().getUser().getRole());
-                getActivity().startActivity(intent);
-                getActivity().finish();
-=======*/
                 UserInfoRequest userInfoRequest = new UserInfoRequest();
                 userInfoRequest.setToken(loginReceive.getData().getToken());
                 userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + txtAuthID.getText().toString());
                 presenter.onUserInfoRequest(userInfoRequest);
 
-
-/*>>>>>>> 8bce5b31c93b8ceccb4a25b24f10cde1f59c302e*/
 
             } catch (Exception e) {
                 e.printStackTrace();
