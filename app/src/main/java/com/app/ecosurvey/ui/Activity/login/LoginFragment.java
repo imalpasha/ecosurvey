@@ -1,5 +1,6 @@
 package com.app.ecosurvey.ui.Activity.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -81,6 +82,8 @@ public class LoginFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         //pref = new SharedPrefManager(getActivity());
 
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+
         editTextMaterial(txtAuthID, txtAuthIDHint);
         editTextMaterial(txtAuthPassword, txtPasswordHint);
 
@@ -129,6 +132,7 @@ public class LoginFragment extends BaseFragment {
 
                 Intent intent = new Intent(getActivity(), TabActivity.class);
                 intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
+                Log.e("ROLE", loginReceive.getData().getUser().getRole());
                 getActivity().startActivity(intent);
                 getActivity().finish();
 

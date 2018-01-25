@@ -162,61 +162,69 @@ public class CategoryParlimenFragment extends BaseFragment {
             }
         });
 
-        block2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
-                //intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
-                getActivity().startActivity(intent);
-            }
-        });
 
-        block3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
-                getActivity().startActivity(intent);
-            }
-        });
+        if (status != null) {
+            if (status.equalsIgnoreCase("EDIT")) {
 
-        block4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
-                getActivity().startActivity(intent);
-            }
-        });
+                block2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
+                        //intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
 
-        block5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
-                getActivity().startActivity(intent);
-            }
-        });
+                block3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
 
-        block6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
-                getActivity().startActivity(intent);
+                block4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block5.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block6.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
             }
-        });
+        }
+
 
         return view;
     }

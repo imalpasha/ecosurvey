@@ -50,17 +50,17 @@ public class UserInfoReceive {
         private String parlimen;
         private String duncode;
         private String dun;
-        private String role;
+        private String Role;
         private String pdmcode;
         private String pdm;
 
 
         public String getRole() {
-            return role;
+            return Role;
         }
 
         public void setRole(String role) {
-            this.role = role;
+            this.Role = role;
         }
 
 

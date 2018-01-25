@@ -54,24 +54,22 @@
         android:vmSafeMode="true"
         tools:replace="android:icon">
 
-        <activity android:name="com.app.ecosurvey.ui.Activity.login.LoginActivity">
+        <activity android:name="com.app.ecosurvey.ui.Activity.login.LoginActivity"/>
 
-        </activity>
+        <activity android:name="com.app.ecosurvey.ui.Activity.homepage.TabActivity"/>
 
-        <activity android:name="com.app.ecosurvey.ui.Activity.homepage.TabActivity"></activity>
-
-        <activity android:name="com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity"></activity>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity"/>
         <activity
             android:name="com.app.ecosurvey.ui.Activity.survey.SurveyIssueActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
 
         <activity
             android:name="com.app.ecosurvey.ui.Activity.survey.SurveyWishlistActivity"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
 
-        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyPhotoActivity"></activity>
-        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyVideoActivity"></activity>
-        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyReviewActivity"></activity>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyPhotoActivity"/>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyVideoActivity"/>
+        <activity android:name="com.app.ecosurvey.ui.Activity.survey.SurveyReviewActivity"/>
         <activity android:name="com.tangxiaolv.telegramgallery.GalleryActivity" />
         <activity android:name="com.app.ecosurvey.ui.Activity.survey.GalleryActivityV2" android:theme="@style/NoActionBar" />
         <activity android:name="com.app.ecosurvey.ui.Activity.splash.SplashActivity" android:theme="@style/NoActionBar" >
