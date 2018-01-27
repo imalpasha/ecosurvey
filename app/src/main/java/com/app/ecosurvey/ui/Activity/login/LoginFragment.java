@@ -92,6 +92,8 @@ public class LoginFragment extends BaseFragment {
         ButterKnife.bind(this, view);
         //pref = new SharedPrefManager(getActivity());
 
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+
         editTextMaterial(txtAuthID, txtAuthIDHint);
         editTextMaterial(txtAuthPassword, txtPasswordHint);
 
@@ -134,15 +136,10 @@ public class LoginFragment extends BaseFragment {
                 editor.putString("user_id", txtAuthID.getText().toString());
                 editor.apply();
 
-                //get_categories
-                //CategoryRequest categoryRequest = new CategoryRequest();
-                //presenter.onCategoryRequest(categoryRequest);
-
                 UserInfoRequest userInfoRequest = new UserInfoRequest();
                 userInfoRequest.setToken(loginReceive.getData().getToken());
                 userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + txtAuthID.getText().toString());
                 presenter.onUserInfoRequest(userInfoRequest);
-
 
 
             } catch (Exception e) {

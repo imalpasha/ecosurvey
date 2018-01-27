@@ -1,14 +1,19 @@
 package com.app.ecosurvey.ui.Activity.survey;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
@@ -18,6 +23,7 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
+import com.app.ecosurvey.utils.Utils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -27,9 +33,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
+import static android.app.Activity.RESULT_OK;
+
 public class SurveyVideoFragment extends BaseFragment {
 
     private int fragmentContainerId;
+    static final int REQUEST_VIDEO_CAPTURE = 1;
 
     @Inject
     MainPresenter presenter;
@@ -66,6 +75,18 @@ public class SurveyVideoFragment extends BaseFragment {
 
     private String randomID;
     private String status;
+
+    /*private AlertDialog dialog;
+    private String userChoosenTask;
+    private Boolean result;
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private int CHANGE_FILE = 2;
+    private static final String GALLERY_CONFIG = "GALLERY_CONFIG";
+    private View view;
+    private ImageListAdapter adapter;
+    private int changeImagePosition;
+    private ArrayList<SelectedImagePath> list = new ArrayList<SelectedImagePath>();
+    private Boolean changeImageTrue = false;*/
 
     public static SurveyVideoFragment newInstance(Bundle bundle) {
 
@@ -121,64 +142,165 @@ public class SurveyVideoFragment extends BaseFragment {
             }
         });
 
-        block1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
+        if (status != null) {
+            if (status.equalsIgnoreCase("EDIT")) {
+
+                block1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+
+                block6.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        intent.putExtra("LocalSurveyID",randomID);
+                        intent.putExtra("Status",status);
+                        getActivity().startActivity(intent);
+                    }
+                });
+            }
+        }
+
+        return view;
+    }
+
+
+    private void dispatchTakeVideoIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        }
+    }
+
+    /*private void captureImageInitialization() {
+
+        LayoutInflater li = LayoutInflater.from(getActivity());
+        final View myView = li.inflate(R.layout.init_video, null);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(myView);
+
+        final TextView btnGallery = (TextView) myView.findViewById(R.id.btn_select_gallery);
+        final TextView btnCamera = (TextView) myView.findViewById(R.id.btn_take_camera);
+        TextView btnCancel = (TextView) myView.findViewById(R.id.btn_cancel);
+
+        dialog = builder.create();
+
+        btnGallery.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                userChoosenTask = "Choose Photo";
+                btnGallery.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            result = Utils.checkPermissionGallery(getActivity());
+                            if (result) {
+                                galleryIntent();
+                                dialog.dismiss();
+                            } else {
+                                Log.e("Gallery", "CLOSE");
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
             }
         });
 
-        block2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                userChoosenTask = "Take Photo";
+                btnCamera.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            result = Utils.checkPermissionCamera(getActivity());
+                            if (result) {
+                                cameraIntent();
+                                dialog.dismiss();
+                            } else {
+                                Log.e("Camera", "CLOSE");
+                            }
+                        } catch (Exception e) {
+
+                        }
+                    }
+                });
+
+>>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 
-        block3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
-            }
-        });
 
-        block4.setOnClickListener(new View.OnClickListener() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
-            }
-        });
-
-        block6.setOnClickListener(new View.OnClickListener() {
-            @Override
+<<<<<<< HEAD
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.putExtra("LocalSurveyID", randomID);
                 intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
+=======
+            public void onClick(View v) {
+                dialog.dismiss();
+>>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 
-        return view;
-    }
+        dialog = builder.create();
 
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = 1070;
+        dialog.getWindow().setAttributes(lp);
+
+    }*/
 
     @Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {
@@ -207,6 +329,15 @@ public class SurveyVideoFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         fragmentContainerId = ((FragmentContainerActivity) getActivity()).getFragmentContainerId();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /*if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
+            Uri videoUri = data.getData();
+            //mVideoView.setVideoURI(videoUri);
+        }*/
     }
 
     @Override

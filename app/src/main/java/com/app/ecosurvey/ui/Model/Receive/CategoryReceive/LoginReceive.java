@@ -21,6 +21,9 @@ public class LoginReceive {
 
     public class Data {
 
+        private String token;
+        private LoginUser user;
+
         public String getToken() {
             return token;
         }
@@ -28,9 +31,6 @@ public class LoginReceive {
         public void setToken(String token) {
             this.token = token;
         }
-
-
-        private String token;
 
         public LoginUser getUser() {
             return user;
@@ -40,7 +40,6 @@ public class LoginReceive {
             this.user = user;
         }
 
-        private LoginUser user;
     }
 
 

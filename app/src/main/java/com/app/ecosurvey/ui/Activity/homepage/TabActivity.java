@@ -1,6 +1,8 @@
 package com.app.ecosurvey.ui.Activity.homepage;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -42,9 +44,11 @@ public class TabActivity extends MainFragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tab_fragment);
         normal_with_title("Eco Survey");
-//1s
+
+        preferences = this.getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
         try {
+
             Bundle bundle = getIntent().getExtras();
             role = bundle.getString("ROLE");
             Log.e("Role",role);

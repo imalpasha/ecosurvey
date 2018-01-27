@@ -4,8 +4,6 @@ import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 
 import java.util.List;
 
-import io.realm.RealmObject;
-
 /**
  * Created by imalpasha on 17/01/2018.
  */
@@ -40,6 +38,29 @@ public class UserInfoReceive {
 
     public class Data {
 
+/*<<<<<<< HEAD
+        private String name;
+        private String email;
+        private String phoneno;
+        private String rolename;
+        private String stateid;
+        private String state;
+        private String parlimenCode;
+        private String parlimen;
+        private String duncode;
+        private String dun;
+        private String Role;
+        private String pdmcode;
+        private String pdm;
+
+
+        public String getRole() {
+            return Role;
+        }
+
+        public void setRole(String role) {
+            this.Role = role;
+=======*/
         private String Name;
         private String Email;
         private String Phoneno;

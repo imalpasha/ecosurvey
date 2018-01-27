@@ -75,6 +75,7 @@ public class SplashFragment extends BaseFragment {
         view = inflater.inflate(R.layout.splash_page, container, false);
         ButterKnife.bind(this, view);
 
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
         //get_token
 
         initiateLoading(getActivity());
@@ -190,7 +191,7 @@ public class SplashFragment extends BaseFragment {
         if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
             //save to realm
-            //convert to gsom
+            //convert to gson
             Gson gson = new Gson();
             String userInfo = gson.toJson(userInfoReceive);
 

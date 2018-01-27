@@ -54,7 +54,7 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <TextView
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
                 android:id="@+id/txtAuthIDHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -76,6 +76,7 @@
                 android:drawableStart="@mipmap/email"
                 android:gravity="center|left"
                 android:hint="@string/txtAuthID"
+                android:text="7777"
                 android:inputType="textFilter"
                 android:paddingBottom="2dp"
                 android:paddingLeft="8dp"
@@ -93,7 +94,7 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <TextView
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
                 android:id="@+id/txtPasswordHint"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -115,6 +116,7 @@
                 android:drawableStart="@mipmap/email"
                 android:gravity="center|left"
                 android:hint="@string/txtAuthPassword"
+                android:text="password"
                 android:inputType="textPassword"
                 android:paddingBottom="2dp"
                 android:paddingLeft="8dp"
@@ -123,7 +125,7 @@
                 app:met_floatingLabel="normal" />
         </LinearLayout>
 
-        <Button
+        <com.app.ecosurvey.utils.FontStyle.PlayButtonText
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -139,7 +141,7 @@
             android:textSize="17sp"
             android:textStyle="bold">
 
-        </Button>
+        </com.app.ecosurvey.utils.FontStyle.PlayButtonText>
 
         <!--Black box-->
 

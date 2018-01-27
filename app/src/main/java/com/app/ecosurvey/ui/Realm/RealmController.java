@@ -206,8 +206,7 @@ public class RealmController {
 
     }
 
-    public void
-    surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList*/String listImage) {
+    public void surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList*/String listImage) {
 
         //move to realm list
 
