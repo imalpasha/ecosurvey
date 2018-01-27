@@ -138,6 +138,8 @@ public class SurveyReviewFragment extends BaseFragment {
                 rController.surveyLocalStorageS5(context, randomID, formattedDate);
 
                 Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                 intent.putExtra("ROLE", preferences.getString("user_role", ""));
                 getActivity().startActivity(intent);
 
@@ -228,11 +230,11 @@ public class SurveyReviewFragment extends BaseFragment {
                 txtSurveyWishlist.setText(survey.getSurveyWishlist());
             }
 
-            Log.e("SurveyWishlist", survey.getSurveyWishlist());
+            //Log.e("SurveyWishlist", survey.getSurveyWishlist());
 
-            for (int x = 0; x < survey.getImagePath().size(); x++) {
-                Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
-            }
+            //for (int x = 0; x < survey.getImagePath().size(); x++) {
+            //    Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
+            //}
 
         } finally {
             realm.close();

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +20,10 @@ import android.widget.TextView;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.adapter.ImageListAdapter;
 import com.app.ecosurvey.ui.Activity.adapter.SurveyListAdapter;
+import com.app.ecosurvey.ui.Activity.survey.SurveyPhotoFragment;
+import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SurveyList;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -37,6 +42,7 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -63,9 +69,6 @@ public class MySurveyFragment extends BaseFragment {
     Button createSurveyBtn;
 
 
-    @Bind(R.id.listview)
-    ListView mListView;
-
     @Bind(R.id.no_list)
     LinearLayout no_list;
 
@@ -77,6 +80,7 @@ public class MySurveyFragment extends BaseFragment {
 
     View view;
     SharedPrefManager pref;
+    SurveyListAdapter mAdapter;
 
     public static MySurveyFragment newInstance(Bundle bundle) {
 
@@ -148,6 +152,30 @@ public class MySurveyFragment extends BaseFragment {
         return view;
     }
 
+    public void confirmDelete(final Integer pos){
+
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Confirmation require.")
+                .setContentText("Are you sure want to remove this from survey list?")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+
+                        mAdapter.confirmDelete(pos);
+                        sDialog.dismiss();
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+
+                    }
+                })
+                .show();
+
+    }
+
     public void editData(String randomID){
         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
         intent.putExtra("LocalSurveyID",randomID);
@@ -180,17 +208,30 @@ public class MySurveyFragment extends BaseFragment {
                 surveyLists.add(info);
             }
 
-            //Collections.reverse(notificationInfo);
-            SurveyListAdapter mAdapter = new SurveyListAdapter(getActivity(), this, surveyLists);
-            mListView.setAdapter(mAdapter);
-            /*mAdapter.setMode(Attributes.Mode.Single);*/
 
+            initiateImageAdapter(surveyLists);
         } else {
             have_list.setVisibility(View.GONE);
             no_list.setVisibility(View.VISIBLE);
         }
     }
 
+
+    public void initiateImageAdapter(List<SurveyList> array){
+
+        RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        myRecyclerView.setHasFixedSize(true);
+        myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mAdapter = new SurveyListAdapter(getActivity() ,this,array );
+
+        myRecyclerView.setAdapter(mAdapter);
+        myRecyclerView.setLayoutManager(MyLayoutManager);
+
+    }
     /*@Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {
 

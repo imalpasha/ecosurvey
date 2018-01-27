@@ -206,25 +206,17 @@ public class RealmController {
 
     }
 
-    public void surveyLocalStorageS4(Context context, String id, List<SelectedImagePath> imageList /*String image*/) {
+    public void
+    surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList*/String listImage) {
 
         //move to realm list
 
         Realm realm = getRealmInstanceContext(context);
         realm.beginTransaction();
 
-        RealmList<Image> realmList = new RealmList<Image>();
-        for (int y = 0; y < imageList.size(); y++) {
-            Image image = new Image();
-            image.setImagePath(imageList.get(y).getImagePath());
-            realmList.add(image);
-            Log.e("IMAGE_PATH", image.getImagePath());
-        }
-
-
         //realm.beginTransaction();
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setImagePath(realmList);
+        survey.setImagePath(listImage);
 
         realm.commitTransaction();
         realm.close();
