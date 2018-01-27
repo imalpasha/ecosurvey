@@ -87,7 +87,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                frag.confirmDelete(position);
+                frag.confirmDelete(position,obj.get(position).getLocalSurveyID());
             }
         });
 

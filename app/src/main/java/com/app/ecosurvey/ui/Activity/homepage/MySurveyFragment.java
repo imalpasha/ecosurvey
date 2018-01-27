@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import com.app.ecosurvey.ui.Activity.adapter.SurveyListAdapter;
 import com.app.ecosurvey.ui.Activity.survey.SurveyPhotoFragment;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SurveyList;
+import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity;
@@ -68,7 +70,6 @@ public class MySurveyFragment extends BaseFragment {
     @Bind(R.id.createSurveyBtn)
     Button createSurveyBtn;
 
-
     @Bind(R.id.no_list)
     LinearLayout no_list;
 
@@ -80,6 +81,7 @@ public class MySurveyFragment extends BaseFragment {
 
     View view;
     SharedPrefManager pref;
+
     SurveyListAdapter mAdapter;
 
     public static MySurveyFragment newInstance(Bundle bundle) {
@@ -152,7 +154,7 @@ public class MySurveyFragment extends BaseFragment {
         return view;
     }
 
-    public void confirmDelete(final Integer pos){
+    public void confirmDelete(final Integer pos,final String id){
 
         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Confirmation require.")
@@ -162,6 +164,25 @@ public class MySurveyFragment extends BaseFragment {
                     public void onClick(SweetAlertDialog sDialog) {
 
                         mAdapter.confirmDelete(pos);
+
+                        //remove from realm
+                        Realm realm = rController.getRealmInstanceContext(context);
+                        try {
+                            LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+                            Log.e("SurveyImagePath", survey.getImagePath());
+                            try {
+                                realm.beginTransaction();
+                                survey.removeFromRealm();;
+                                realm.commitTransaction();
+                                realm.close();
+                            } catch (Exception e) {
+                                Log.e("clearCached", e.getMessage());
+                            }
+
+                        } finally {
+                            realm.close();
+                        }
+
                         sDialog.dismiss();
                     }
                 })
