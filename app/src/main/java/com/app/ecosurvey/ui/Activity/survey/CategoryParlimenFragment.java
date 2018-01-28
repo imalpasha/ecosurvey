@@ -122,9 +122,8 @@ public class CategoryParlimenFragment extends BaseFragment {
 
                 if (manualValidation()) {
 
-                    String category = txtKategori.getText().toString();
-                    String parliment = txtParlimen.getText().toString();
-
+                    String category = txtKategori.getTag().toString();
+                    String parliment = txtParlimen.getTag().toString();
 
                     rController.surveyLocalStorageS1(context, randomID, category, parliment, "local_progress");
 
@@ -174,8 +173,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                         Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                         //intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -185,8 +184,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -196,8 +195,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -207,8 +206,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -218,8 +217,8 @@ public class CategoryParlimenFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -240,8 +239,15 @@ public class CategoryParlimenFragment extends BaseFragment {
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
-                    txtParlimen.setText(survey.getSurveyParliment());
-                    txtKategori.setText(survey.getSurveyCategory());
+                    String[] parliment = survey.getSurveyParliment().split("/");
+                    String[] category = survey.getSurveyCategory().split("/");
+
+                    txtParlimen.setText(parliment[0]);
+                    txtKategori.setText(category[0]);
+
+                    txtParlimen.setTag(parliment[1]);
+                    txtKategori.setTag(category[1]);
+
 
                 } finally {
                     realm.close();
@@ -256,16 +262,23 @@ public class CategoryParlimenFragment extends BaseFragment {
         Boolean status;
 
         if (txtParlimen.getText().toString().equalsIgnoreCase("")) {
-            setShake(txtParlimen);
+            //setShake(txtParlimen);
+
             txtParlimen.setFocusable(true);
             txtParlimen.requestFocus();
-            txtParlimen.setError("Please select parlimen");
+            //txtParlimen.setError("Please select parlimen");
+
+            setError(getActivity(), "Validation Error.", "Please select parlimen");
+
             status = false;
         } else if (txtKategori.getText().toString().equalsIgnoreCase("")) {
-            setShake(txtKategori);
+            //setShake(txtKategori);
             txtKategori.setFocusable(true);
             txtKategori.requestFocus();
-            txtKategori.setError("Please select kategori");
+            //txtKategori.setError("Please select kategori");
+
+            setError(getActivity(), "Validation Error.", "Please select category");
+
             status = false;
         } else {
             status = true;
@@ -300,9 +313,11 @@ public class CategoryParlimenFragment extends BaseFragment {
             realm.close();
         }
 
+        Realm realm2 = rController.getRealmInstanceContext(context);
+
         try {
 
-            RealmResults<UserInfoCached> survey = realm.where(UserInfoCached.class).findAll();
+            RealmResults<UserInfoCached> survey = realm2.where(UserInfoCached.class).findAll();
             if (survey.size() > 0) {
 
                 Gson gson = new Gson();
@@ -317,7 +332,7 @@ public class CategoryParlimenFragment extends BaseFragment {
 
 
         } finally {
-            realm.close();
+            realm2.close();
         }
 
         //String[] parlimenDummy = new String[]{"Parlimen A", "Parlimen B", "Parlimen C", "Parlimen D"};

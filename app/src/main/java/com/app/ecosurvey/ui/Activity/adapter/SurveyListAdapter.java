@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -30,7 +31,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.MyViewHolder> {
+import static android.text.Html.fromHtml;
+
+public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.MyViewHolder> {
 
     private final Activity context;
     private MySurveyFragment frag;
@@ -56,15 +59,27 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
     @Override
     public void onBindViewHolder(final SurveyListAdapter.MyViewHolder holder, final int position) {
 
-        String c = obj.get(position).getSurveyParliment() + " " + obj.get(position).getSurveyCategory();
+
+        String[] par = obj.get(position).getSurveyParliment().split("/");
+        String[] cat = obj.get(position).getSurveyCategory().split("/");
+
+        String c = par[0] + "  " + cat[0];
         String i = obj.get(position).getSurveyIssue();
-        String s = obj.get(position).getSurveyStatus();
+        String s = obj.get(position).getSurveyLocalProgress();
         String d = obj.get(position).getStatusCreated();
         String u = obj.get(position).getStatusUpdated();
 
         holder.survey_category.setText(c);
-        holder.survey_issue.setText(i);
-        holder.survey_status.setText(s);
+
+        String upToNCharacters0 = i.substring(0, Math.min(i.length(), 10));
+        holder.survey_issue.setText(fromHtml(upToNCharacters0 + "..."), CheckBox.BufferType.SPANNABLE);
+
+
+        if (obj.get(position).getSurveyStatus().equalsIgnoreCase("")) {
+            holder.survey_status.setText(s);
+        } else {
+            holder.survey_status_api.setText(obj.get(position).getSurveyStatus());
+        }
 
         /*Calendar calendar = Calendar.getInstance();
         System.out.println("Current time => "+calendar.getTime());
@@ -87,7 +102,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                frag.confirmDelete(position,obj.get(position).getLocalSurveyID());
+                frag.confirmDelete(position, obj.get(position).getLocalSurveyID());
             }
         });
 
@@ -102,6 +117,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
         TextView survey_status;
         TextView survey_updated;
         ImageView btnDelete;
+        TextView survey_status_api;
 
 
         public MyViewHolder(View insideMeal) {
@@ -114,6 +130,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
             survey_updated = (TextView) insideMeal.findViewById(R.id.survey_updated);
             btnDelete = (ImageView) insideMeal.findViewById(R.id.btnDelete);
             survey_layout = (RelativeLayout) insideMeal.findViewById(R.id.survey_layout);
+            survey_status_api = (TextView) insideMeal.findViewById(R.id.survey_status_api);
 
 
         }
@@ -121,7 +138,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
 
 
 
-    static class ViewHolder {
+    /*static class ViewHolder {
 
         @Bind(R.id.survey_category)
         TextView survey_category;
@@ -144,7 +161,7 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
         @Bind(R.id.btnDelete)
         TextView btnDelete;
 
-    }
+    }*/
 
 
     @Override
@@ -153,19 +170,29 @@ public class SurveyListAdapter  extends RecyclerView.Adapter<SurveyListAdapter.M
     }
 
 
-
-
     @Override
     public long getItemId(int position) {
         return 0;
     }
 
 
-    public void confirmDelete(Integer position){
+    public void confirmDelete(Integer position) {
 
-        obj.remove(position);
+        Log.e("confirmdelete", "Y");
+        Log.e("positionremove", Integer.toString(position));
+
         //recycler.removeViewAt(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, obj.size());
+        notifyDataSetChanged();
+
+        obj.remove(position);
+
+    }
+
+    public void setTierText(String issue) {
+
+
     }
 }
+

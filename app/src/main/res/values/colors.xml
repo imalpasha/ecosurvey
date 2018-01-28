@@ -210,7 +210,7 @@
     <color name="blue_btn_bg_color">#ef332a</color>
     <color name="blue_btn_bg_pressed_color">#EE2D24</color>
 
-    <color name="screen_background_dark_transparent">#80000000</color>
+    <color name="screen_background_dark_transparent">#4D000000</color>
     <color name="screen_background_dark_transparent_2">#CC000000</color>
 
 </resources>

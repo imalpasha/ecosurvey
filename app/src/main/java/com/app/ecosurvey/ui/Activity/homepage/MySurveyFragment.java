@@ -106,7 +106,7 @@ public class MySurveyFragment extends BaseFragment {
         getData();
 
         Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => "+calendar.getTime());
+        System.out.println("Current time => " + calendar.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
         final String formattedDate = df.format(calendar.getTime());
@@ -119,8 +119,8 @@ public class MySurveyFragment extends BaseFragment {
                 rController.surveyLocalStorageS0(context, randomID, "local_progress", formattedDate);
 
                 Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status","CREATE");
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", "CREATE");
                 getActivity().startActivity(intent);
 
                 /*initiateLoading(getActivity());
@@ -154,16 +154,22 @@ public class MySurveyFragment extends BaseFragment {
         return view;
     }
 
-    public void confirmDelete(final Integer pos,final String id){
+    public void confirmDelete(final Integer pos, final String id) {
 
         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                .setTitleText("Confirmation require.")
-                .setContentText("Are you sure want to remove this from survey list?")
+                .setTitleText("Eco Survey.")
+                .setContentText("Remove this from survey list?")
+                .setCancelText("No")
+                .setConfirmText("Yes")
                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
 
-                        mAdapter.confirmDelete(pos);
+                        //mAdapter.confirmDelete(pos);
+                        getData();
+                        //mAdapter.notifyItemRemoved(pos);
+                        //mAdapter.notifyItemRangeChanged(position, obj.size());
+                        //mAdapter.notifyDataSetChanged();
 
                         //remove from realm
                         Realm realm = rController.getRealmInstanceContext(context);
@@ -172,7 +178,8 @@ public class MySurveyFragment extends BaseFragment {
                             Log.e("SurveyImagePath", survey.getImagePath());
                             try {
                                 realm.beginTransaction();
-                                survey.removeFromRealm();;
+                                survey.removeFromRealm();
+                                ;
                                 realm.commitTransaction();
                                 realm.close();
                             } catch (Exception e) {
@@ -180,6 +187,7 @@ public class MySurveyFragment extends BaseFragment {
                             }
 
                         } finally {
+                            getData();
                             realm.close();
                         }
 
@@ -190,21 +198,21 @@ public class MySurveyFragment extends BaseFragment {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
-
+                        sweetAlertDialog.dismiss();
                     }
                 })
                 .show();
 
     }
 
-    public void editData(String randomID){
+    public void editData(String randomID) {
         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
-        intent.putExtra("LocalSurveyID",randomID);
-        intent.putExtra("Status","EDIT");
+        intent.putExtra("LocalSurveyID", randomID);
+        intent.putExtra("Status", "EDIT");
         getActivity().startActivity(intent);
     }
 
-    public void getData(){
+    public void getData() {
         //call from Realm
         Realm realm = rController.getRealmInstanceContext(context);
         final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
@@ -219,7 +227,7 @@ public class MySurveyFragment extends BaseFragment {
                 info.setLocalSurveyID(result2.get(position).getLocalSurveyID());
                 info.setSurveyCategory(result2.get(position).getSurveyCategory());
                 info.setSurveyParliment(result2.get(position).getSurveyParliment());
-                info.setSurveyLocalProgress(result2.get(position).getSurveyLocalProgress());
+                info.setSurveyLocalProgress("Not Submit");
                 info.setSurveyIssue(result2.get(position).getSurveyIssue());
                 info.setSurveyWishlist(result2.get(position).getSurveyWishlist());
                 info.setImageString(result2.get(position).getImageString());
@@ -238,7 +246,7 @@ public class MySurveyFragment extends BaseFragment {
     }
 
 
-    public void initiateImageAdapter(List<SurveyList> array){
+    public void initiateImageAdapter(List<SurveyList> array) {
 
         RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
         myRecyclerView.setHasFixedSize(true);
@@ -247,7 +255,7 @@ public class MySurveyFragment extends BaseFragment {
         LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
         MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mAdapter = new SurveyListAdapter(getActivity() ,this,array );
+        mAdapter = new SurveyListAdapter(getActivity(), this, array);
 
         myRecyclerView.setAdapter(mAdapter);
         myRecyclerView.setLayoutManager(MyLayoutManager);

@@ -8,26 +8,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey_light"
+        android:background="@color/white"
         android:orientation="vertical">
 
 
         <LinearLayout
-            android:layout_gravity="center"
             android:id="@+id/profileLoading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center"
+            android:visibility="gone"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/btnRetry"
-                android:visibility="gone"
-                android:layout_gravity="center"
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/textView10"
@@ -40,13 +41,13 @@
                 <Button
                     android:id="@+id/btnToRetry"
                     android:layout_width="120dp"
-                    android:textColor="@color/white"
-                    android:background="@color/red"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Retry"/>
+                    android:background="@color/red"
+                    android:text="Retry"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
@@ -54,10 +55,10 @@
                 android:id="@+id/loadingSegment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:visibility="visible"
                 android:layout_gravity="center"
-                android:orientation="vertical">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -81,27 +82,14 @@
         <LinearLayout
             android:id="@+id/profileLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/grey_light"
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-
-                <Button
-                    android:id="@+id/btnLogout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Button" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="15dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -183,6 +171,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@color/white"
                 android:orientation="vertical"
+                android:visibility="gone"
                 android:padding="16dp">
 
                 <TextView
@@ -224,9 +213,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtDun"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/txtDun"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
 
@@ -266,9 +255,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtPDM"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/txtPDM"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -277,9 +266,9 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="25dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -303,9 +292,9 @@
                         android:textColor="@color/grey" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtRole"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/txtRole"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
                 </LinearLayout>

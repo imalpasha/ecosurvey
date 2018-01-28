@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -126,6 +127,21 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    public static void setSuccess(final Activity act, String msg, String title) {
+
+        if (act != null) {
+            if (!act.isFinishing()) {
+                new SweetAlertDialog(act, SweetAlertDialog.SUCCESS_TYPE)
+                        .setTitleText(title)
+                        .setContentText(msg)
+                        .show();
+            }
+
+        } else {
+
+        }
+    }
+
     public static void initiateLoading(Activity act) {
 
         try {
@@ -183,7 +199,7 @@ public class BaseFragment extends Fragment {
     }
 
     //popup box using sweatalert dialog box
-    public static void sweetAlert(final Context act, String title, String message) {
+    public static void setError(final Context act, String title, String message) {
 
         new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(title)
@@ -261,7 +277,7 @@ public class BaseFragment extends Fragment {
                 txt.setText(selected);
 
                 if (tagStatus) {
-                    txt.setTag(selectedCode);
+                    txt.setTag(selected + "/" + selectedCode);
                 }
 
                 indexForState = which;
@@ -281,6 +297,11 @@ public class BaseFragment extends Fragment {
         //lp.horizontalMargin = 100;
         //lp.verticalMargin = 100;
         mDialog.getWindow().setAttributes(lp);
+    }
+
+    public void hideKeyboard(Activity act, View v) {
+        InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
 }
