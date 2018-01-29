@@ -153,7 +153,6 @@ public class SurveyVideoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                 intent.putExtra("LocalSurveyID", randomID);
                 intent.putExtra("Status", status);
@@ -376,12 +375,12 @@ public class SurveyVideoFragment extends BaseFragment {
     //gallery feature
     private void galleryIntent() {
 
-        /*Intent intent = new Intent();
-        intent.setType("video*//*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Video"),SELECT_FILE);*/
+        //Intent intent = new Intent();
+        //intent.setType("video*//*");
+        //intent.setAction(Intent.ACTION_GET_CONTENT);
+        //startActivityForResult(Intent.createChooser(intent,"Select Video"),SELECT_FILE);*/
 
-         /*if (changeImageTrue) {
+         if (changeImageTrue) {
 
            GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
@@ -409,7 +408,7 @@ public class SurveyVideoFragment extends BaseFragment {
             changeImageTrue = false;
         }
 
-        changeImageTrue = false;*/
+        changeImageTrue = false;
 
     }
 
@@ -486,15 +485,16 @@ public class SurveyVideoFragment extends BaseFragment {
             if (requestCode == SELECT_FILE) {
                 //list of videos of selected
 
-                List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
 
                 //insert path to object
-                for (int x = 0; x < videos.size(); x++) {
+                //for (int x = 0; x < videos.size(); x++) {
                     SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                    selectedVideoPath.setVideoPath(videos.get(x));
-                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+                    selectedVideoPath.setVideoPath(videos);
+                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
                     list.add(selectedVideoPath);
-                }
+                //}
 
                 if (true) {
                     initiateVideoAdapter(list);

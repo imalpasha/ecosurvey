@@ -1,12 +1,16 @@
 package com.app.ecosurvey.ui.Activity.adapter;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -54,8 +58,13 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
 
         String f = arrayPromo.get(h).getVideoPath();
 
-        holder.selectedImage.setVideoURI(Uri.parse(f));
-        holder.selectedImage.start();
+        Bitmap bMap = ThumbnailUtils.createVideoThumbnail(f, MediaStore.Video.Thumbnails.MINI_KIND);
+        holder.txtVideoPath.setImageBitmap(bMap);
+
+
+
+        //holder.selectedImage.setVideoURI(Uri.parse(f));
+        //holder.selectedImage.start();
 
         /*Picasso.with(activity)
                 .load(f)
@@ -98,6 +107,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
 
         final TextView actionRemove;
         final TextView actionChange;
+        final ImageView txtVideoPath;
         final VideoView selectedImage;
 
 
@@ -105,6 +115,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
             super(insideMeal);
 
             actionRemove = (TextView) insideMeal.findViewById(R.id.txtActionRemove);
+            txtVideoPath = (ImageView) insideMeal.findViewById(R.id.txtVideoPath);
             actionChange = (TextView) insideMeal.findViewById(R.id.txtActionChange);
             selectedImage = (VideoView) insideMeal.findViewById(R.id.selectedImage);
 

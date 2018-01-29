@@ -220,6 +220,8 @@ public class LoginFragment extends BaseFragment {
                 checklistRequest.setToken(token);
                 checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
                 presenter.onChecklistRequest(checklistRequest);
+
+
             }
 
 

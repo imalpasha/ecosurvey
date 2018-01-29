@@ -2,9 +2,7 @@ package com.app.ecosurvey.ui.Model.Adapter.Object;
 
 import android.net.Uri;
 
-import io.realm.RealmObject;
-
-public class SelectedVideoPath extends RealmObject {
+public class SelectedVideoPath {
 
     private String videoPath;
     private String randomPathCode;
