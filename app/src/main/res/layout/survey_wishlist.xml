@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="bottom"
@@ -9,7 +9,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:fillViewport="true"
         android:padding="16dp">
@@ -170,11 +170,23 @@
                 android:text="Survey consist of parlimen category,Survey consist of parlimen category,Survey consist of parlimen category,Survey consist of parlimen category"
                 android:textSize="13sp" />
 
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/txtIssueErr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="20dp"
+                android:text="TextView"
+                android:textColor="@color/red"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="invisible" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="20dp"
                 android:background="@color/white"
                 android:elevation="2dp"
                 android:gravity="center"
@@ -188,7 +200,7 @@
                     android:height="250dp"
                     android:background="@null"
                     android:gravity="top"
-                    android:hint="Masukkan survey wishlist disini"
+                    android:hint="Input survey wishlist here."
                     android:inputType="textAutoCorrect|textCapSentences|textMultiLine"
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
@@ -200,9 +212,36 @@
 
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/btnHide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/circle_border_black_transparent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/login_aab_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:contentDescription="TODO"
+            android:gravity="center"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_arrow_drop_down" />
+
+    </LinearLayout>
+
     <com.app.ecosurvey.utils.FontStyle.PlayButtonText
         android:id="@+id/wishlistBtnNext"
         android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@color/default_theme_colour"
@@ -211,4 +250,4 @@
         android:textColor="@color/white"
         android:textStyle="bold" />
 
-</LinearLayout>
+</RelativeLayout>

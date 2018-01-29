@@ -6,7 +6,9 @@ import com.app.ecosurvey.api.ApiRequestHandler;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.squareup.otto.Bus;
@@ -35,6 +37,14 @@ public class MainPresenter {
 
     public void onUserInfoRequest(UserInfoRequest data) {
         apiRequestHandler.onUserInfoRequest(data);
+    }
+
+    public void onPostSurvey(PostSurveyRequest data) {
+        apiRequestHandler.onPostSurveyRequest(data);
+    }
+
+    public void onListSurveyRequest(ListSurveyRequest data) {
+        apiRequestHandler.onListSurveyRequest(data);
     }
 
     public void onCategoryRequest(CategoryRequest data) {

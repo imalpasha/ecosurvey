@@ -38,42 +38,30 @@ public class UserInfoReceive {
 
     public class Data {
 
-/*<<<<<<< HEAD
-        private String name;
-        private String email;
-        private String phoneno;
-        private String rolename;
-        private String stateid;
-        private String state;
-        private String parlimenCode;
-        private String parlimen;
-        private String duncode;
-        private String dun;
-        private String Role;
-        private String pdmcode;
-        private String pdm;
 
-
-        public String getRole() {
-            return Role;
-        }
-
-        public void setRole(String role) {
-            this.Role = role;
-=======*/
+        private String IcNumber;
         private String Name;
         private String Email;
-        private String Phoneno;
+        private String PhoneNo;
         private String Rolename;
-        private String Stateid;
-        private String State;
-        private String ParlimenCode;
-        private String Parlimen;
-        private String Duncode;
-        private String Dun;
         private String Role;
-        private String Pdmcode;
-        private String Pdm;
+
+
+        public String getIcNumber() {
+            return IcNumber;
+        }
+
+        public void setIcNumber(String icNumber) {
+            IcNumber = icNumber;
+        }
+
+        public String getPhoneNo() {
+            return PhoneNo;
+        }
+
+        public void setPhoneNo(String phoneNo) {
+            PhoneNo = phoneNo;
+        }
 
         public List<Location> getLocations() {
             return Locations;
@@ -101,14 +89,6 @@ public class UserInfoReceive {
             Email = email;
         }
 
-        public String getPhoneno() {
-            return Phoneno;
-        }
-
-        public void setPhoneno(String phoneno) {
-            Phoneno = phoneno;
-        }
-
         public String getRolename() {
             return Rolename;
         }
@@ -116,6 +96,26 @@ public class UserInfoReceive {
         public void setRolename(String rolename) {
             Rolename = rolename;
         }
+
+        public String getRole() {
+            return Role;
+        }
+
+        public void setRole(String role) {
+            Role = role;
+        }
+
+
+    }
+
+    public class Location{
+
+        private String Parlimen;
+        private String ParlimenCode;
+        private String Stateid;
+        private String State;
+        private String Duncode;
+        private String Dun;
 
         public String getStateid() {
             return Stateid;
@@ -133,22 +133,6 @@ public class UserInfoReceive {
             State = state;
         }
 
-        public String getParlimenCode() {
-            return ParlimenCode;
-        }
-
-        public void setParlimenCode(String parlimenCode) {
-            ParlimenCode = parlimenCode;
-        }
-
-        public String getParlimen() {
-            return Parlimen;
-        }
-
-        public void setParlimen(String parlimen) {
-            Parlimen = parlimen;
-        }
-
         public String getDuncode() {
             return Duncode;
         }
@@ -164,38 +148,6 @@ public class UserInfoReceive {
         public void setDun(String dun) {
             Dun = dun;
         }
-
-        public String getRole() {
-            return Role;
-        }
-
-        public void setRole(String role) {
-            Role = role;
-        }
-
-        public String getPdmcode() {
-            return Pdmcode;
-        }
-
-        public void setPdmcode(String pdmcode) {
-            Pdmcode = pdmcode;
-        }
-
-        public String getPdm() {
-            return Pdm;
-        }
-
-        public void setPdm(String pdm) {
-            Pdm = pdm;
-        }
-
-    }
-
-    public class Location{
-
-        String Parlimen;
-        String ParlimenCode;
-
         public String getParlimen() {
             return Parlimen;
         }

@@ -18,21 +18,31 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class SurveyReviewFragment extends BaseFragment {
 
@@ -97,6 +107,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
     private String randomID;
     private String status;
+    private String formattedDate;
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -116,6 +127,9 @@ public class SurveyReviewFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.survey_review, container, false);
         ButterKnife.bind(this, view);
+
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
@@ -129,17 +143,42 @@ public class SurveyReviewFragment extends BaseFragment {
         System.out.println("Current time => " + calendar.getTime());
 
         SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        final String formattedDate = df.format(calendar.getTime());
+        formattedDate = df.format(calendar.getTime());
 
         surveySaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                rController.surveyLocalStorageS5(context, randomID, formattedDate);
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Eco Survey")
+                        .setContentText("Confirm save this survey?")
+                        .setCancelText("No")
+                        .setConfirmText("Yes")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
 
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                intent.putExtra("ROLE", preferences.getString("user_role", ""));
-                getActivity().startActivity(intent);
+                                rController.surveyLocalStorageS5(context, randomID, formattedDate,"Completed","", null);
+                                Log.e("role123", preferences.getString("user_role", ""));
+
+                                Intent intent = new Intent(getActivity(), TabActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                getActivity().startActivity(intent);
+
+                                sDialog.dismiss();
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .show();
+
 
             }
         });
@@ -147,7 +186,80 @@ public class SurveyReviewFragment extends BaseFragment {
         surveySubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateStatusData();
+                //updateStatusData();
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Eco Survey")
+                        .setContentText("Confirm submit this survey?")
+                        .setCancelText("No")
+                        .setConfirmText("Yes")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                initiateLoading(getActivity());
+
+                                Realm realm2 = rController.getRealmInstanceContext(context);
+
+                                try {
+
+                                    RealmResults<UserInfoCached> infoCached = realm2.where(UserInfoCached.class).findAll();
+                                    LocalSurvey survey = realm2.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                                    if (infoCached.size() > 0) {
+
+                                        Gson gson = new Gson();
+                                        UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
+                                        String icNumber = obj.getData().getIcNumber();
+
+                                        PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
+                                        postSurveyRequest.setIcNumber(icNumber);
+
+                                        String[] parliment = survey.getSurveyParliment().split("/");
+                                        String[] category = survey.getSurveyCategory().split("/");
+
+                                        List<Content> contents = new ArrayList<Content>();
+                                        Content content = new Content();
+                                        content.setCategoryid(category[1]);
+                                        content.setIssue(survey.getSurveyIssue());
+                                        content.setWishlist(survey.getSurveyWishlist());
+                                        contents.add(content);
+
+                                        postSurveyRequest.setLocationCode(parliment[1]);
+                                        postSurveyRequest.setLocationName(parliment[0]);
+                                        postSurveyRequest.setLocationType("?");
+                                        postSurveyRequest.setContent(contents);
+                                        postSurveyRequest.setToken(preferences.getString("temp_token", ""));
+
+                                        presenter.onPostSurvey(postSurveyRequest);
+                                    }
+
+
+                                } finally {
+                                    realm2.close();
+                                }
+
+
+
+
+
+                                /*rController.surveyLocalStorageS5(context, randomID, formattedDate);
+                                Intent intent = new Intent(getActivity(), TabActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                getActivity().startActivity(intent);*/
+
+                                sDialog.dismiss();
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                sweetAlertDialog.dismiss();
+
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -158,8 +270,8 @@ public class SurveyReviewFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -169,8 +281,8 @@ public class SurveyReviewFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -180,8 +292,8 @@ public class SurveyReviewFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -191,8 +303,8 @@ public class SurveyReviewFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -202,14 +314,13 @@ public class SurveyReviewFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
             }
         }
-
 
 
         return view;
@@ -223,22 +334,30 @@ public class SurveyReviewFragment extends BaseFragment {
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
-            txtParlimen.setText(survey.getSurveyParliment());
-            txtKategori.setText(survey.getSurveyCategory());
+
+            String[] parliment = survey.getSurveyParliment().split("/");
+            String[] category = survey.getSurveyCategory().split("/");
+
+            txtParlimen.setText(parliment[0]);
+            txtKategori.setText(category[0]);
             txtSurveyIssue.setText(survey.getSurveyIssue());
 
-            if (survey.getSurveyWishlist() == "") {
+            if (survey.getSurveyWishlist().equalsIgnoreCase("")) {
                 wishlistTitle.setVisibility(View.GONE);
                 wishlistBlock.setVisibility(View.GONE);
+                Log.e("nowishlist", "a" + survey.getSurveyWishlist());
             } else {
                 txtSurveyWishlist.setText(survey.getSurveyWishlist());
+                Log.e("nowishlist", "ab" + survey.getSurveyWishlist());
+
+
             }
 
-            Log.e("SurveyWishlist", survey.getSurveyWishlist());
+            //Log.e("SurveyWishlist", survey.getSurveyWishlist());
 
-            for (int x = 0; x < survey.getImagePath().size(); x++) {
-                Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
-            }
+            //for (int x = 0; x < survey.getImagePath().size(); x++) {
+            //    Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
+            //}
 
         } finally {
             realm.close();
@@ -263,12 +382,17 @@ public class SurveyReviewFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void onLoginReceive(LoginReceive loginReceive) {
+    public void onPostSurveyReceive(PostSurveyReceive postSurveyReceive) {
 
         dismissLoading();
 
-        if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
+        if (postSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
+
+                //save info to realm with proper id
+                setSuccess(getActivity(), "Success.", "Survey successfully saved.");
+                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed","Pending PDM Review", "apiID");
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -277,7 +401,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
         } else {
 
-            String error_msg = loginReceive.getMessage();
+            String error_msg = postSurveyReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
 
         }

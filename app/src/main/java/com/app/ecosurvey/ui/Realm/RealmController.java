@@ -12,7 +12,9 @@ import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -218,65 +220,34 @@ public class RealmController {
 
     }
 
-    /*public void surveyLocalStorageS4(Context context, String id, List<SelectedImagePath> imageList *//*String image*//*) {
+    public void surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList*/String listImage) {
 
         //move to realm list
 
         Realm realm = getRealmInstanceContext(context);
         realm.beginTransaction();
 
-        RealmList<Image> realmList = new RealmList<Image>();
-        for (int y = 0; y < imageList.size(); y++) {
-            Image image = new Image();
-            image.setImagePath(imageList.get(y).getImagePath());
-            realmList.add(image);
-            Log.e("IMAGE_PATH", image.getImagePath());
-        }
-
-
         //realm.beginTransaction();
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setImagePath(realmList);
-
-        realm.commitTransaction();
-        realm.close();
-
-    }*/
-
-    public void surveyLocalStorageS4(Context context, String id, /*List<SelectedImagePath> imageList*/ String image) {
-
-        //move to realm list
-        Log.e("TEST", "S4_REALM");
-        Realm realm = getRealmInstanceContext(context);
-        realm.beginTransaction();
-
-        /*RealmList<Image> realmList = new RealmList<Image>();
-        for (int y = 0; y < imageList.size(); y++) {
-            Image image = new Image();
-            image.setImagePath(imageList.get(y).toString());
-            realmList.add(image);
-            Log.e("IMAGE_PATH", image.getImagePath());
-        }*/
-
-
-        //realm.beginTransaction();
-        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setImageString(image);
+        survey.setImagePath(listImage);
 
         realm.commitTransaction();
         realm.close();
 
     }
 
-    public void surveyLocalStorageS5(Context context, String id, String time){
+    public void surveyLocalStorageS5(Context context, String id, String time, String status, String lineStatus, String fromApiID) {
 
         Realm realm = getRealmInstanceContext(context);
 
-
         realm.beginTransaction();
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-        survey.setSurveyLocalProgress("Completed");
+        survey.setSurveyLocalProgress(status);
+        survey.setSurveyStatus(lineStatus);
         survey.setStatusUpdated(time);
+        if (fromApiID != null) {
+            survey.setLocalSurveyID(fromApiID);
+        }
         realm.commitTransaction();
         realm.close();
     }
@@ -290,6 +261,34 @@ public class RealmController {
             realm.commitTransaction();
         } catch (Exception e) {
         }
+
+    }
+
+    public void updateLocalRealm(Context context, ListSurveyReceive listSurveyReceive) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        for (int x = 0; x < listSurveyReceive.getData().size(); x++) {
+
+            String surveyID = "apiID";
+            //listSurveyReceive.getData().get(x).getSurveyID();
+
+            realm.beginTransaction();
+
+
+            LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", surveyID).findFirst();
+            if (survey != null) {
+                survey.setSurveyIssue(listSurveyReceive.getData().get(x).getIssue());
+                survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getWishlist());
+                survey.setSurveyCategory(listSurveyReceive.getData().get(x).getCategoryid());
+            }
+
+            realm.commitTransaction();
+
+        }
+
+
+        realm.close();
 
     }
 

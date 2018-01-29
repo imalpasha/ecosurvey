@@ -139,6 +139,7 @@ public class SurveyPhotoFragment extends BaseFragment {
         status = bundle.getString("Status");
 
         setupBlock(getActivity(), block4);
+        autoFill2();
 
         //try fetch realm data.
         Realm realm = rController.getRealmInstanceContext(context);
@@ -162,8 +163,17 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //save list of photo
                 try {
 
-                    Log.e("TEST", "LIST_NOT_NULL");
+                    String imageList = "";
 
+                    //Gson gsonUserInfo = new Gson();
+                    //String gsonImage = gsonUserInfo.toJson(list);
+                    for(int x = 0 ; x < list.size(); x++){
+                        imageList += list.get(x).getImagePath() +"___";
+                    }
+
+                    rController.surveyLocalStorageS4(context, randomID, imageList);
+                    Log.e("TEST", "LIST_NOT_NULL");
+/*
                     if (list != null) {
                         Gson gsonUserInfo = new Gson();
                         String gsonImage = gsonUserInfo.toJson(list);
@@ -180,17 +190,17 @@ public class SurveyPhotoFragment extends BaseFragment {
                     } else {
                         Log.e("TEST", "LIST_NULL");
                     }
-
+*/
 
                 } catch (Exception e) {
 
                     Log.e("SaveImage", "Error: " + e.getMessage());
                 } finally {
 
-                    /*Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
+                    Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                     intent.putExtra("LocalSurveyID", randomID);
                     intent.putExtra("Status", status);
-                    getActivity().startActivity(intent);*/
+                    getActivity().startActivity(intent);
                 }
 
                 /*initiateLoading(getActivity());
@@ -281,6 +291,40 @@ public class SurveyPhotoFragment extends BaseFragment {
         }
 
         return view;
+    }
+
+    public void autoFill2(){
+
+        if (status != null){
+            if (status.equalsIgnoreCase("EDIT")){
+
+                //try fetch realm data.
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                    String imageList = survey.getImagePath();
+
+                    String[] parts = imageList.split("___");
+                    //insert path to object
+                    for (int x = 0; x < parts.length; x++) {
+                        SelectedImagePath selectedImagePath = new SelectedImagePath();
+                        selectedImagePath.setImagePath(parts[x]);
+                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                        Log.e("pathpath",parts[x]);
+                        list.add(selectedImagePath);
+                    }
+
+                    initiateImageAdapter(list);
+
+                    //txtSurveyIssue.setText(survey.getSurveyIssue());
+
+                } finally {
+                    realm.close();
+                }
+            }
+        }
+
     }
 
     private void captureImageInitialization() {

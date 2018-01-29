@@ -116,10 +116,7 @@ public class SurveyVideoFragment extends BaseFragment {
         Realm realm = rController.getRealmInstanceContext(context);
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
-
-            for(int x = 0 ; x < survey.getImagePath().size() ; x++){
-                Log.e("SurveyImagePath",survey.getImagePath().get(x).getImagePath());
-            }
+            Log.e("SurveyImagePath", survey.getImagePath());
 
         } finally {
             realm.close();
@@ -131,8 +128,8 @@ public class SurveyVideoFragment extends BaseFragment {
 
 
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
-                intent.putExtra("LocalSurveyID",randomID);
-                intent.putExtra("Status",status);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
 
                 /*initiateLoading(getActivity());
@@ -274,14 +271,24 @@ public class SurveyVideoFragment extends BaseFragment {
                     }
                 });
 
+>>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
+<<<<<<< HEAD
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.putExtra("LocalSurveyID", randomID);
+                intent.putExtra("Status", status);
+                getActivity().startActivity(intent);
+=======
             public void onClick(View v) {
                 dialog.dismiss();
+>>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 

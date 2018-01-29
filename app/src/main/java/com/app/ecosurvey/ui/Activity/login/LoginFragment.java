@@ -21,6 +21,11 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -72,8 +77,9 @@ public class LoginFragment extends BaseFragment {
     Context context;
 
     View view;
-    String role;
-    String token;
+    SharedPrefManager pref;
+    private String token;
+    private String role;
 
     public static LoginFragment newInstance(Bundle bundle) {
 
@@ -100,6 +106,8 @@ public class LoginFragment extends BaseFragment {
         editTextMaterial(txtAuthID, txtAuthIDHint);
         editTextMaterial(txtAuthPassword, txtPasswordHint);
 
+        token = preferences.getString("temp_token", "DEFAULT");
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,7 +117,6 @@ public class LoginFragment extends BaseFragment {
 
                 initiateLoading(getActivity());
 
-                String token = preferences.getString("temp_token", "DEFAULT");
 
                 Log.e("token", token);
 
@@ -140,24 +147,11 @@ public class LoginFragment extends BaseFragment {
                 editor.putString("user_id", txtAuthID.getText().toString());
                 editor.apply();
 
-                //get_categories
-                //CategoryRequest categoryRequest = new CategoryRequest();
-                //presenter.onCategoryRequest(categoryRequest);
-
-/*<<<<<<< HEAD
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                intent.putExtra("ROLE", loginReceive.getData().getUser().getRole());
-                Log.e("ROLE", loginReceive.getData().getUser().getRole());
-                getActivity().startActivity(intent);
-                getActivity().finish();
-=======*/
                 UserInfoRequest userInfoRequest = new UserInfoRequest();
                 userInfoRequest.setToken(loginReceive.getData().getToken());
                 userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + txtAuthID.getText().toString());
                 presenter.onUserInfoRequest(userInfoRequest);
 
-
-/*>>>>>>> 8bce5b31c93b8ceccb4a25b24f10cde1f59c302e*/
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -185,7 +179,13 @@ public class LoginFragment extends BaseFragment {
 
         if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
-            //save to realm
+            //save to role
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("user_role", userInfoReceive.getData().getRole());
+            editor.apply();
+
+            String userId = preferences.getString("user_id", "");
+
             //convert to gsom
             Gson gson = new Gson();
             String userInfo = gson.toJson(userInfoReceive);
@@ -193,17 +193,11 @@ public class LoginFragment extends BaseFragment {
             rController.saveUserInfo(context, userInfo);
             role = userInfoReceive.getData().getRole();
 
-            ChecklistRequest checklistRequest = new ChecklistRequest();
-            checklistRequest.setToken(token);
-            checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
-            presenter.onChecklistRequest(checklistRequest);
-
-
-            /*Log.e("whaTrole",userInfoReceive.getData().getRole());
-            Intent intent = new Intent(getActivity(), TabActivity.class);
-            intent.putExtra("ROLE", userInfoReceive.getData().getRole());
-            getActivity().startActivity(intent);
-            getActivity().finish();*/
+            //call existing survey
+            ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
+            listSurveyRequest.setToken(token);
+            listSurveyRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/surveys/" + userId);
+            presenter.onListSurveyRequest(listSurveyRequest);
 
         } else {
 
@@ -213,22 +207,52 @@ public class LoginFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void onChecklistReceive(ChecklistReceive checklistReceive) {
+    public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
 
+        if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            //update_realm_with_local
+            try {
+                rController.updateLocalRealm(getActivity(), listSurveyReceive);
+            } finally {
+
+                ChecklistRequest checklistRequest = new ChecklistRequest();
+                checklistRequest.setToken(token);
+                checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
+                presenter.onChecklistRequest(checklistRequest);
+            }
+
+
+        } else {
+
+            String error_msg = listSurveyReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }
+
+
+    @Subscribe
+    public void onChecklistReceive(ChecklistReceive checklistReceive) {
+        dismissLoading();
         if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
-            //save to realm
-            //convert to gsom
-            Gson gson = new Gson();
-            String checklist = gson.toJson(checklistReceive);
+            try {
+                //save to realm
+                //convert to gsom
+                Gson gson = new Gson();
+                String checklist = gson.toJson(checklistReceive);
 
-            rController.saveChecklist(context, checklist);
+                rController.saveChecklist(context, checklist);
 
-            Log.e("whaTrole",role);
-            Intent intent = new Intent(getActivity(), TabActivity.class);
-            intent.putExtra("ROLE", role);
-            getActivity().startActivity(intent);
-            getActivity().finish();
+            } finally {
+                //update_realm_with_local
+                Log.e("whaTrole",role);
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+
+            }
 
         } else {
 

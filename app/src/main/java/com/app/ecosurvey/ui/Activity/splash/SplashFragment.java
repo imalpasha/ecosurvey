@@ -16,9 +16,11 @@ import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Activity.login.LoginActivity;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -55,6 +57,7 @@ public class SplashFragment extends BaseFragment {
     View view;
     SharedPrefManager pref;
     private String token;
+    private String role;
 
     public static SplashFragment newInstance(Bundle bundle) {
 
@@ -191,17 +194,35 @@ public class SplashFragment extends BaseFragment {
         if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
             //save to realm
+            //save to role
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("user_role", userInfoReceive.getData().getRole());
+            editor.apply();
+
             //convert to gson
             Gson gson = new Gson();
             String userInfo = gson.toJson(userInfoReceive);
 
+            String userId = preferences.getString("user_id", "");
+
+            role = userInfoReceive.getData().getRole();
+
             rController.saveUserInfo(context, userInfo);
 
-            Log.e("whaTrole",userInfoReceive.getData().getRole());
-            Intent intent = new Intent(getActivity(), TabActivity.class);
-            intent.putExtra("ROLE", userInfoReceive.getData().getRole());
-            getActivity().startActivity(intent);
-            getActivity().finish();
+            Log.e("phononeonenoe",userInfoReceive.getData().getPhoneNo());
+
+
+            //Intent intent = new Intent(getActivity(), TabActivity.class);
+            //intent.putExtra("ROLE", role);
+            //getActivity().startActivity(intent);
+            //getActivity().finish();
+
+            //call existing survey
+            ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
+            listSurveyRequest.setToken(token);
+            listSurveyRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/surveys/" + userId);
+            presenter.onListSurveyRequest(listSurveyRequest);
+
 
         } else {
 
@@ -209,6 +230,32 @@ public class SplashFragment extends BaseFragment {
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
         }
     }
+
+    @Subscribe
+    public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
+
+        dismissLoading();
+        if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+
+            //update_realm_with_local
+            try {
+                rController.updateLocalRealm(getActivity(), listSurveyReceive);
+            } finally {
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+            }
+
+
+        } else {
+
+            String error_msg = listSurveyReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

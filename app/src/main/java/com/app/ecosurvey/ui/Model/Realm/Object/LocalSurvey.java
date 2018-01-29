@@ -21,7 +21,7 @@ public class LocalSurvey extends RealmObject {
     private String surveyLocalProgress;
     private String surveyIssue;
     private String surveyWishlist;
-    private RealmList<Image> imagePath;
+    private String imagePath;
     private String imageString;
     private String surveyStatus;
     private String statusAPI;
@@ -68,11 +68,11 @@ public class LocalSurvey extends RealmObject {
         this.imageString = imageString;
     }
 
-    public RealmList<Image> getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 
-    public void setImagePath(RealmList<Image> imagePath) {
+    public void setImagePath(String  imagePath) {
         this.imagePath = imagePath;
     }
 
