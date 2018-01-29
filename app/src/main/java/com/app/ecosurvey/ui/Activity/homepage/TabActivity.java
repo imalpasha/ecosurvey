@@ -27,13 +27,13 @@ public class TabActivity extends MainFragmentActivity {
     SharedPreferences preferences;
 
     // Declaring Your View and Variables
-    static ViewPager pager;
+    ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
     String point;
     private static Boolean normalFlow = true;
 
-    int Numboftabs = 3;
+    int Numboftabs = 2;
     String[] title;
 
     Activity act;
@@ -47,11 +47,13 @@ public class TabActivity extends MainFragmentActivity {
 
         preferences = this.getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
+        Log.e("Oncreata", "Y");
+
         try {
 
             Bundle bundle = getIntent().getExtras();
             role = bundle.getString("ROLE");
-            Log.e("Role",role);
+            Log.e("Role", role);
 
             //save to pref.
             //SharedPreferences.Editor editor = preferences.edit();
@@ -61,13 +63,17 @@ public class TabActivity extends MainFragmentActivity {
             if (role.equalsIgnoreCase("ParlimentSurveyor")) {
                 Numboftabs = 2;
                 title = new String[]{"Profile", "My Survey"};
+
+                Log.e("xxx", role);
             } else {
                 Numboftabs = 3;
-                title = new String[]{"Profile", "My Survey", "Checklist"};
+                title = new String[]{"Profile", "My Survey", "Checklist2"};
+                Log.e("ademasuksinike", "a" + role);
+
             }
 
         } catch (Exception e) {
-            Log.e("Null", e.getMessage());
+            Log.e("crash?", e.getMessage());
 
         }
 
@@ -78,7 +84,7 @@ public class TabActivity extends MainFragmentActivity {
         // Assigning ViewPager View and setting the adapter
         pager = findViewById(R.id.pager);
         pager.setAdapter(adapter);
-        pager.setOffscreenPageLimit(4);
+        pager.setOffscreenPageLimit(Numboftabs);
 
         // Assigning the Sliding Tab Layout View
         tabs = findViewById(R.id.tabs);
@@ -103,12 +109,8 @@ public class TabActivity extends MainFragmentActivity {
 
     }
 
-    public static void setPager(int position) {
+    public void setPager(int position) {
         pager.setCurrentItem(position);
-    }
-
-    public static ViewPager getPagerInstance() {
-        return pager;
     }
 
     /*public void exitApp() {

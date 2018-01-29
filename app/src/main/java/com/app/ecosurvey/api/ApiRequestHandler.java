@@ -7,11 +7,15 @@ import com.app.ecosurvey.MainFragmentActivity;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.squareup.otto.Bus;
@@ -183,6 +187,79 @@ public class ApiRequestHandler {
             }
         });
     }
+
+    //call api function - retrofit2.1
+    @Subscribe
+    public void onPostSurveyRequest(final PostSurveyRequest event) {
+
+        Call<PostSurveyReceive> call = apiService.postSurvey(event,"FrsApi "+event.getToken());
+        call.enqueue(new Callback<PostSurveyReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<PostSurveyReceive> call, Response<PostSurveyReceive> response) {
+
+                PostSurveyReceive user = new PostSurveyReceive();
+                //successs call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new PostSurveyReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new PostSurveyReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<PostSurveyReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", "DOUBLE_N");
+
+            }
+        });
+    }
+
+    //call api function - retrofit2.1
+    @Subscribe
+    public void onListSurveyRequest(final ListSurveyRequest event) {
+
+        Call<ListSurveyReceive> call = apiService.listSurvey("FrsApi "+event.getToken(),event.getUrl());
+        call.enqueue(new Callback<ListSurveyReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<ListSurveyReceive> call, Response<ListSurveyReceive> response) {
+
+                ListSurveyReceive user = new ListSurveyReceive();
+                //successs call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new ListSurveyReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new ListSurveyReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<ListSurveyReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS",t.getMessage());
+
+            }
+        });
+    }
+
 
 
 

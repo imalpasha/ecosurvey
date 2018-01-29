@@ -1,11 +1,14 @@
 package com.app.ecosurvey.api;
 
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 
 import retrofit2.Call;
@@ -33,6 +36,12 @@ public interface ApiService {
     @GET
     Call<UserInfoReceive> userinfo(@Header("Authorization") String header,@Url String url);
 
+
+    @POST("/api/v1/surveys")
+    Call<PostSurveyReceive> postSurvey(@Body PostSurveyRequest obj,@Header("Authorization") String header);
+
+    @GET
+    Call<ListSurveyReceive> listSurvey(@Header("Authorization") String header, @Url String url);
 
     /*@Multipart
     @POST("user/updateprofile")

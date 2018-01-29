@@ -68,9 +68,6 @@ public class ProfileFragment extends BaseFragment {
     @Bind(R.id.btnToRetry)
     Button btnToRetry;
 
-    @Bind(R.id.btnLogout)
-    Button btnLogout;
-
     @Bind(R.id.txtName)
     TextView txtName;
 
@@ -134,7 +131,7 @@ public class ProfileFragment extends BaseFragment {
         });*/
         loadData();
 
-        btnLogout.setVisibility(View.GONE);
+        /*btnLogout.setVisibility(View.GONE);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,7 +145,7 @@ public class ProfileFragment extends BaseFragment {
                 getActivity().startActivity(intent);
                 getActivity().finish();
             }
-        });
+        });*/
 
         return view;
     }
@@ -173,10 +170,11 @@ public class ProfileFragment extends BaseFragment {
             UserInfoReceive userInfoReceive = gson.fromJson(survey.getUserInfoString(), UserInfoReceive.class);
 
             txtName.setText(userInfoReceive.getData().getName());
-            txtPhoneNo.setText(userInfoReceive.getData().getPhoneno());
+            txtPhoneNo.setText(userInfoReceive.getData().getPhoneNo());
+            Log.e("phone","phone"+userInfoReceive.getData().getPhoneNo());
             txtEmail.setText(userInfoReceive.getData().getEmail());
 
-            if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)
+            /*if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)
                 txtParlimen.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
 
             if (userInfoReceive.getData().getDun() != null && userInfoReceive.getData().getDuncode() != null)
@@ -186,10 +184,10 @@ public class ProfileFragment extends BaseFragment {
                 txtPDM.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
 
             if (userInfoReceive.getData().getState() != null)
-                txtState.setText(userInfoReceive.getData().getState());
+                txtState.setText(userInfoReceive.getData().getState());*/
 
-            if (userInfoReceive.getData().getRolename() != null)
-                txtRole.setText(userInfoReceive.getData().getRolename());
+            if (userInfoReceive.getData().getRole() != null)
+                txtRole.setText(userInfoReceive.getData().getRole());
 
         } catch (Exception e) {
 

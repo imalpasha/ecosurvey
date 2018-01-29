@@ -197,10 +197,10 @@ public class SurveyPhotoFragment extends BaseFragment {
                     Log.e("SaveImage", "Error: " + e.getMessage());
                 } finally {
 
-                    /*Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
+                    Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                     intent.putExtra("LocalSurveyID", randomID);
                     intent.putExtra("Status", status);
-                    getActivity().startActivity(intent);*/
+                    getActivity().startActivity(intent);
                 }
 
                 /*initiateLoading(getActivity());
