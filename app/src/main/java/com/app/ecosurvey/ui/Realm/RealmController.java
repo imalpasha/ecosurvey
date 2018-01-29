@@ -252,6 +252,22 @@ public class RealmController {
         realm.close();
     }
 
+    public void surveyLocalStorageS6(Context context, String id, String listVideo) {
+
+        //move to realm list
+
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+
+        //realm.beginTransaction();
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        survey.setVideoPath(listVideo);
+
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
     public static <E extends RealmObject> void clearCachedList(Realm realm, Class<E> clazz) {
 
         try {
