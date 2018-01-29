@@ -5,6 +5,7 @@ import android.content.Context;
 import com.app.ecosurvey.api.ApiRequestHandler;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
@@ -36,14 +37,13 @@ public class MainPresenter {
         apiRequestHandler.onUserInfoRequest(data);
     }
 
-
-
     public void onCategoryRequest(CategoryRequest data) {
         apiRequestHandler.onCategoryRequest(data);
     }
 
-
-
+    public void onChecklistRequest(ChecklistRequest data){
+        apiRequestHandler.onChecklistRequest(data);
+    }
 
     public void onResume() {
         bus.register(this);

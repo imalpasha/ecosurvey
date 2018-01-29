@@ -16,9 +16,11 @@ import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -70,7 +72,8 @@ public class LoginFragment extends BaseFragment {
     Context context;
 
     View view;
-    SharedPrefManager pref;
+    String role;
+    String token;
 
     public static LoginFragment newInstance(Bundle bundle) {
 
@@ -129,6 +132,7 @@ public class LoginFragment extends BaseFragment {
         //dismissLoading();
 
         if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            token = loginReceive.getData().getToken();
             try {
 
                 SharedPreferences.Editor editor = preferences.edit();
@@ -187,16 +191,48 @@ public class LoginFragment extends BaseFragment {
             String userInfo = gson.toJson(userInfoReceive);
 
             rController.saveUserInfo(context, userInfo);
+            role = userInfoReceive.getData().getRole();
 
-            Log.e("whaTrole",userInfoReceive.getData().getRole());
+            ChecklistRequest checklistRequest = new ChecklistRequest();
+            checklistRequest.setToken(token);
+            checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
+            presenter.onChecklistRequest(checklistRequest);
+
+
+            /*Log.e("whaTrole",userInfoReceive.getData().getRole());
             Intent intent = new Intent(getActivity(), TabActivity.class);
             intent.putExtra("ROLE", userInfoReceive.getData().getRole());
+            getActivity().startActivity(intent);
+            getActivity().finish();*/
+
+        } else {
+
+            String error_msg = userInfoReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }
+
+    @Subscribe
+    public void onChecklistReceive(ChecklistReceive checklistReceive) {
+
+        if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            //save to realm
+            //convert to gsom
+            Gson gson = new Gson();
+            String checklist = gson.toJson(checklistReceive);
+
+            rController.saveChecklist(context, checklist);
+
+            Log.e("whaTrole",role);
+            Intent intent = new Intent(getActivity(), TabActivity.class);
+            intent.putExtra("ROLE", role);
             getActivity().startActivity(intent);
             getActivity().finish();
 
         } else {
 
-            String error_msg = userInfoReceive.getMessage();
+            String error_msg = checklistReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
         }
     }

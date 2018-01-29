@@ -7,10 +7,12 @@ import com.app.ecosurvey.MainFragmentActivity;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
@@ -184,7 +186,41 @@ public class ApiRequestHandler {
         });
     }
 
+    //call api function - retrofit2.1
+    @Subscribe
+    public void onChecklistRequest(final ChecklistRequest event) {
 
+        Call<ChecklistReceive> call = apiService.checklist("FrsApi "+event.getToken(), event.getUrl());
+        call.enqueue(new Callback<ChecklistReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<ChecklistReceive> call, Response<ChecklistReceive> response) {
+
+                ChecklistReceive user = new ChecklistReceive();
+                //success call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new ChecklistReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new ChecklistReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<ChecklistReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", "DOUBLE_N");
+
+            }
+        });
+    }
 
 
 

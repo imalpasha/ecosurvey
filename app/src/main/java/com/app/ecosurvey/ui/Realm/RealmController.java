@@ -7,6 +7,7 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
+import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
@@ -145,6 +146,17 @@ public class RealmController {
         realm.beginTransaction();
         UserInfoCached realmObject = realm.createObject(UserInfoCached.class);
         realmObject.setUserInfoString(userInfoReceive);
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
+    public void saveChecklist(Context context, String checklistReceive) {
+
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+        ChecklistCached realmObject = realm.createObject(ChecklistCached.class);
+        realmObject.setCheckListString(checklistReceive);
         realm.commitTransaction();
         realm.close();
 

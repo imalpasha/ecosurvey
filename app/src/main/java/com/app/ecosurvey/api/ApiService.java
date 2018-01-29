@@ -1,6 +1,7 @@
 package com.app.ecosurvey.api;
 
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
@@ -32,6 +33,9 @@ public interface ApiService {
 
     @GET
     Call<UserInfoReceive> userinfo(@Header("Authorization") String header,@Url String url);
+
+    @GET
+    Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Url String Url);
 
 
     /*@Multipart
