@@ -225,6 +225,7 @@ public class SurveyReviewFragment extends BaseFragment {
                                         String[] parliment = survey.getSurveyParliment().split("/");
                                         String[] category = survey.getSurveyCategory().split("/");
 
+                                        Log.e("getSurveyCategory", "a" + survey.getSurveyCategory());
                                         //List<Content> contents = new ArrayList<Content>();
 
                                         Content content = new Content();

@@ -122,8 +122,8 @@ public class CategoryParlimenFragment extends BaseFragment {
 
                 if (manualValidation()) {
 
-                    String category = txtKategori.getTag().toString();
-                    String parliment = txtParlimen.getTag().toString();
+                    String category = txtKategori.getTag().toString() + "/" + txtKategori.getText().toString();
+                    String parliment = txtParlimen.getTag().toString() + "/" + txtKategori.getText().toString();
 
                     rController.surveyLocalStorageS1(context, randomID, category, parliment, "local_progress");
 
@@ -241,6 +241,8 @@ public class CategoryParlimenFragment extends BaseFragment {
 
                     String[] parliment = survey.getSurveyParliment().split("/");
                     String[] category = survey.getSurveyCategory().split("/");
+
+                    Log.e(survey.getSurveyParliment(), survey.getSurveyCategory());
 
                     txtParlimen.setText(parliment[0]);
                     txtKategori.setText(category[0]);

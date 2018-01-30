@@ -111,6 +111,8 @@ public class MySurveyFragment extends BaseFragment {
 
         getData();
 
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+
         Calendar calendar = Calendar.getInstance();
         System.out.println("Current time => " + calendar.getTime());
 
@@ -218,7 +220,7 @@ public class MySurveyFragment extends BaseFragment {
         getActivity().startActivity(intent);
     }
 
-    public void reloadList(){
+    public void reloadList() {
 
         String userId = preferences.getString("user_id", "");
         String token = preferences.getString("temp_token", "");
@@ -233,6 +235,7 @@ public class MySurveyFragment extends BaseFragment {
     @Subscribe
     public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
 
+        Log.e("sruver", "Recveive");
         swipeContainer.setRefreshing(false);
         if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
@@ -343,12 +346,16 @@ public class MySurveyFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        presenter.onResume();
+        bus.register(this);
 
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        presenter.onPause();
+        bus.unregister(this);
 
     }
 

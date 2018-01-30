@@ -167,8 +167,8 @@ public class SurveyPhotoFragment extends BaseFragment {
 
                     //Gson gsonUserInfo = new Gson();
                     //String gsonImage = gsonUserInfo.toJson(list);
-                    for(int x = 0 ; x < list.size(); x++){
-                        imageList += list.get(x).getImagePath() +"___";
+                    for (int x = 0; x < list.size(); x++) {
+                        imageList += list.get(x).getImagePath() + "___";
                     }
 
                     rController.surveyLocalStorageS4(context, randomID, imageList);
@@ -238,8 +238,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -249,8 +249,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -260,8 +260,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -271,8 +271,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -282,8 +282,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -293,10 +293,10 @@ public class SurveyPhotoFragment extends BaseFragment {
         return view;
     }
 
-    public void autoFill2(){
+    public void autoFill2() {
 
-        if (status != null){
-            if (status.equalsIgnoreCase("EDIT")){
+        if (status != null) {
+            if (status.equalsIgnoreCase("EDIT")) {
 
                 //try fetch realm data.
                 Realm realm = rController.getRealmInstanceContext(context);
@@ -304,18 +304,19 @@ public class SurveyPhotoFragment extends BaseFragment {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
                     String imageList = survey.getImagePath();
+                    if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                        String[] parts = imageList.split("___");
+                        //insert path to object
+                        for (int x = 0; x < parts.length; x++) {
+                            SelectedImagePath selectedImagePath = new SelectedImagePath();
+                            selectedImagePath.setImagePath(parts[x]);
+                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                            Log.e("pathpath", parts[x]);
+                            list.add(selectedImagePath);
+                        }
 
-                    String[] parts = imageList.split("___");
-                    //insert path to object
-                    for (int x = 0; x < parts.length; x++) {
-                        SelectedImagePath selectedImagePath = new SelectedImagePath();
-                        selectedImagePath.setImagePath(parts[x]);
-                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                        Log.e("pathpath",parts[x]);
-                        list.add(selectedImagePath);
+                        initiateImageAdapter(list);
                     }
-
-                    initiateImageAdapter(list);
 
                     //txtSurveyIssue.setText(survey.getSurveyIssue());
 
