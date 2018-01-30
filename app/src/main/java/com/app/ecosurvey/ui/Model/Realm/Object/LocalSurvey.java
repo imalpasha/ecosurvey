@@ -27,6 +27,15 @@ public class LocalSurvey extends RealmObject {
     private String statusAPI;
     private String statusCreated;
     private String statusUpdated;
+    private String videoPath;
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
+    }
 
     public String getStatusUpdated() {
         return statusUpdated;

@@ -7,6 +7,7 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
+import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
@@ -152,6 +153,17 @@ public class RealmController {
 
     }
 
+    public void saveChecklist(Context context, String checklistReceive) {
+
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+        ChecklistCached realmObject = realm.createObject(ChecklistCached.class);
+        realmObject.setCheckListString(checklistReceive);
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
     public void surveyLocalStorageS0(Context context, String surveyID, String progress, String date) {
 
         Realm realm = getRealmInstanceContext(context);
@@ -238,6 +250,22 @@ public class RealmController {
         }
         realm.commitTransaction();
         realm.close();
+    }
+
+    public void surveyLocalStorageS6(Context context, String id, String listVideo) {
+
+        //move to realm list
+
+        Realm realm = getRealmInstanceContext(context);
+        realm.beginTransaction();
+
+        //realm.beginTransaction();
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        survey.setVideoPath(listVideo);
+
+        realm.commitTransaction();
+        realm.close();
+
     }
 
     public static <E extends RealmObject> void clearCachedList(Realm realm, Class<E> clazz) {

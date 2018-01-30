@@ -7,6 +7,7 @@ import com.app.ecosurvey.MainFragmentActivity;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
@@ -15,6 +16,7 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
@@ -272,12 +274,14 @@ public class ApiRequestHandler {
     /*@Subscribe
     public void onSurveyPhotoRequest(final SurveyPhotoRequest event) {
 
+
         Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getIcnumber(), event.getLocationCode(), event.getLocationName(), "FrsApi " + event.getToken());
         call.enqueue(new Callback<SurveyPhotoReceive>() {
 
             //succces retrieve information
             @Override
             public void onResponse(Call<SurveyPhotoReceive> call, Response<SurveyPhotoReceive> response) {
+
 
                 SurveyPhotoReceive user = new SurveyPhotoReceive();
                 //successs call
@@ -304,5 +308,39 @@ public class ApiRequestHandler {
         });
     }*/
 
+    @Subscribe
+    public void onChecklistRequest(final ChecklistRequest event) {
+
+        Call<ChecklistReceive> call = apiService.checklist("FrsApi "+event.getToken(), event.getUrl());
+        call.enqueue(new Callback<ChecklistReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<ChecklistReceive> call, Response<ChecklistReceive> response) {
+
+                ChecklistReceive user = new ChecklistReceive();
+                //success call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new ChecklistReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new ChecklistReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<ChecklistReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", "DOUBLE_N");
+
+            }
+        });
+    }
 
 }

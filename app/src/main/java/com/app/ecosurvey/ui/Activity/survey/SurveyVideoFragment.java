@@ -1,11 +1,15 @@
 package com.app.ecosurvey.ui.Activity.survey;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +22,9 @@ import android.widget.TextView;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Activity.adapter.VideoListAdapter;
+import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
+import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedVideoPath;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
@@ -26,6 +33,14 @@ import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.Utils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+import com.tangxiaolv.telegramgallery.GalleryConfig;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,7 +53,7 @@ import static android.app.Activity.RESULT_OK;
 public class SurveyVideoFragment extends BaseFragment {
 
     private int fragmentContainerId;
-    static final int REQUEST_VIDEO_CAPTURE = 1;
+    static final int REQUEST_VIDEO_CAPTURE = 0;
 
     @Inject
     MainPresenter presenter;
@@ -73,20 +88,32 @@ public class SurveyVideoFragment extends BaseFragment {
     @Bind(R.id.block6)
     LinearLayout block6;
 
+    @Bind(R.id.openImageAction)
+    LinearLayout openImageAction;
+
+    @Bind(R.id.openImageActionSmall)
+    LinearLayout openImageActionSmall;
+
+    @Bind(R.id.setImageBlock1)
+    LinearLayout setImageBlock1;
+
+    @Bind(R.id.setImageBlock2)
+    LinearLayout setImageBlock2;
+
     private String randomID;
     private String status;
 
-    /*private AlertDialog dialog;
+    private AlertDialog dialog;
     private String userChoosenTask;
     private Boolean result;
-    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private int SELECT_FILE = 1;
     private int CHANGE_FILE = 2;
     private static final String GALLERY_CONFIG = "GALLERY_CONFIG";
     private View view;
-    private ImageListAdapter adapter;
+    private VideoListAdapter adapter;
     private int changeImagePosition;
-    private ArrayList<SelectedImagePath> list = new ArrayList<SelectedImagePath>();
-    private Boolean changeImageTrue = false;*/
+    private ArrayList<SelectedVideoPath> list = new ArrayList<SelectedVideoPath>();
+    private Boolean changeImageTrue = false;
 
     public static SurveyVideoFragment newInstance(Bundle bundle) {
 
@@ -104,7 +131,7 @@ public class SurveyVideoFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.survey_video, container, false);
+        view = inflater.inflate(R.layout.survey_video, container, false);
         ButterKnife.bind(this, view);
 
         Bundle bundle = getArguments();
@@ -126,21 +153,32 @@ public class SurveyVideoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-
                 Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                 intent.putExtra("LocalSurveyID", randomID);
                 intent.putExtra("Status", status);
                 getActivity().startActivity(intent);
 
-                /*initiateLoading(getActivity());
+            }
+        });
 
-                LoginRequest loginRequest = new LoginRequest();
-                loginRequest.setUserID(txtAuthID.getText().toString());
-                loginRequest.setUserPassword(txtAuthPassword.getText().toString());
-                presenter.onLoginRequest(loginRequest);*/
+        openImageAction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
 
             }
         });
+
+        openImageActionSmall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
+
+            }
+        });
+
+        //init camera & gallery
+        captureImageInitialization();
 
         if (status != null) {
             if (status.equalsIgnoreCase("EDIT")) {
@@ -207,13 +245,18 @@ public class SurveyVideoFragment extends BaseFragment {
 
 
     private void dispatchTakeVideoIntent() {
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
-        }
+
+        File mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + System.currentTimeMillis() + ".mp4");
+
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+
+        Uri videoUri = Uri.fromFile(mediaFile);
+
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
+        startActivityForResult(intent, REQUEST_VIDEO_CAPTURE);
     }
 
-    /*private void captureImageInitialization() {
+    private void captureImageInitialization() {
 
         LayoutInflater li = LayoutInflater.from(getActivity());
         final View myView = li.inflate(R.layout.init_video, null);
@@ -260,7 +303,7 @@ public class SurveyVideoFragment extends BaseFragment {
                         try {
                             result = Utils.checkPermissionCamera(getActivity());
                             if (result) {
-                                cameraIntent();
+                                dispatchTakeVideoIntent();
                                 dialog.dismiss();
                             } else {
                                 Log.e("Camera", "CLOSE");
@@ -271,24 +314,14 @@ public class SurveyVideoFragment extends BaseFragment {
                     }
                 });
 
->>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-<<<<<<< HEAD
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
-=======
             public void onClick(View v) {
                 dialog.dismiss();
->>>>>>> c6d650b074c45152f6be50eafef5415232dcf1c0
             }
         });
 
@@ -300,7 +333,116 @@ public class SurveyVideoFragment extends BaseFragment {
         lp.height = 1070;
         dialog.getWindow().setAttributes(lp);
 
-    }*/
+    }
+
+    public void onCaptureCamera(Intent data) {
+       /* Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");*/
+        Log.e("GetCameraPath", String.valueOf(data.getData()));
+        /*FileOutputStream fo;
+        destination.createNewFile();
+        fo = new FileOutputStream(destination);
+        fo.write(bytes.toByteArray());
+        fo.close();*/
+
+        SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+        selectedVideoPath.setVideoPath(String.valueOf(data.getData()));
+        selectedVideoPath.setRandomPathCode("xxx");
+
+        if (list.size() == 0) {
+            list.add(selectedVideoPath);
+            initiateVideoAdapter(list);
+        } else {
+            if (changeImageTrue) {
+                list.get(changeImagePosition).setVideoPath(String.valueOf(data.getData()));
+                list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
+
+                adapter.retrieveNewObject(changeImagePosition, list);
+            } else {
+                list.add(selectedVideoPath);
+                adapter.retrieveNewObject(null, list);
+            }
+
+        }
+
+
+    }
+
+    //gallery feature
+    private void galleryIntent() {
+
+        //Intent intent = new Intent();
+        //intent.setType("video*//*");
+        //intent.setAction(Intent.ACTION_GET_CONTENT);
+        //startActivityForResult(Intent.createChooser(intent,"Select Video"),SELECT_FILE);*/
+
+         if (changeImageTrue) {
+
+           GalleryConfig config = new GalleryConfig.Build()
+                    .singlePhoto(true)
+                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .build();
+
+            //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
+            Intent intent = new Intent(getActivity(), GalleryActivityV2.class);
+            intent.putExtra(GALLERY_CONFIG, config);
+            startActivityForResult(intent, CHANGE_FILE);
+
+        } else {
+
+            GalleryConfig config = new GalleryConfig.Build()
+                    .limitPickPhoto(5)
+                    .singlePhoto(false)
+                    .hintOfPick("Maximum image is 5")
+                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .build();
+
+            //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
+            Intent intent = new Intent(getActivity(), GalleryActivityV2.class);
+            intent.putExtra(GALLERY_CONFIG, config);
+            startActivityForResult(intent, SELECT_FILE);
+            changeImageTrue = false;
+        }
+
+        changeImageTrue = false;
+
+    }
+
+    public void initiateVideoAdapter(ArrayList<SelectedVideoPath> array) {
+
+        setImageBlock1.setVisibility(View.GONE);
+        setImageBlock2.setVisibility(View.VISIBLE);
+
+        RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+        myRecyclerView.setHasFixedSize(true);
+        myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        adapter = new VideoListAdapter(SurveyVideoFragment.this, array, getActivity());
+
+        myRecyclerView.setAdapter(adapter);
+        myRecyclerView.setLayoutManager(MyLayoutManager);
+
+    }
+
+    public void enableVideoSelection() {
+        setImageBlock1.setVisibility(View.VISIBLE);
+        setImageBlock2.setVisibility(View.GONE);
+    }
+
+    public void reselectVideo(Integer pos) {
+
+        dialog.show();
+        changeImageTrue = true;
+        changeImagePosition = pos;
+
+    }
 
     @Subscribe
     public void onLoginReceive(LoginReceive loginReceive) {
@@ -338,6 +480,51 @@ public class SurveyVideoFragment extends BaseFragment {
             Uri videoUri = data.getData();
             //mVideoView.setVideoURI(videoUri);
         }*/
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE) {
+                //list of videos of selected
+
+                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+
+                //insert path to object
+                //for (int x = 0; x < videos.size(); x++) {
+                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                    selectedVideoPath.setVideoPath(videos);
+                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
+                    list.add(selectedVideoPath);
+                //}
+
+                if (true) {
+                    initiateVideoAdapter(list);
+                }
+
+                //list of videos of selected
+                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+            } else if (requestCode == CHANGE_FILE) {
+
+                List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                Log.e("xxxxx", "a" + videos.get(0));
+
+                SelectedImagePath selectedImagePath = new SelectedImagePath();
+                selectedImagePath.setImagePath(videos.get(0));
+                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(0));
+
+                //list.remove(changeImagePosition);
+                list.get(changeImagePosition).setVideoPath(videos.get(0));
+                list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
+
+                adapter.retrieveNewObject(changeImagePosition, list);
+
+            } else if (requestCode == REQUEST_VIDEO_CAPTURE) {
+                onCaptureCamera(data);
+            }
+        } else {
+            Log.e("STATUS UPLOAD", "Image not uploaded");
+        }
+
+
     }
 
     @Override

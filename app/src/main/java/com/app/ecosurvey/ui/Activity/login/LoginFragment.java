@@ -16,6 +16,11 @@ import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
@@ -134,6 +139,7 @@ public class LoginFragment extends BaseFragment {
         //dismissLoading();
 
         if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            token = loginReceive.getData().getToken();
             try {
 
                 SharedPreferences.Editor editor = preferences.edit();
@@ -185,15 +191,13 @@ public class LoginFragment extends BaseFragment {
             String userInfo = gson.toJson(userInfoReceive);
 
             rController.saveUserInfo(context, userInfo);
+            role = userInfoReceive.getData().getRole();
 
             //call existing survey
             ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
             listSurveyRequest.setToken(token);
             listSurveyRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/surveys/" + userId);
             presenter.onListSurveyRequest(listSurveyRequest);
-
-            role = userInfoReceive.getData().getRole();
-
 
         } else {
 
@@ -205,18 +209,18 @@ public class LoginFragment extends BaseFragment {
     @Subscribe
     public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
 
-        dismissLoading();
         if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
             //update_realm_with_local
             try {
                 rController.updateLocalRealm(getActivity(), listSurveyReceive);
             } finally {
-                //update_realm_with_local
-                Intent intent = new Intent(getActivity(), TabActivity.class);
-                intent.putExtra("ROLE", role);
-                getActivity().startActivity(intent);
-                getActivity().finish();
+
+                ChecklistRequest checklistRequest = new ChecklistRequest();
+                checklistRequest.setToken(token);
+                checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
+                presenter.onChecklistRequest(checklistRequest);
+
 
             }
 
@@ -228,6 +232,36 @@ public class LoginFragment extends BaseFragment {
         }
     }
 
+
+    @Subscribe
+    public void onChecklistReceive(ChecklistReceive checklistReceive) {
+        dismissLoading();
+        if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            try {
+                //save to realm
+                //convert to gsom
+                Gson gson = new Gson();
+                String checklist = gson.toJson(checklistReceive);
+
+                rController.saveChecklist(context, checklist);
+
+            } finally {
+                //update_realm_with_local
+                Log.e("whaTrole",role);
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+
+            }
+
+        } else {
+
+            String error_msg = checklistReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
