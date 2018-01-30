@@ -258,17 +258,41 @@ public class RealmController {
 
         for (int x = 0; x < listSurveyReceive.getData().size(); x++) {
 
-            String surveyID = "apiID";
+            String surveyID = listSurveyReceive.getData().get(x).getId();
             //listSurveyReceive.getData().get(x).getSurveyID();
 
             realm.beginTransaction();
 
+            //need to change updated date here.
+            //if local updated than api. skip. else update. vice versa
 
+            //if id already exist in realm - UPDATE
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", surveyID).findFirst();
             if (survey != null) {
-                survey.setSurveyIssue(listSurveyReceive.getData().get(x).getIssue());
-                survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getWishlist());
-                survey.setSurveyCategory(listSurveyReceive.getData().get(x).getCategoryid());
+                survey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
+                survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
+                survey.setSurveyCategory(listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid()+"/"+listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
+                survey.setSurveyParliment(listSurveyReceive.getData().get(x).getLocationCode()+"/"+listSurveyReceive.getData().get(x).getLocationCode());
+                survey.setSurveyStatus("API-STATUS");
+                survey.setSurveyLocalProgress("Completed");
+
+                survey.setStatusCreated(listSurveyReceive.getData().get(x).getCreated_at());
+                survey.setStatusUpdated(listSurveyReceive.getData().get(x).getUpdated_at());
+
+            }else{
+
+                LocalSurvey newSurvey = realm.createObject(LocalSurvey.class);
+                newSurvey.setLocalSurveyID(surveyID);
+                newSurvey.setSurveyLocalProgress("Completed");
+                newSurvey.setSurveyStatus("API-STATUS");
+                newSurvey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
+                newSurvey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
+                newSurvey.setSurveyCategory(listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid()+"/"+listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
+                newSurvey.setSurveyParliment(listSurveyReceive.getData().get(x).getLocationCode()+"/"+listSurveyReceive.getData().get(x).getLocationCode());
+
+                newSurvey.setStatusCreated(listSurveyReceive.getData().get(x).getCreated_at());
+                newSurvey.setStatusUpdated(listSurveyReceive.getData().get(x).getUpdated_at());
+
             }
 
             realm.commitTransaction();

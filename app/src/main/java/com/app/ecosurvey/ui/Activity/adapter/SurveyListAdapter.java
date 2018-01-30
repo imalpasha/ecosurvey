@@ -77,8 +77,10 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
 
         if (obj.get(position).getSurveyStatus().equalsIgnoreCase("")) {
             holder.survey_status.setText(s);
+            //holder.survey_status_api.setVisibility(View.GONE);
         } else {
-            holder.survey_status_api.setText(obj.get(position).getSurveyStatus());
+            holder.survey_status.setText(obj.get(position).getSurveyStatus());
+            //holder.survey_status.setVisibility(View.GONE);
         }
 
         /*Calendar calendar = Calendar.getInstance();
@@ -98,13 +100,23 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
             }
         });
 
+        if (obj.get(position).getSurveyStatus().equalsIgnoreCase("")) {
+            holder.btnDelete.setVisibility(View.VISIBLE);
+            holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    frag.confirmDelete(position, obj.get(position).getLocalSurveyID());
+                }
+            });
+        } else {
+            holder.btnDelete.setVisibility(View.GONE);
+        }
 
-        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                frag.confirmDelete(position, obj.get(position).getLocalSurveyID());
-            }
-        });
+        if (position == obj.size() - 1) {
+            holder.surveyDivider.setVisibility(View.GONE);
+        } else {
+            holder.surveyDivider.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -118,7 +130,7 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
         TextView survey_updated;
         ImageView btnDelete;
         TextView survey_status_api;
-
+        View surveyDivider;
 
         public MyViewHolder(View insideMeal) {
             super(insideMeal);
@@ -131,7 +143,7 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
             btnDelete = (ImageView) insideMeal.findViewById(R.id.btnDelete);
             survey_layout = (RelativeLayout) insideMeal.findViewById(R.id.survey_layout);
             survey_status_api = (TextView) insideMeal.findViewById(R.id.survey_status_api);
-
+            surveyDivider = (View) insideMeal.findViewById(R.id.surveyDivider);
 
         }
     }

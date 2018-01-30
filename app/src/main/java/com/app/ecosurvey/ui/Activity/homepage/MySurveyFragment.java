@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.app.ecosurvey.R;
+import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.adapter.ImageListAdapter;
@@ -28,11 +30,14 @@ import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SurveyList;
 import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +52,7 @@ import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class MySurveyFragment extends BaseFragment {
 
@@ -139,8 +145,8 @@ public class MySurveyFragment extends BaseFragment {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                getData();
-                swipeContainer.setRefreshing(false);
+                reloadList();
+                swipeContainer.setRefreshing(true);
 
             }
         });
@@ -175,7 +181,7 @@ public class MySurveyFragment extends BaseFragment {
                         Realm realm = rController.getRealmInstanceContext(context);
                         try {
                             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
-                            Log.e("SurveyImagePath", survey.getImagePath());
+
                             try {
                                 realm.beginTransaction();
                                 survey.removeFromRealm();
@@ -212,22 +218,55 @@ public class MySurveyFragment extends BaseFragment {
         getActivity().startActivity(intent);
     }
 
+    public void reloadList(){
+
+        String userId = preferences.getString("user_id", "");
+        String token = preferences.getString("temp_token", "");
+
+        ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
+        listSurveyRequest.setToken(token);
+        listSurveyRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/surveys/" + userId);
+        presenter.onListSurveyRequest(listSurveyRequest);
+
+    }
+
+    @Subscribe
+    public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
+
+        swipeContainer.setRefreshing(false);
+        if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            //update_realm_with_local
+            try {
+                rController.updateLocalRealm(getActivity(), listSurveyReceive);
+            } finally {
+                getData();
+            }
+
+        } else {
+
+            String error_msg = listSurveyReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }
+
     public void getData() {
         //call from Realm
         Realm realm = rController.getRealmInstanceContext(context);
         final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
 
         if (result2.size() != 0) {
+            Log.e("totalsurvey", Integer.toString(result2.size()));
 
             //convert
             List<SurveyList> surveyLists = new ArrayList<SurveyList>();
 
-            for (int position = 0; position < result2.size(); position++) {
+            for (int position = result2.size() - 1; position >= 0; position--) {
+
                 SurveyList info = new SurveyList();
                 info.setLocalSurveyID(result2.get(position).getLocalSurveyID());
                 info.setSurveyCategory(result2.get(position).getSurveyCategory());
                 info.setSurveyParliment(result2.get(position).getSurveyParliment());
-                info.setSurveyLocalProgress("Not Submit");
                 info.setSurveyIssue(result2.get(position).getSurveyIssue());
                 info.setSurveyWishlist(result2.get(position).getSurveyWishlist());
                 info.setImageString(result2.get(position).getImageString());
@@ -235,8 +274,8 @@ public class MySurveyFragment extends BaseFragment {
                 info.setStatusCreated(result2.get(position).getStatusCreated());
                 info.setStatusUpdated(result2.get(position).getStatusUpdated());
                 surveyLists.add(info);
-            }
 
+            }
 
             initiateImageAdapter(surveyLists);
         } else {
