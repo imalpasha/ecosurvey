@@ -13,8 +13,12 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
+import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
+import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
+import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
@@ -342,5 +346,77 @@ public class ApiRequestHandler {
             }
         });
     }
+
+    @Subscribe
+    public void onPhotoRequest(final PhotoRequest event) {
+
+        Call<PhotoReceive> call = apiService.photoRequest("FrsApi "+event.getToken(), event.getUrl());
+        call.enqueue(new Callback<PhotoReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<PhotoReceive> call, Response<PhotoReceive> response) {
+
+                PhotoReceive user = new PhotoReceive();
+                //success call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new PhotoReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new PhotoReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<PhotoReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", "DOUBLE_N");
+
+            }
+        });
+    }
+
+    @Subscribe
+    public void onVideoRequest(final VideoRequest event) {
+
+        Call<VideoReceive> call = apiService.videoRequest("FrsApi "+event.getToken(), event.getUrl());
+        call.enqueue(new Callback<VideoReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<VideoReceive> call, Response<VideoReceive> response) {
+
+                VideoReceive user = new VideoReceive();
+                //success call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new VideoReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new VideoReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<VideoReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", "DOUBLE_N");
+
+            }
+        });
+    }
+
+
 
 }

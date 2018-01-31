@@ -123,7 +123,7 @@ public class CategoryParlimenFragment extends BaseFragment {
                 if (manualValidation()) {
 
                     String category = txtKategori.getTag().toString() + "/" + txtKategori.getText().toString();
-                    String parliment = txtParlimen.getTag().toString() + "/" + txtKategori.getText().toString();
+                    String parliment = txtParlimen.getTag().toString() + "/" + txtParlimen.getText().toString();
 
                     rController.surveyLocalStorageS1(context, randomID, category, parliment, "local_progress");
 

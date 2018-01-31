@@ -2,8 +2,10 @@ package com.app.ecosurvey.ui.Activity.adapter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyViewHolder> {
 
@@ -58,9 +61,19 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
 
         String f = arrayPromo.get(h).getVideoPath();
 
-        Bitmap bMap = ThumbnailUtils.createVideoThumbnail(f, MediaStore.Video.Thumbnails.MINI_KIND);
-        holder.txtVideoPath.setImageBitmap(bMap);
+        holder.txtVideoPathURL.setText(f);
 
+        if (f.contains("http")) {
+            try {
+                //holder.txtVideoPath.setImageBitmap(retrieveThumbnail(f));
+            } catch (Throwable e) {
+
+            }
+
+        } else {
+            Bitmap bMap = ThumbnailUtils.createVideoThumbnail(f, MediaStore.Video.Thumbnails.MINI_KIND);
+            holder.txtVideoPath.setImageBitmap(bMap);
+        }
 
 
         //holder.selectedImage.setVideoURI(Uri.parse(f));
@@ -110,6 +123,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         final ImageView txtVideoPath;
         final VideoView selectedImage;
 
+        final TextView txtVideoPathURL;
+
 
         public MyViewHolder(View insideMeal) {
             super(insideMeal);
@@ -118,6 +133,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
             txtVideoPath = (ImageView) insideMeal.findViewById(R.id.txtVideoPath);
             actionChange = (TextView) insideMeal.findViewById(R.id.txtActionChange);
             selectedImage = (VideoView) insideMeal.findViewById(R.id.selectedImage);
+            txtVideoPathURL = (TextView) insideMeal.findViewById(R.id.txtVideoPathURL);
 
             actionRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -165,5 +181,31 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         if (arrayPromo.size() == 0) {
             frag.enableVideoSelection();
         }
+    }
+
+    public static Bitmap retrieveThumbnail(String videoPath)
+            throws Throwable {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever mediaMetadataRetriever = null;
+        try {
+            mediaMetadataRetriever = new MediaMetadataRetriever();
+            if (Build.VERSION.SDK_INT >= 14)
+                mediaMetadataRetriever.setDataSource(videoPath, new HashMap<String, String>());
+            else
+                mediaMetadataRetriever.setDataSource(videoPath);
+            //   mediaMetadataRetriever.setDataSource(videoPath);
+            bitmap = mediaMetadataRetriever.getFrameAtTime();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Throwable(
+                    "Exception in retriveVideoFrameFromVideo(String videoPath)"
+                            + e.getMessage());
+
+        } finally {
+            if (mediaMetadataRetriever != null) {
+                mediaMetadataRetriever.release();
+            }
+        }
+        return bitmap;
     }
 }

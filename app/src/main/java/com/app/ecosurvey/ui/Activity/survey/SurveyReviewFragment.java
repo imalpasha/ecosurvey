@@ -233,6 +233,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         Content content = new Content();
                                         content.setCategoryid(category[1]);
+                                        content.setCategoryName(category[0]);
                                         content.setIssue(survey.getSurveyIssue());
                                         content.setWishlist(survey.getSurveyWishlist());
 
@@ -249,7 +250,7 @@ public class SurveyReviewFragment extends BaseFragment {
                                         postSurveyRequest.setLocationType("?");
                                         postSurveyRequest.setContent(stringContent);
                                         postSurveyRequest.setToken(preferences.getString("temp_token", ""));
-
+                                        //postSurveyRequest.setId(randomID);
                                         presenter.onPostSurvey(postSurveyRequest);
                                     }
 
@@ -411,7 +412,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
                 //save info to realm with proper id
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
-                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getId());
+                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getData().getId());
 
                 /*new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Success.")

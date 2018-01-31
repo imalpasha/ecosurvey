@@ -6,6 +6,13 @@ package com.app.ecosurvey.ui.Model.Request.ecosurvey;
 
 public class Content {
 
+
+    private String categoryName;
+    private String issue;
+    private String wishlist;
+    private Content content[];
+    private String categoryid;
+
     public Content[] getContent() {
         return content;
     }
@@ -14,38 +21,37 @@ public class Content {
         this.content = content;
     }
 
-    private Content content[];
+    public String getCategoryName() {
+        return categoryName;
+    }
 
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
 
+    public String getCategoryid() {
+        return categoryid;
+    }
 
-        private String categoryid;
-        private String issue;
-        private String wishlist;
+    public void setCategoryid(String categoryid) {
+        this.categoryid = categoryid;
+    }
 
-        public String getCategoryid() {
-            return categoryid;
-        }
+    public String getIssue() {
+        return issue;
+    }
 
-        public void setCategoryid(String categoryid) {
-            this.categoryid = categoryid;
-        }
+    public void setIssue(String issue) {
+        this.issue = issue;
+    }
 
-        public String getIssue() {
-            return issue;
-        }
+    public String getWishlist() {
+        return wishlist;
+    }
 
-        public void setIssue(String issue) {
-            this.issue = issue;
-        }
-
-        public String getWishlist() {
-            return wishlist;
-        }
-
-        public void setWishlist(String wishlist) {
-            this.wishlist = wishlist;
-        }
-
+    public void setWishlist(String wishlist) {
+        this.wishlist = wishlist;
+    }
 
 
     /*Initiate Class*/

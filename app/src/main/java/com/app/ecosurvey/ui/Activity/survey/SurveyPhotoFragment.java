@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
+import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Activity.adapter.ImageListAdapter;
@@ -60,6 +63,9 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     @Inject
     Bus bus;
+
+    @Inject
+    SharedPreferences preferences;
 
     @Inject
     RealmController rController;
@@ -137,6 +143,7 @@ public class SurveyPhotoFragment extends BaseFragment {
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
         setupBlock(getActivity(), block4);
         autoFill2();
@@ -299,11 +306,13 @@ public class SurveyPhotoFragment extends BaseFragment {
             if (status.equalsIgnoreCase("EDIT")) {
 
                 //try fetch realm data.
+                Log.e("edit", "edit");
                 Realm realm = rController.getRealmInstanceContext(context);
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
                     String imageList = survey.getImagePath();
+
                     if (imageList != null && !imageList.equalsIgnoreCase("")) {
                         String[] parts = imageList.split("___");
                         //insert path to object
@@ -316,6 +325,10 @@ public class SurveyPhotoFragment extends BaseFragment {
                         }
 
                         initiateImageAdapter(list);
+                    } else {
+
+                        //need to verify photo_updated_date before call this.
+                        loadImageFromAPI();
                     }
 
                     //txtSurveyIssue.setText(survey.getSurveyIssue());
@@ -323,8 +336,22 @@ public class SurveyPhotoFragment extends BaseFragment {
                 } finally {
                     realm.close();
                 }
+
             }
         }
+
+    }
+
+    public void loadImageFromAPI() {
+
+        String token = preferences.getString("temp_token", "");
+
+        initiateLoading(getActivity());
+
+        PhotoRequest photoRequest = new PhotoRequest();
+        photoRequest.setToken(token);
+        photoRequest.setUrl("/api/v1/surveys/photos/" + randomID);
+        presenter.onPhotoRequest(photoRequest);
 
     }
 
@@ -482,13 +509,24 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     }
 
+
     @Subscribe
-    public void onLoginReceive(LoginReceive loginReceive) {
+    public void onPhotoReceive(PhotoReceive photoReceive) {
 
         dismissLoading();
 
-        if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
+        if (photoReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
+
+                for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                    SelectedImagePath selectedImagePath = new SelectedImagePath();
+                    selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                    Log.e("pathpath", photoReceive.getData().getContent().getImages().get(x));
+                    list.add(selectedImagePath);
+                }
+
+                initiateImageAdapter(list);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -497,7 +535,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         } else {
 
-            String error_msg = loginReceive.getMessage();
+            String error_msg = photoReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
 
         }

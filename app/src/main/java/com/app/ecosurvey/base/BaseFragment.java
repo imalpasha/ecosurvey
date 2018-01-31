@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
+import com.app.ecosurvey.ui.Activity.splash.SplashActivity;
 import com.app.ecosurvey.utils.DropDownItem;
 import com.app.ecosurvey.utils.DropMenuAdapter;
 import com.app.ecosurvey.utils.SharedPrefManager;
@@ -116,14 +117,40 @@ public class BaseFragment extends Fragment {
 
         if (act != null) {
             if (!act.isFinishing()) {
-                new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(title)
-                        .setContentText(msg)
-                        .show();
+
+                if (act.getClass().getSimpleName().equals("SplashActivity")) {
+                    new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(title)
+                            .setContentText(msg)
+                            .setConfirmText("Retry")
+                            .setCancelText(act.getString(R.string.home_close))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    Intent retryActivity = new Intent(act, SplashActivity.class);
+                                    retryActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    act.startActivity(retryActivity);
+                                    act.overridePendingTransition(0, 0);
+                                    act.finish();
+                                    sDialog.dismiss();
+                                }
+                            })
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    act.finish();
+                                    sDialog.dismiss();
+                                }
+                            })
+                            .show();
+
+                } else {
+                    new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("xx")
+                            .setContentText(msg)
+                            .show();
+                }
             }
-
-        } else {
-
         }
     }
 

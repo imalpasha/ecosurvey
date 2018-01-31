@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,6 +28,10 @@ import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedImagePath;
 import com.app.ecosurvey.ui.Model.Adapter.Object.SelectedVideoPath;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
+import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
+import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
+import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
@@ -63,6 +68,9 @@ public class SurveyVideoFragment extends BaseFragment {
 
     @Inject
     RealmController rController;
+
+    @Inject
+    SharedPreferences preferences;
 
     @Inject
     Context context;
@@ -137,8 +145,10 @@ public class SurveyVideoFragment extends BaseFragment {
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
+        preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
         setupBlock(getActivity(), block5);
+        autoFill2();
 
         Realm realm = rController.getRealmInstanceContext(context);
         try {
@@ -153,11 +163,29 @@ public class SurveyVideoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
-                intent.putExtra("LocalSurveyID", randomID);
-                intent.putExtra("Status", status);
-                getActivity().startActivity(intent);
+                try {
 
+                    String videoList = "";
+
+                    //Gson gsonUserInfo = new Gson();
+                    //String gsonImage = gsonUserInfo.toJson(list);
+                    for (int x = 0; x < list.size(); x++) {
+                        videoList += list.get(x).getVideoPath() + "___";
+                    }
+
+                    rController.surveyLocalStorageS6(context, randomID, videoList);
+
+
+                } catch (Exception e) {
+
+                    Log.e("SaveImage", "Error: " + e.getMessage());
+                } finally {
+
+                    Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
+                    intent.putExtra("LocalSurveyID", randomID);
+                    intent.putExtra("Status", status);
+                    getActivity().startActivity(intent);
+                }
             }
         });
 
@@ -188,8 +216,8 @@ public class SurveyVideoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -199,8 +227,8 @@ public class SurveyVideoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyIssueActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -210,8 +238,8 @@ public class SurveyVideoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyWishlistActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -221,8 +249,8 @@ public class SurveyVideoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyPhotoActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -232,8 +260,8 @@ public class SurveyVideoFragment extends BaseFragment {
                     public void onClick(View view) {
                         Intent intent = new Intent(getActivity(), SurveyReviewActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("LocalSurveyID",randomID);
-                        intent.putExtra("Status",status);
+                        intent.putExtra("LocalSurveyID", randomID);
+                        intent.putExtra("Status", status);
                         getActivity().startActivity(intent);
                     }
                 });
@@ -243,6 +271,102 @@ public class SurveyVideoFragment extends BaseFragment {
         return view;
     }
 
+    public void autoFill2() {
+
+        if (status != null) {
+            if (status.equalsIgnoreCase("EDIT")) {
+
+                //try fetch realm data.
+                Log.e("edit", "edit");
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                    String videoList = survey.getVideoPath();
+
+                    /*SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                    selectedVideoPath.setVideoPath(String.valueOf(data.getData()));
+                    selectedVideoPath.setRandomPathCode("xxx");
+
+                    if (list.size() == 0) {
+                        list.add(selectedVideoPath);
+                        initiateVideoAdapter(list);
+                    }*/
+
+                    if (videoList != null && !videoList.equalsIgnoreCase("")) {
+                        String[] parts = videoList.split("___");
+                        //insert path to object
+                        for (int x = 0; x < parts.length; x++) {
+                            SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                            selectedVideoPath.setVideoPath(parts[x]);
+                            selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+                            Log.e("pathpath", parts[x]);
+                            list.add(selectedVideoPath);
+                        }
+
+                        initiateVideoAdapter(list);
+                    } else {
+
+                        //need to verify photo_updated_date before call this.
+                        loadVideoFromAPI();
+                    }
+
+                    //txtSurveyIssue.setText(survey.getSurveyIssue());
+
+                } finally {
+                    realm.close();
+                }
+
+            }
+        }
+
+    }
+
+    @Subscribe
+    public void onVideoReceive(VideoReceive videoReceive) {
+
+        dismissLoading();
+
+        if (videoReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            try {
+
+                for (int x = 0; x < videoReceive.getData().getContent().getVideos().size(); x++) {
+                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                    selectedVideoPath.setVideoPath(videoReceive.getData().getContent().getVideos().get(x));
+                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+                    Log.e("pathpath", videoReceive.getData().getContent().getVideos().get(x));
+                    list.add(selectedVideoPath);
+                }
+
+                initiateVideoAdapter(list);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            }
+
+        } else {
+
+            String error_msg = videoReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+
+        }
+
+
+    }
+
+    public void loadVideoFromAPI() {
+
+        String token = preferences.getString("temp_token", "");
+
+        initiateLoading(getActivity());
+
+        VideoRequest videoRequest = new VideoRequest();
+        videoRequest.setToken(token);
+        videoRequest.setUrl("/api/v1/surveys/videos/" + "FFCC12BC-1E9F-3B8B-ADE8-38234BFA5806");
+        presenter.onVideoRequest(videoRequest);
+
+    }
 
     private void dispatchTakeVideoIntent() {
 
@@ -380,9 +504,9 @@ public class SurveyVideoFragment extends BaseFragment {
         //intent.setAction(Intent.ACTION_GET_CONTENT);
         //startActivityForResult(Intent.createChooser(intent,"Select Video"),SELECT_FILE);*/
 
-         if (changeImageTrue) {
+        if (changeImageTrue) {
 
-           GalleryConfig config = new GalleryConfig.Build()
+            GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
                     .filterMimeTypes(new String[]{"image/jpeg"})
                     .build();
@@ -490,10 +614,10 @@ public class SurveyVideoFragment extends BaseFragment {
 
                 //insert path to object
                 //for (int x = 0; x < videos.size(); x++) {
-                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                    selectedVideoPath.setVideoPath(videos);
-                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
-                    list.add(selectedVideoPath);
+                SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                selectedVideoPath.setVideoPath(videos);
+                selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
+                list.add(selectedVideoPath);
                 //}
 
                 if (true) {

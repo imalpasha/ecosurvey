@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.app.ecosurvey.api.ApiRequestHandler;
 import com.app.ecosurvey.application.MainApplication;
+import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
+import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
@@ -60,6 +62,16 @@ public class MainPresenter {
     public void onChecklistRequest(ChecklistRequest data){
         apiRequestHandler.onChecklistRequest(data);
     }
+
+    public void onPhotoRequest(PhotoRequest data){
+        apiRequestHandler.onPhotoRequest(data);
+    }
+
+    public void onVideoRequest(VideoRequest data){
+        apiRequestHandler.onVideoRequest(data);
+    }
+
+
 
     public void onResume() {
         bus.register(this);

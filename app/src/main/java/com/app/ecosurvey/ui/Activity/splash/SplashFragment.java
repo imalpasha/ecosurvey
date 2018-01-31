@@ -220,7 +220,7 @@ public class SplashFragment extends BaseFragment {
             //call existing survey
             ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
             listSurveyRequest.setToken(token);
-            listSurveyRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/surveys/" + userId);
+            listSurveyRequest.setUrl("/api/v1/surveys/" + userId);
             presenter.onListSurveyRequest(listSurveyRequest);
 
 

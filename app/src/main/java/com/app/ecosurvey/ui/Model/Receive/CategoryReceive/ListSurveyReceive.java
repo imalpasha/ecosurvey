@@ -29,9 +29,18 @@ public class ListSurveyReceive {
         private String icnumber;
         private String locationCode;
         private String locationType;
+        private String locationName;
         private Boolean processed;
         private String created_at;
         private String updated_at;
+
+        public String getLocationName() {
+            return locationName;
+        }
+
+        public void setLocationName(String locationName) {
+            this.locationName = locationName;
+        }
 
         private List<Content> content;
 
