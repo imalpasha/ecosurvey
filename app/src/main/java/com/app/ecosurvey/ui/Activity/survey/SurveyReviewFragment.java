@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -117,6 +118,11 @@ public class SurveyReviewFragment extends BaseFragment {
     private String randomID;
     private String status;
     private String formattedDate;
+    private String icNumber;
+
+    String[] parliment;
+    String[] category;
+
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -217,16 +223,13 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         Gson gson = new Gson();
                                         UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
-                                        String icNumber = obj.getData().getIcNumber();
+                                        icNumber = obj.getData().getIcNumber();
 
                                         PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
                                         postSurveyRequest.setIcNumber(icNumber);
 
-                                        String[] parliment = survey.getSurveyParliment().split("/");
-                                        String[] category = survey.getSurveyCategory().split("/");
-
-                                        Log.e("getSurveyCategory", "a" + survey.getSurveyCategory());
-                                        //List<Content> contents = new ArrayList<Content>();
+                                        parliment = survey.getSurveyParliment().split("/");
+                                        category = survey.getSurveyCategory().split("/");
 
                                         Content content = new Content();
                                         content.setCategoryid(category[1]);
@@ -410,7 +413,7 @@ public class SurveyReviewFragment extends BaseFragment {
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
                 rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getId());
 
-                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                /*new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Success.")
                         .setContentText("Survey successfully saved.")
                         .setConfirmText("Ok")
@@ -426,10 +429,10 @@ public class SurveyReviewFragment extends BaseFragment {
                                 sDialog.dismiss();
                             }
                         })
-                        .show();
+                        .show();*/
 
                 //get saved photo
-                /*List<MultipartBody.Part> listMultipart = new ArrayList<>();
+                List<MultipartBody.Part> listMultipart = new ArrayList<>();
                 Realm realm = rController.getRealmInstanceContext(context);
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
@@ -444,17 +447,19 @@ public class SurveyReviewFragment extends BaseFragment {
                     }
 
 
+                } catch (Exception e) {
+                    Log.e("ERROR_MSG", e.getMessage());
                 } finally {
                     realm.close();
                 }
 
                 //submit photo.
                 SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
-                surveyPhotoRequest.setIcnumber("7777");
-                surveyPhotoRequest.setLocationCode("01001");
-                surveyPhotoRequest.setLocationName("PADANG BESAR");
+                surveyPhotoRequest.setIcnumber(icNumber);
+                surveyPhotoRequest.setLocationCode(parliment[1]);
+                surveyPhotoRequest.setLocationName(parliment[0]);
                 surveyPhotoRequest.setLocationType("PAR");
-                surveyPhotoRequest.setParts(listMultipart);*/
+                surveyPhotoRequest.setParts(listMultipart);
 
 
                 //presenter.onSurveyPhotoRequest(surveyPhotoRequest);
