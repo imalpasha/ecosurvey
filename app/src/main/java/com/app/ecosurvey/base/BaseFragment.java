@@ -187,29 +187,25 @@ public class BaseFragment extends Fragment {
 
         }
 
+    }
 
-        /*if (dialog != null) {
-            dialog.dismiss();
+
+    public static void initiateLoadingMsg(Activity act,String msg) {
+
+        try {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+
+            progressDialog = new ProgressDialog(act);
+            progressDialog.show();
+            progressDialog.setMessage(msg);
+            progressDialog.setCancelable(false);
+
+        } catch (Exception e) {
+
         }
 
-        dialog = new Dialog(act, R.style.DialogTheme);
-
-        LayoutInflater li = LayoutInflater.from(act);
-        final View myView = li.inflate(R.layout.loading_screen, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(act);
-        builder.setView(myView);
-
-        dialog.setContentView(myView);
-        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#CC000000")));
-        dialog.setCancelable(true);
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        dialog.getWindow().setAttributes(lp);
-        dialog.show();
-*/
     }
 
     public static void dismissLoading() {
@@ -339,7 +335,7 @@ public class BaseFragment extends Fragment {
 
         Calendar calendar = Calendar.getInstance();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         formattedDate = df.format(calendar.getTime());
 
         //2018-02-01 00:06:43

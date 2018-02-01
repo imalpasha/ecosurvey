@@ -99,7 +99,6 @@ public class SplashFragment extends BaseFragment {
     @Subscribe
     public void onTokenReceive(TokenReceive tokenReceive) {
 
-
         if (tokenReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
 
@@ -137,8 +136,6 @@ public class SplashFragment extends BaseFragment {
     @Subscribe
     public void onCategoryReceive(CategoryReceive categoryReceive) {
 
-        dismissLoading();
-
         if (categoryReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
 
@@ -161,12 +158,15 @@ public class SplashFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+                dismissLoading();
+
             }
 
         } else {
 
             String error_msg = categoryReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            dismissLoading();
 
         }
 
@@ -209,14 +209,6 @@ public class SplashFragment extends BaseFragment {
 
             rController.saveUserInfo(context, userInfo);
 
-            Log.e("phononeonenoe",userInfoReceive.getData().getPhoneNo());
-
-
-            //Intent intent = new Intent(getActivity(), TabActivity.class);
-            //intent.putExtra("ROLE", role);
-            //getActivity().startActivity(intent);
-            //getActivity().finish();
-
             //call existing survey
             ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
             listSurveyRequest.setToken(token);
@@ -228,6 +220,8 @@ public class SplashFragment extends BaseFragment {
 
             String error_msg = userInfoReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            dismissLoading();
+
         }
     }
 
@@ -235,24 +229,26 @@ public class SplashFragment extends BaseFragment {
     public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
 
         dismissLoading();
-        if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
+        if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
             //update_realm_with_local
             try {
                 rController.updateLocalRealm(getActivity(), listSurveyReceive);
             } finally {
+
                 Intent intent = new Intent(getActivity(), TabActivity.class);
                 intent.putExtra("ROLE", role);
                 getActivity().startActivity(intent);
                 getActivity().finish();
             }
 
-
         } else {
 
             String error_msg = listSurveyReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            dismissLoading();
+
         }
     }
 

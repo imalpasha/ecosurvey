@@ -84,11 +84,11 @@ public interface ApiService {
 
     //surveyPhoto
     @Multipart
-    @POST("upload")
+    @POST("/api/v1/surveys/photos")
     Call<SurveyPhotoReceive> surveyPhoto(
             @Header("Authorization") String header,
-            @PartMap() Map<String, Object> partMap,
-            @Part("photos[]") List<MultipartBody.Part> files);
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part() List<MultipartBody.Part> files);
 
     /*@Multipart
     @POST("user/updateprofile")

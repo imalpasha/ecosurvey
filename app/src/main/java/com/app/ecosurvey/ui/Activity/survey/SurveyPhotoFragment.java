@@ -323,11 +323,11 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         String token = preferences.getString("temp_token", "");
 
-        initiateLoading(getActivity());
+        initiateLoadingMsg(getActivity(),"Fetching photo...");
 
         PhotoRequest photoRequest = new PhotoRequest();
         photoRequest.setToken(token);
-        photoRequest.setUrl("/api/v1/surveys/photos/" + "FFCC12BC-1E9F-3B8B-ADE8-38234BFA5806");
+        photoRequest.setUrl("/api/v1/surveys/photos/" + randomID);
         presenter.onPhotoRequest(photoRequest);
 
     }
