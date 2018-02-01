@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -18,21 +21,34 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Activity.adapter.ChecklistAdapter;
+import com.app.ecosurvey.ui.Model.Adapter.Object.CheckList;
 import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
+import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostChecklistRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MyWishlistFragment extends BaseFragment {
 
@@ -65,9 +81,20 @@ public class MyWishlistFragment extends BaseFragment {
     @Bind(R.id.swipeContainer)
     SwipeRefreshLayout swipeContainer;
 
+    @Bind(R.id.updateBtn)
+    Button updateBtn;
+
     View view;
     String token;
     String userId;
+    private ChecklistAdapter mAdapter;
+    private List<CheckList> surveyLists;
+
+    String[] parliment;
+    String[] category;
+
+    //private String randomID;
+    private String icNumber;
 
     public static MyWishlistFragment newInstance(Bundle bundle) {
 
@@ -112,6 +139,26 @@ public class MyWishlistFragment extends BaseFragment {
                 android.R.color.holo_green_light,
                 android.R.color.holo_blue_bright);
 
+        mListView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                return false;
+            }
+        });
+
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                submitChecklist();
+            }
+        });
         return view;
     }
 
@@ -150,7 +197,7 @@ public class MyWishlistFragment extends BaseFragment {
 
         Realm realm = rController.getRealmInstanceContext(context);
         Log.e("TEST", "1");
-        //try {
+        try {
 
             ChecklistCached checklist = realm.where(ChecklistCached.class).findFirst();
             Gson gson = new Gson();
@@ -161,7 +208,7 @@ public class MyWishlistFragment extends BaseFragment {
                 if (checklistReceive.getData().size() != 0) {
                     Log.e("TEST", "3");
                     //Collections.reverse(notificationInfo);
-                    ChecklistAdapter mAdapter = new ChecklistAdapter(getActivity(), this, checklistReceive);
+                    mAdapter = new ChecklistAdapter(getActivity(), this, checklistReceive);
                     mListView.setAdapter(mAdapter);
                 /*mAdapter.setMode(Attributes.Mode.Single);*/
 
@@ -177,13 +224,15 @@ public class MyWishlistFragment extends BaseFragment {
                 no_list.setVisibility(View.VISIBLE);
             }
 
-        /*} catch (Exception e) {
+        } catch (Exception e) {
 
             Log.e("UnableToLoad", "Y");
+            have_list.setVisibility(View.GONE);
+            no_list.setVisibility(View.VISIBLE);
         } finally {
 
             realm.close();
-        }*/
+        }
 
 
 
@@ -231,6 +280,123 @@ public class MyWishlistFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         fragmentContainerId = ((FragmentContainerActivity) getActivity()).getFragmentContainerId();
     }*/
+
+    public String showList(){
+        List x = checklist();
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String stringContent = gson.toJson(x);
+        Log.e("LIST LIST", stringContent);
+
+        return stringContent;
+    }
+
+    public void insertList(int position, String i, String t, String c){
+
+        Log.e("position", String.valueOf(position));
+        surveyLists = new ArrayList<CheckList>();
+
+        for (int p = 0; p <= position; p++) {
+
+        CheckList info = new CheckList();
+        info.setCategoryid(i);
+        info.setIssue(t);
+        info.setWishlist(c);
+        surveyLists.add(info);
+
+        }
+    }
+
+    public void submitChecklist(){
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Eco Survey")
+                .setContentText("Confirm submit this checklist?")
+                .setCancelText("No")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+
+                        initiateLoading(getActivity());
+
+                        Realm realm2 = rController.getRealmInstanceContext(context);
+
+                        try {
+
+                            RealmResults<UserInfoCached> infoCached = realm2.where(UserInfoCached.class).findAll();
+                            //LocalSurvey survey = realm2.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                            if (infoCached.size() > 0) {
+
+                                Gson gson = new Gson();
+                                UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
+                                icNumber = obj.getData().getIcNumber();
+
+                                PostChecklistRequest postChecklistRequest = new PostChecklistRequest();
+                                postChecklistRequest.setIcNumber(icNumber);
+
+                                //parliment = survey.getSurveyParliment().split("/");
+                                //category = survey.getSurveyCategory().split("/");
+
+                                String content = showList();
+
+                                //postChecklistRequest.setLocationCode(parliment[1]);
+                                postChecklistRequest.setLocationCode("01001");
+                                //postChecklistRequest.setLocationName(parliment[0]);
+                                postChecklistRequest.setLocationName("PADANG BESAR");
+                                postChecklistRequest.setLocationType("PAR");
+                                postChecklistRequest.setContent(content);
+                                postChecklistRequest.setToken(preferences.getString("temp_token", ""));
+                                presenter.onPostChecklist(postChecklistRequest);
+                            }
+
+
+                        } finally {
+                            realm2.close();
+                        }
+
+
+
+                        sDialog.dismiss();
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
+    }
+
+    @Subscribe
+    public void onPostChecklistReceive(PostChecklistReceive postChecklistReceive) {
+
+        dismissLoading();
+
+        if (postChecklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            try {
+                Log.e("POST CHECKLIST", "Success");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            }
+
+        } else {
+
+            String error_msg = postChecklistReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+
+        }
+
+
+    }
+
+    public List checklist(){
+        return surveyLists;
+    }
 
     @Override
     public void onResume() {

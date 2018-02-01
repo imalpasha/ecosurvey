@@ -10,6 +10,7 @@ import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
@@ -61,6 +62,10 @@ public class MainPresenter {
 
     public void onChecklistRequest(ChecklistRequest data){
         apiRequestHandler.onChecklistRequest(data);
+    }
+
+    public void onPostChecklist(PostChecklistRequest dicMap) {
+        apiRequestHandler.onPostChecklistRequest(dicMap);
     }
 
     public void onPhotoRequest(PhotoRequest data){

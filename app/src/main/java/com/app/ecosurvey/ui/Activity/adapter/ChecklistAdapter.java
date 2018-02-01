@@ -6,13 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.ui.Activity.homepage.MyWishlistFragment;
+import com.app.ecosurvey.ui.Model.Adapter.Object.CheckList;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,6 +31,8 @@ public class ChecklistAdapter extends BaseAdapter {
     private final Activity context;
     private MyWishlistFragment frag;
     private final ChecklistReceive obj;
+    private String i,t,c;
+    List<CheckList> surveyLists;
 
     public String statusImage = "NOT_CLICK";
 
@@ -60,7 +67,7 @@ public class ChecklistAdapter extends BaseAdapter {
         TextView checklist_title;
 
         @Bind(R.id.checklist_cont)
-        TextView checklist_cont;
+        EditText checklist_cont;
 
         @Bind(R.id.container)
         LinearLayout container;
@@ -78,32 +85,34 @@ public class ChecklistAdapter extends BaseAdapter {
         ButterKnife.bind(vh, view);
         view.setTag(vh);
 
-        String t = obj.getData().get(position).getChecklist_text();
+        /*String t = obj.getData().get(position).getIssue();
         String c = obj.getData().get(position).getComment();
-        /*String s = obj.get(position).getSurveyStatus();
+        String s = obj.get(position).getSurveyStatus();
         String d = obj.get(position).getStatusCreated();
         String u = obj.get(position).getStatusUpdated();
 
         vh.survey_category.setText(c);*/
-        vh.checklist_title.setText(t);
-        vh.checklist_cont.setText(c);
 
-        /*Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => "+calendar.getTime());
+        if (obj.getData().get(position).getIssue()!= null){
+            i = obj.getData().get(position).getCategoryid();
+            //i = "A";
+            t = obj.getData().get(position).getIssue();
+            c = obj.getData().get(position).getWishlist();
 
-        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        String formattedDate = df.format(calendar.getTime());*/
+            vh.checklist_title.setText(t);
+            vh.checklist_cont.setText(c);
+            frag.insertList(position, i,t,vh.checklist_cont.getText().toString());
 
-        /*vh.survey_created.setText("Created : " + d);
-        vh.survey_updated.setText("Last Updated : " + u);
+        } else {
+            i = obj.getData().get(position).getId();
+            //i = "B";
+            t = obj.getData().get(position).getComment();
+            c = obj.getData().get(position).getCheck();
 
-
-        vh.survey_layout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                frag.editData(obj.get(position).getLocalSurveyID());
-            }
-        });*/
+            vh.checklist_title.setText(t);
+            vh.checklist_cont.setText(c);
+            frag.insertList(position, i,t,vh.checklist_cont.getText().toString());
+        }
 
         vh.checked_image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,5 +134,6 @@ public class ChecklistAdapter extends BaseAdapter {
 
         return view;
     }
+
 }
 

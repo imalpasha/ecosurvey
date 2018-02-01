@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/survey_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="10dp"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="1dp"
             android:background="@color/white"
             android:orientation="vertical">
 
@@ -21,6 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:background="@color/white"
                 android:weightSum="1">
 
                 <com.app.ecosurvey.utils.FontStyle.PlayTextView
@@ -38,8 +41,8 @@
 
                     <ImageView
                         android:id="@+id/checked_image"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/box_64"/>
 
                 </LinearLayout>
@@ -50,14 +53,17 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/default_colour"
+                android:background="@drawable/shadow_box"
                 android:visibility="gone"
                 android:padding="10dp">
 
-                <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                <com.app.ecosurvey.utils.FontStyle.PlayEditText
                     android:id="@+id/checklist_cont"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:paddingBottom="30dp"
+                    android:textSize="13sp"
                     android:text="Issue" />
 
             </LinearLayout>
