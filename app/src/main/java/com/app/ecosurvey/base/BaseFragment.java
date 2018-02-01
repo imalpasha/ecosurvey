@@ -28,12 +28,15 @@ import android.widget.TextView;
 
 import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
+import com.app.ecosurvey.ui.Activity.splash.SplashActivity;
 import com.app.ecosurvey.utils.DropDownItem;
 import com.app.ecosurvey.utils.DropMenuAdapter;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.app.ecosurvey.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -116,14 +119,40 @@ public class BaseFragment extends Fragment {
 
         if (act != null) {
             if (!act.isFinishing()) {
-                new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText(title)
-                        .setContentText(msg)
-                        .show();
+
+                if (act.getClass().getSimpleName().equals("SplashActivity")) {
+                    new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText(title)
+                            .setContentText(msg)
+                            .setConfirmText("Retry")
+                            .setCancelText(act.getString(R.string.home_close))
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    Intent retryActivity = new Intent(act, SplashActivity.class);
+                                    retryActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    act.startActivity(retryActivity);
+                                    act.overridePendingTransition(0, 0);
+                                    act.finish();
+                                    sDialog.dismiss();
+                                }
+                            })
+                            .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+                                    act.finish();
+                                    sDialog.dismiss();
+                                }
+                            })
+                            .show();
+
+                } else {
+                    new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("xx")
+                            .setContentText(msg)
+                            .show();
+                }
             }
-
-        } else {
-
         }
     }
 
@@ -303,5 +332,22 @@ public class BaseFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
+
+    public String getDate(){
+
+        String formattedDate;
+
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        formattedDate = df.format(calendar.getTime());
+
+        //2018-02-01 00:06:43
+
+        return formattedDate;
+    }
+
+
+
 
 }

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -116,7 +117,11 @@ public class SurveyReviewFragment extends BaseFragment {
 
     private String randomID;
     private String status;
-    private String formattedDate;
+    private String icNumber;
+
+    String[] parliment;
+    String[] category;
+
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -148,12 +153,6 @@ public class SurveyReviewFragment extends BaseFragment {
 
         setData();
 
-        Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => " + calendar.getTime());
-
-        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        formattedDate = df.format(calendar.getTime());
-
         surveySaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,7 +166,7 @@ public class SurveyReviewFragment extends BaseFragment {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
 
-                                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "", null);
+                                rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "", null);
 
                                 Intent intent = new Intent(getActivity(), TabActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -217,19 +216,17 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         Gson gson = new Gson();
                                         UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
-                                        String icNumber = obj.getData().getIcNumber();
+                                        icNumber = obj.getData().getIcNumber();
 
                                         PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
                                         postSurveyRequest.setIcNumber(icNumber);
 
-                                        String[] parliment = survey.getSurveyParliment().split("/");
-                                        String[] category = survey.getSurveyCategory().split("/");
-
-                                        Log.e("getSurveyCategory", "a" + survey.getSurveyCategory());
-                                        //List<Content> contents = new ArrayList<Content>();
+                                        parliment = survey.getSurveyParliment().split("/");
+                                        category = survey.getSurveyCategory().split("/");
 
                                         Content content = new Content();
                                         content.setCategoryid(category[1]);
+                                        content.setCategoryName(category[0]);
                                         content.setIssue(survey.getSurveyIssue());
                                         content.setWishlist(survey.getSurveyWishlist());
 
@@ -246,7 +243,7 @@ public class SurveyReviewFragment extends BaseFragment {
                                         postSurveyRequest.setLocationType("?");
                                         postSurveyRequest.setContent(stringContent);
                                         postSurveyRequest.setToken(preferences.getString("temp_token", ""));
-
+                                        //postSurveyRequest.setId(randomID);
                                         presenter.onPostSurvey(postSurveyRequest);
                                     }
 
@@ -408,9 +405,9 @@ public class SurveyReviewFragment extends BaseFragment {
 
                 //save info to realm with proper id
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
-                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getId());
+                rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "API-STATUS", postSurveyReceive.getData().getId());
 
-                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                /*new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Success.")
                         .setContentText("Survey successfully saved.")
                         .setConfirmText("Ok")
@@ -426,10 +423,10 @@ public class SurveyReviewFragment extends BaseFragment {
                                 sDialog.dismiss();
                             }
                         })
-                        .show();
+                        .show();*/
 
                 //get saved photo
-                /*List<MultipartBody.Part> listMultipart = new ArrayList<>();
+                List<MultipartBody.Part> listMultipart = new ArrayList<>();
                 Realm realm = rController.getRealmInstanceContext(context);
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
@@ -443,21 +440,21 @@ public class SurveyReviewFragment extends BaseFragment {
                         }
                     }
 
-
+                } catch (Exception e) {
+                    Log.e("ERROR_MSG", e.getMessage());
                 } finally {
                     realm.close();
                 }
 
                 //submit photo.
                 SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
-                surveyPhotoRequest.setIcnumber("7777");
-                surveyPhotoRequest.setLocationCode("01001");
-                surveyPhotoRequest.setLocationName("PADANG BESAR");
+                surveyPhotoRequest.setIcnumber(icNumber);
+                surveyPhotoRequest.setLocationCode(parliment[1]);
+                surveyPhotoRequest.setLocationName(parliment[0]);
                 surveyPhotoRequest.setLocationType("PAR");
-                surveyPhotoRequest.setParts(listMultipart);*/
+                surveyPhotoRequest.setParts(listMultipart);
 
-
-                //presenter.onSurveyPhotoRequest(surveyPhotoRequest);
+                presenter.onSurveyPhotoRequest(surveyPhotoRequest);
 
             } catch (Exception e) {
                 e.printStackTrace();

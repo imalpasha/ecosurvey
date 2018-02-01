@@ -28,6 +28,15 @@ public class LocalSurvey extends RealmObject {
     private String statusCreated;
     private String statusUpdated;
     private String videoPath;
+    private String photoUpdateDate;
+
+    public String getPhotoUpdateDate() {
+        return photoUpdateDate;
+    }
+
+    public void setPhotoUpdateDate(String photoUpdateDate) {
+        this.photoUpdateDate = photoUpdateDate;
+    }
 
     public String getVideoPath() {
         return videoPath;

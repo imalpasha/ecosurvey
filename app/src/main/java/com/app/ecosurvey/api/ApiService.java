@@ -7,7 +7,9 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
+import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
@@ -51,10 +53,16 @@ public interface ApiService {
     //Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Body  obj);
 
     @GET
-    Call<UserInfoReceive> userinfo(@Header("Authorization") String header,@Url String url);
+    Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Url String url);
 
     @GET
     Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Url String Url);
+
+    @GET
+    Call<PhotoReceive> photoRequest(@Header("Authorization") String header, @Url String Url);
+
+    @GET
+    Call<VideoReceive> videoRequest(@Header("Authorization") String header, @Url String Url);
 
     @FormUrlEncoded
     @POST("/api/v1/surveys")
@@ -80,8 +88,7 @@ public interface ApiService {
             @Part("icnumber") String icnumber,
             @Part("locationCode") String locationCode,
             @Part("locationName") String locationName,
-            @Part("photos") List<MultipartBody.Part> files);
-
+            @Part("photos[]") List<MultipartBody.Part> files);
 
     /*@Multipart
     @POST("user/updateprofile")

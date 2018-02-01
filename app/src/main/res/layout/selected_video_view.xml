@@ -24,7 +24,18 @@
         android:scaleType="centerInside"
         android:src="@drawable/upload_icon" />-->
 
+    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+        android:id="@+id/txtVideoPathURL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginRight="0.5dp"
+        android:background="@color/grey_light"
+        android:paddingRight="10dp"
+        android:textSize="15sp" />
+
     <ImageView
+        android:visibility="gone"
         android:id="@+id/txtVideoPath"
         android:layout_width="match_parent"
         android:layout_height="120dp" />
