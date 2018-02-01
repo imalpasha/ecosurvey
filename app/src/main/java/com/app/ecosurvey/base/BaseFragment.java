@@ -34,7 +34,9 @@ import com.app.ecosurvey.utils.DropMenuAdapter;
 import com.app.ecosurvey.utils.SharedPrefManager;
 import com.app.ecosurvey.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -330,5 +332,22 @@ public class BaseFragment extends Fragment {
         InputMethodManager imm = (InputMethodManager) act.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
+
+    public String getDate(){
+
+        String formattedDate;
+
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        formattedDate = df.format(calendar.getTime());
+
+        //2018-02-01 00:06:43
+
+        return formattedDate;
+    }
+
+
+
 
 }

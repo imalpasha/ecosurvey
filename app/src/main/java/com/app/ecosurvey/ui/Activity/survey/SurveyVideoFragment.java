@@ -209,7 +209,7 @@ public class SurveyVideoFragment extends BaseFragment {
         captureImageInitialization();
 
         if (status != null) {
-            if (status.equalsIgnoreCase("EDIT")) {
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 block1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -305,18 +305,17 @@ public class SurveyVideoFragment extends BaseFragment {
                         }
 
                         initiateVideoAdapter(list);
-                    } else {
-
-                        //need to verify photo_updated_date before call this.
-                        loadVideoFromAPI();
                     }
-
-                    //txtSurveyIssue.setText(survey.getSurveyIssue());
 
                 } finally {
                     realm.close();
                 }
 
+            } else if (status.equalsIgnoreCase("EDIT_API")) {
+                //survey from api.since api data more updated.
+                //nd tp call image to validate with local image.
+                //later check internet connection
+                loadVideoFromAPI();
             }
         }
 

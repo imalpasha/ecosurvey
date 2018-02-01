@@ -165,7 +165,7 @@ public class CategoryParlimenFragment extends BaseFragment {
 
 
         if (status != null) {
-            if (status.equalsIgnoreCase("EDIT")) {
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 block2.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -232,7 +232,7 @@ public class CategoryParlimenFragment extends BaseFragment {
     public void autoFill() {
 
         if (status != null) {
-            if (status.equalsIgnoreCase("EDIT")) {
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 //try fetch realm data.
                 Realm realm = rController.getRealmInstanceContext(context);
@@ -241,6 +241,9 @@ public class CategoryParlimenFragment extends BaseFragment {
 
                     String[] parliment = survey.getSurveyParliment().split("/");
                     String[] category = survey.getSurveyCategory().split("/");
+
+                    Log.e("category", survey.getSurveyCategory());
+                    Log.e("parlimen", survey.getSurveyParliment());
 
                     Log.e(survey.getSurveyParliment(), survey.getSurveyCategory());
 

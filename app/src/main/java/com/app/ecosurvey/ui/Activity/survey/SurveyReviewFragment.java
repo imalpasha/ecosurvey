@@ -117,7 +117,6 @@ public class SurveyReviewFragment extends BaseFragment {
 
     private String randomID;
     private String status;
-    private String formattedDate;
     private String icNumber;
 
     String[] parliment;
@@ -154,12 +153,6 @@ public class SurveyReviewFragment extends BaseFragment {
 
         setData();
 
-        Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => " + calendar.getTime());
-
-        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        formattedDate = df.format(calendar.getTime());
-
         surveySaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,7 +166,7 @@ public class SurveyReviewFragment extends BaseFragment {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
 
-                                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "", null);
+                                rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "", null);
 
                                 Intent intent = new Intent(getActivity(), TabActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -412,7 +405,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
                 //save info to realm with proper id
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
-                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getData().getId());
+                rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "API-STATUS", postSurveyReceive.getData().getId());
 
                 /*new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Success.")
@@ -447,7 +440,6 @@ public class SurveyReviewFragment extends BaseFragment {
                         }
                     }
 
-
                 } catch (Exception e) {
                     Log.e("ERROR_MSG", e.getMessage());
                 } finally {
@@ -462,8 +454,7 @@ public class SurveyReviewFragment extends BaseFragment {
                 surveyPhotoRequest.setLocationType("PAR");
                 surveyPhotoRequest.setParts(listMultipart);
 
-
-                //presenter.onSurveyPhotoRequest(surveyPhotoRequest);
+                presenter.onSurveyPhotoRequest(surveyPhotoRequest);
 
             } catch (Exception e) {
                 e.printStackTrace();

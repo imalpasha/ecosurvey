@@ -185,7 +185,6 @@ public class RealmController {
 
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
-        Log.e("SAVED", category + "_" + parliment);
         survey.setSurveyCategory(category);
         survey.setSurveyParliment(parliment);
 
@@ -313,8 +312,8 @@ public class RealmController {
                 survey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
                 survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
 
-                survey.setSurveyCategory(listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid() + "/" + categoryName);
-                survey.setSurveyParliment(listSurveyReceive.getData().get(x).getLocationCode() + "/" + parlimenName);
+                survey.setSurveyCategory(categoryName + "/" + listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
+                survey.setSurveyParliment(parlimenName + "/" + listSurveyReceive.getData().get(x).getLocationCode());
                 survey.setSurveyStatus("API-STATUS");
                 survey.setSurveyLocalProgress("Completed");
 
@@ -344,6 +343,18 @@ public class RealmController {
 
         realm.close();
 
+    }
+
+
+    public void surveyPhotoUpdate(Context context, String id, String time) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        realm.beginTransaction();
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        survey.setPhotoUpdateDate(time);
+        realm.commitTransaction();
+        realm.close();
     }
 
     public void clearCachedResult(Context act) {

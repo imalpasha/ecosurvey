@@ -56,7 +56,7 @@ public class MainPresenter {
     }
 
     public void onSurveyPhotoRequest(SurveyPhotoRequest data) {
-        //apiRequestHandler.onSurveyPhotoRequest(data);
+        apiRequestHandler.onSurveyPhotoRequest(data);
     }
 
     public void onChecklistRequest(ChecklistRequest data){

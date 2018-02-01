@@ -120,6 +120,8 @@ public class SurveyPhotoFragment extends BaseFragment {
     private int changeImagePosition;
     private ArrayList<SelectedImagePath> list = new ArrayList<SelectedImagePath>();
     private Boolean changeImageTrue = false;
+    private Realm realm;
+
 
     public static SurveyPhotoFragment newInstance(Bundle bundle) {
 
@@ -144,12 +146,12 @@ public class SurveyPhotoFragment extends BaseFragment {
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+        realm = rController.getRealmInstanceContext(context);
 
         setupBlock(getActivity(), block4);
         autoFill2();
 
         //try fetch realm data.
-        Realm realm = rController.getRealmInstanceContext(context);
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
             Log.e("SurveyCategory", survey.getSurveyCategory());
@@ -179,28 +181,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     }
 
                     rController.surveyLocalStorageS4(context, randomID, imageList);
-                    Log.e("TEST", "LIST_NOT_NULL");
-/*
-                    if (list != null) {
-                        Gson gsonUserInfo = new Gson();
-                        String gsonImage = gsonUserInfo.toJson(list);
-
-                        Log.e("TEST_GSON_IMAGE", gsonImage);
-                        rController.surveyLocalStorageS4(context, randomID, gsonImage);
-
-                        Log.e("TEST", "DONE_S4_REALM");
-                        Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
-                        intent.putExtra("LocalSurveyID", randomID);
-                        intent.putExtra("Status", status);
-                        getActivity().startActivity(intent);
-
-                    } else {
-                        Log.e("TEST", "LIST_NULL");
-                    }
-*/
 
                 } catch (Exception e) {
-
                     Log.e("SaveImage", "Error: " + e.getMessage());
                 } finally {
 
@@ -210,11 +192,6 @@ public class SurveyPhotoFragment extends BaseFragment {
                     getActivity().startActivity(intent);
                 }
 
-                /*initiateLoading(getActivity());
-                LoginRequest loginRequest = new LoginRequest();
-                loginRequest.setUserID(txtAuthID.getText().toString());
-                loginRequest.setUserPassword(txtAuthPassword.getText().toString());
-                presenter.onLoginRequest(loginRequest);*/
             }
         });
 
@@ -238,7 +215,7 @@ public class SurveyPhotoFragment extends BaseFragment {
         captureImageInitialization();
 
         if (status != null) {
-            if (status.equalsIgnoreCase("EDIT")) {
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 block1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -303,11 +280,14 @@ public class SurveyPhotoFragment extends BaseFragment {
     public void autoFill2() {
 
         if (status != null) {
+
+            //survey from local-since local more updated.
             if (status.equalsIgnoreCase("EDIT")) {
+
+                //nd to compare here
 
                 //try fetch realm data.
                 Log.e("edit", "edit");
-                Realm realm = rController.getRealmInstanceContext(context);
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
@@ -323,20 +303,18 @@ public class SurveyPhotoFragment extends BaseFragment {
                             Log.e("pathpath", parts[x]);
                             list.add(selectedImagePath);
                         }
-
                         initiateImageAdapter(list);
-                    } else {
-
-                        //need to verify photo_updated_date before call this.
-                        loadImageFromAPI();
                     }
-
-                    //txtSurveyIssue.setText(survey.getSurveyIssue());
 
                 } finally {
                     realm.close();
                 }
 
+            } else if (status.equalsIgnoreCase("EDIT_API")) {
+                //survey from api.since api data more updated.
+                //nd tp call image to validate with local image.
+                //later check internet connection
+                loadImageFromAPI();
             }
         }
 
@@ -350,7 +328,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         PhotoRequest photoRequest = new PhotoRequest();
         photoRequest.setToken(token);
-        photoRequest.setUrl("/api/v1/surveys/photos/" + randomID);
+        photoRequest.setUrl("/api/v1/surveys/photos/" + "FFCC12BC-1E9F-3B8B-ADE8-38234BFA5806");
         presenter.onPhotoRequest(photoRequest);
 
     }
@@ -509,21 +487,51 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     }
 
-
     @Subscribe
     public void onPhotoReceive(PhotoReceive photoReceive) {
 
-        dismissLoading();
+
+        //compare api date with local date.
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+        if (survey.getPhotoUpdateDate() != null) {
+            Log.e("LOCAL_DATE", survey.getPhotoUpdateDate());
+        }
 
         if (photoReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
 
-                for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
-                    SelectedImagePath selectedImagePath = new SelectedImagePath();
-                    selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
-                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                    Log.e("pathpath", photoReceive.getData().getContent().getImages().get(x));
-                    list.add(selectedImagePath);
+                //wait
+                dismissLoading();
+
+                if (true) {
+                    //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+
+                    Log.e("API_DATE", photoReceive.getData().getUpdated_at());
+                    Log.e("LOCAL_DATE", survey.getPhotoUpdateDate());
+
+                    for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                        SelectedImagePath selectedImagePath = new SelectedImagePath();
+                        selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                        Log.e("pathpath", photoReceive.getData().getContent().getImages().get(x));
+                        list.add(selectedImagePath);
+                    }
+
+                } else {
+
+                    String imageList = survey.getImagePath();
+                    if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                        String[] parts = imageList.split("___");
+                        //insert path to object
+                        for (int x = 0; x < parts.length; x++) {
+                            SelectedImagePath selectedImagePath = new SelectedImagePath();
+                            selectedImagePath.setImagePath(parts[x]);
+                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                            Log.e("pathpath", parts[x]);
+                            list.add(selectedImagePath);
+                        }
+                    }
                 }
 
                 initiateImageAdapter(list);
@@ -531,6 +539,8 @@ public class SurveyPhotoFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            } finally {
+                realm.close();
             }
 
         } else {
@@ -567,6 +577,9 @@ public class SurveyPhotoFragment extends BaseFragment {
                 }
 
                 if (true) {
+
+                    //once initiate from here.update the updated_date for photo
+                    rController.surveyPhotoUpdate(context, randomID, getDate());
                     initiateImageAdapter(list);
                 }
 
@@ -617,6 +630,8 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             if (list.size() == 0) {
                 list.add(selectedImagePath);
+
+                rController.surveyPhotoUpdate(context, randomID, getDate());
                 initiateImageAdapter(list);
             } else {
                 if (changeImageTrue) {

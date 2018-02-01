@@ -275,11 +275,11 @@ public class ApiRequestHandler {
         });
     }
 
-    /*@Subscribe
+    @Subscribe
     public void onSurveyPhotoRequest(final SurveyPhotoRequest event) {
 
 
-        Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getIcnumber(), event.getLocationCode(), event.getLocationName(), "FrsApi " + event.getToken());
+        Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getIcnumber(), event.getLocationCode(), event.getLocationName(),event.getParts());
         call.enqueue(new Callback<SurveyPhotoReceive>() {
 
             //succces retrieve information
@@ -310,7 +310,7 @@ public class ApiRequestHandler {
 
             }
         });
-    }*/
+    }
 
     @Subscribe
     public void onChecklistRequest(final ChecklistRequest event) {

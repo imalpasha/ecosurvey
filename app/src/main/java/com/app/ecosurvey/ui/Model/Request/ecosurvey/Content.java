@@ -6,7 +6,6 @@ package com.app.ecosurvey.ui.Model.Request.ecosurvey;
 
 public class Content {
 
-
     private String categoryName;
     private String issue;
     private String wishlist;

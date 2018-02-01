@@ -88,8 +88,7 @@ public interface ApiService {
             @Part("icnumber") String icnumber,
             @Part("locationCode") String locationCode,
             @Part("locationName") String locationName,
-            @Part("photos") List<MultipartBody.Part> files);
-
+            @Part("photos[]") List<MultipartBody.Part> files);
 
     /*@Multipart
     @POST("user/updateprofile")

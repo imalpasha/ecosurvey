@@ -138,7 +138,7 @@ public class SurveyIssueFragment extends BaseFragment {
         });
 
         if (status != null) {
-            if (status.equalsIgnoreCase("EDIT")) {
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 block1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -238,7 +238,7 @@ public class SurveyIssueFragment extends BaseFragment {
     public void autoFill(){
 
         if (status != null){
-            if (status.equalsIgnoreCase("EDIT")){
+            if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")){
 
                 //try fetch realm data.
                 Realm realm = rController.getRealmInstanceContext(context);

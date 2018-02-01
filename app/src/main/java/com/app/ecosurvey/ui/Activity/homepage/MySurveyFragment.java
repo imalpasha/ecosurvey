@@ -216,7 +216,7 @@ public class MySurveyFragment extends BaseFragment {
     public void editData(String randomID) {
         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
         intent.putExtra("LocalSurveyID", randomID);
-        intent.putExtra("Status", "EDIT");
+        intent.putExtra("Status", "EDIT_API");
         getActivity().startActivity(intent);
     }
 
@@ -256,10 +256,10 @@ public class MySurveyFragment extends BaseFragment {
     public void getData() {
         //call from Realm
         Realm realm = rController.getRealmInstanceContext(context);
-        final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
-
+        //final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
+        //RealmResults<LocalSurvey> list = realm.where(LocalSurvey.class).sort("date",Sort.DESCENDING).findAll();
+        RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAllSorted("statusUpdated",Sort.ASCENDING);
         if (result2.size() != 0) {
-            Log.e("totalsurvey", Integer.toString(result2.size()));
 
             //convert
             List<SurveyList> surveyLists = new ArrayList<SurveyList>();
@@ -303,45 +303,6 @@ public class MySurveyFragment extends BaseFragment {
         myRecyclerView.setLayoutManager(MyLayoutManager);
 
     }
-    /*@Subscribe
-    public void onLoginReceive(LoginReceive loginReceive) {
-
-        dismissLoading();
-
-        if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
-            try {
-                String status = loginReceive.getStatus();
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("status", status);
-                editor.putBoolean("auth_status", true);
-                editor.putBoolean("just_login", true);
-                editor.apply();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
-            }
-
-        } else {
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("auth_status", false);
-            editor.apply();
-
-            String error_msg = loginReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
-
-        }
-
-
-    }*/
-
-    /*@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        fragmentContainerId = ((FragmentContainerActivity) getActivity()).getFragmentContainerId();
-    }*/
 
     @Override
     public void onResume() {
