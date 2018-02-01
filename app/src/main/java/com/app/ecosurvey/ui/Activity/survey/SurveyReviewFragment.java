@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,6 +26,7 @@ import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoContentRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
@@ -151,7 +153,6 @@ public class SurveyReviewFragment extends BaseFragment {
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
 
-        realm = rController.getRealmInstanceContext(context);
         setupBlock(getActivity(), block6);
         setData();
 
@@ -169,13 +170,13 @@ public class SurveyReviewFragment extends BaseFragment {
                             public void onClick(SweetAlertDialog sDialog) {
 
                                 rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "", null);
+                                sDialog.dismiss();
 
                                 Intent intent = new Intent(getActivity(), TabActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.putExtra("ROLE", preferences.getString("user_role", ""));
                                 getActivity().startActivity(intent);
 
-                                sDialog.dismiss();
                             }
                         })
                         .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
@@ -205,14 +206,14 @@ public class SurveyReviewFragment extends BaseFragment {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
 
-                                initiateLoading(getActivity());
+                                initiateLoadingMsg(getActivity(),"Submitting Survey...");
 
-                                Realm realm2 = rController.getRealmInstanceContext(context);
+                                realm = rController.getRealmInstanceContext(context);
 
                                 try {
 
-                                    RealmResults<UserInfoCached> infoCached = realm2.where(UserInfoCached.class).findAll();
-                                    LocalSurvey survey = realm2.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+                                    RealmResults<UserInfoCached> infoCached = realm.where(UserInfoCached.class).findAll();
+                                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
                                     if (infoCached.size() > 0) {
 
@@ -251,7 +252,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
 
                                 } finally {
-                                    realm2.close();
+                                    realm.close();
                                 }
 
 
@@ -345,6 +346,8 @@ public class SurveyReviewFragment extends BaseFragment {
 
     public void setData() {
 
+        realm = rController.getRealmInstanceContext(context);
+
         //try fetch realm data.
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
@@ -367,12 +370,6 @@ public class SurveyReviewFragment extends BaseFragment {
 
 
             }
-
-            //Log.e("SurveyWishlist", survey.getSurveyWishlist());
-
-            //for (int x = 0; x < survey.getImagePath().size(); x++) {
-            //    Log.e("SurveyImagePath", survey.getImagePath().get(x).toString());
-            //}
 
         } finally {
             realm.close();
@@ -398,36 +395,20 @@ public class SurveyReviewFragment extends BaseFragment {
     @Subscribe
     public void onPostSurveyReceive(PostSurveyReceive postSurveyReceive) {
 
-        dismissLoading();
 
         if (postSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
 
+                dismissLoading();
+
                 //save info to realm with proper id
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
                 rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "API-STATUS", postSurveyReceive.getData().getId());
-
-                /*new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                        .setTitleText("Success.")
-                        .setContentText("Survey successfully saved.")
-                        .setConfirmText("Ok")
-                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sDialog) {
-
-                                Intent intent = new Intent(getActivity(), TabActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
-                                getActivity().startActivity(intent);
-
-                                sDialog.dismiss();
-                            }
-                        })
-                        .show();*/
+                randomID = postSurveyReceive.getData().getId();
 
                 //get saved photo
                 List<MultipartBody.Part> listMultipart = new ArrayList<>();
-                //try {
+                try {
                 LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", postSurveyReceive.getData().getId()).findFirst();
                 String imageList = survey.getImagePath();
 
@@ -435,15 +416,13 @@ public class SurveyReviewFragment extends BaseFragment {
                 for (int b = 0; b < parts.length; b++) {
                     if (parts[b] != null) {
                         Uri myUri = Uri.parse(parts[b]);
-                        listMultipart.add(prepareFilePart("photo[]", myUri));
+                        listMultipart.add(prepareFilePart("photos[]", myUri));
                     }
                 }
 
-                //} catch (Exception e) {
-                //    Log.e("ERROR_MSG", e.getMessage());
-                //} finally {
-                realm.close();
-                //}
+                } catch (Exception e) {
+                    Log.e("ERROR_MSG", e.getMessage());
+                }
 
                 //submit photo.
                 SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
@@ -454,16 +433,19 @@ public class SurveyReviewFragment extends BaseFragment {
                 Gson gson = new GsonBuilder().disableHtmlEscaping().create();
                 String stringContent = gson.toJson(surveyPhotoContentRequest);
 
-                HashMap<String, Object> map = new HashMap<>();
-                map.put("icnumber", icNumber);
-                map.put("locationCode", parliment[1]);
-                map.put("locationName", parliment[0]);
-                map.put("locationType", "PAR");
+                HashMap<String, RequestBody> map = new HashMap<>();
+                map.put("icnumber", toRequestBody(icNumber));
+                map.put("locationCode", toRequestBody(parliment[1]));
+                map.put("locationName", toRequestBody(parliment[0]));
+                map.put("locationType", toRequestBody("PAR"));
+                map.put("id", toRequestBody(postSurveyReceive.getData().getId()));
 
+                initiateLoadingMsg(getActivity(),"Uploading Photo...");
                 SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
                 surveyPhotoRequest.setStringContent(stringContent);
                 surveyPhotoRequest.setMap(map);
                 surveyPhotoRequest.setParts(listMultipart);
+                surveyPhotoRequest.setToken(preferences.getString("temp_token", ""));
 
                 presenter.onSurveyPhotoRequest(surveyPhotoRequest);
 
@@ -482,18 +464,75 @@ public class SurveyReviewFragment extends BaseFragment {
 
     }
 
+    @Subscribe
+    public void onSurveyPhotoReceive(SurveyPhotoReceive surveyPhotoReceive) {
+
+        dismissLoading();
+        if (surveyPhotoReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            try {
+
+                 new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Success.")
+                        .setContentText("Survey successfully saved.")
+                        .setConfirmText("Ok")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                sDialog.dismiss();
+
+                                Intent intent = new Intent(getActivity(), TabActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                getActivity().startActivity(intent);
+
+                            }
+                        })
+                        .show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            }
+
+        } else {
+
+            String error_msg = surveyPhotoReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+
+        }
+
+
+    }
+
+    public static RequestBody toRequestBody(String val){
+
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"),val);
+        return body;
+    }
+
     @NonNull
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
         Log.e("X", fileUri.toString());
         File file = new File(fileUri.getPath());
+        Log.e("X", Long.toString(file.length()));
 
         // create RequestBody instance from file
-        RequestBody requestFile = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), file);
-
+        RequestBody requestFile = RequestBody.create(null, file);
+//MediaType.parse(getActivity().getContentResolver().getType(fileUri)
         // MultipartBody.Part is used to send also the actual file name
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+    }
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 
 

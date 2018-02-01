@@ -71,12 +71,12 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
 
         holder.survey_category.setText(c);
 
-        String upToNCharacters0 = i.substring(0, Math.min(i.length(), 10));
+        String upToNCharacters0 = i.substring(0, Math.min(i.length(), 45));
         holder.survey_issue.setText(fromHtml(upToNCharacters0 + "..."), CheckBox.BufferType.SPANNABLE);
 
 
         if (obj.get(position).getSurveyStatus().equalsIgnoreCase("")) {
-            holder.survey_status.setText(s);
+            holder.survey_status.setText("Locally Saved.");
             //holder.survey_status_api.setVisibility(View.GONE);
         } else {
             holder.survey_status.setText(obj.get(position).getSurveyStatus());
@@ -96,7 +96,7 @@ public class SurveyListAdapter extends RecyclerView.Adapter<SurveyListAdapter.My
         holder.survey_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                frag.editData(obj.get(position).getLocalSurveyID());
+                frag.editData(obj.get(position).getLocalSurveyID(),obj.get(position).getSurveyStatus());
             }
         });
 

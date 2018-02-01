@@ -113,18 +113,12 @@ public class MySurveyFragment extends BaseFragment {
 
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
-        Calendar calendar = Calendar.getInstance();
-        System.out.println("Current time => " + calendar.getTime());
-
-        SimpleDateFormat df = new SimpleDateFormat("dd MMM yyyy HH:mm");
-        final String formattedDate = df.format(calendar.getTime());
-
         createSurveyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 String randomID = UUID.randomUUID().toString();
-                rController.surveyLocalStorageS0(context, randomID, "local_progress", formattedDate);
+                rController.surveyLocalStorageS0(context, randomID, "local_progress", getDate());
 
                 Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
                 intent.putExtra("LocalSurveyID", randomID);
@@ -213,10 +207,14 @@ public class MySurveyFragment extends BaseFragment {
 
     }
 
-    public void editData(String randomID) {
+    public void editData(String randomID,String status) {
         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
         intent.putExtra("LocalSurveyID", randomID);
-        intent.putExtra("Status", "EDIT_API");
+        if (status.equalsIgnoreCase("")) {
+            intent.putExtra("Status", "EDIT");
+        } else {
+            intent.putExtra("Status", "EDIT_API");
+        }
         getActivity().startActivity(intent);
     }
 
@@ -258,7 +256,7 @@ public class MySurveyFragment extends BaseFragment {
         Realm realm = rController.getRealmInstanceContext(context);
         //final RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAll();
         //RealmResults<LocalSurvey> list = realm.where(LocalSurvey.class).sort("date",Sort.DESCENDING).findAll();
-        RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAllSorted("statusUpdated",Sort.ASCENDING);
+        RealmResults<LocalSurvey> result2 = realm.where(LocalSurvey.class).equalTo("surveyLocalProgress", "Completed").findAllSorted("statusUpdated", Sort.ASCENDING);
         if (result2.size() != 0) {
 
             //convert

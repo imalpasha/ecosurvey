@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
@@ -192,16 +193,17 @@ public class SurveyVideoFragment extends BaseFragment {
         openImageAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
-
+                //dialog.show();
+                Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
+                Log.e("toast","Y");
             }
         });
 
         openImageActionSmall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
-
+                //dialog.show();
+                Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
             }
         });
 

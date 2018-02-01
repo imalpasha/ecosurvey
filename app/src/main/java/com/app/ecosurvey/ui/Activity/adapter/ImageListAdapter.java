@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.ecosurvey.R;
@@ -63,6 +64,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
                     @Override
                     public void onSuccess() {
                         Log.v("Picasso", "Fetch image");
+                        holder.imageLoading.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -74,6 +76,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
                                     @Override
                                     public void onSuccess() {
                                         Log.v("Picasso", "Fetch image");
+                                        holder.imageLoading.setVisibility(View.GONE);
                                     }
 
                                     @Override
@@ -98,6 +101,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         final TextView actionRemove;
         final TextView actionChange;
         final ImageView selectedImage;
+        final ProgressBar imageLoading;
 
 
         public MyViewHolder(View insideMeal) {
@@ -106,6 +110,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
             actionRemove = (TextView) insideMeal.findViewById(R.id.txtActionRemove);
             actionChange = (TextView) insideMeal.findViewById(R.id.txtActionChange);
             selectedImage = (ImageView) insideMeal.findViewById(R.id.selectedImage);
+            imageLoading = (ProgressBar) insideMeal.findViewById(R.id.imageLoading);
 
             actionRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
