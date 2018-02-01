@@ -207,7 +207,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostSurveyRequest(final PostSurveyRequest event) {
 
-        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(),event.getLocationCode(),event.getLocationName(),event.getLocationType(),event.getContent(), "FrsApi " + event.getToken());
+        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
         call.enqueue(new Callback<PostSurveyReceive>() {
 
             //succces retrieve information
@@ -279,7 +279,7 @@ public class ApiRequestHandler {
     public void onSurveyPhotoRequest(final SurveyPhotoRequest event) {
 
 
-        Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getIcnumber(), event.getLocationCode(), event.getLocationName(),event.getParts());
+        Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getMap(), event.getParts());
         call.enqueue(new Callback<SurveyPhotoReceive>() {
 
             //succces retrieve information
@@ -315,7 +315,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onChecklistRequest(final ChecklistRequest event) {
 
-        Call<ChecklistReceive> call = apiService.checklist("FrsApi "+event.getToken(), event.getUrl());
+        Call<ChecklistReceive> call = apiService.checklist("FrsApi " + event.getToken(), event.getUrl());
         call.enqueue(new Callback<ChecklistReceive>() {
 
             //succces retrieve information
@@ -350,7 +350,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPhotoRequest(final PhotoRequest event) {
 
-        Call<PhotoReceive> call = apiService.photoRequest("FrsApi "+event.getToken(), event.getUrl());
+        Call<PhotoReceive> call = apiService.photoRequest("FrsApi " + event.getToken(), event.getUrl());
         call.enqueue(new Callback<PhotoReceive>() {
 
             //succces retrieve information
@@ -385,7 +385,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onVideoRequest(final VideoRequest event) {
 
-        Call<VideoReceive> call = apiService.videoRequest("FrsApi "+event.getToken(), event.getUrl());
+        Call<VideoReceive> call = apiService.videoRequest("FrsApi " + event.getToken(), event.getUrl());
         call.enqueue(new Callback<VideoReceive>() {
 
             //succces retrieve information
@@ -416,7 +416,6 @@ public class ApiRequestHandler {
             }
         });
     }
-
 
 
 }

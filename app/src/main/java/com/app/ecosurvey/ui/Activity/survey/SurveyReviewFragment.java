@@ -25,6 +25,7 @@ import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.SurveyPhotoContentRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
@@ -53,6 +54,8 @@ import io.realm.RealmResults;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.http.Part;
+import retrofit2.http.PartMap;
 
 public class SurveyReviewFragment extends BaseFragment {
 
@@ -447,11 +450,23 @@ public class SurveyReviewFragment extends BaseFragment {
                 }
 
                 //submit photo.
+                SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
+                surveyPhotoContentRequest.setIcnumber(icNumber);
+                surveyPhotoContentRequest.setLocationCode(parliment[1]);
+                surveyPhotoContentRequest.setLocationName(parliment[0]);
+
+                Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+                String stringContent = gson.toJson(surveyPhotoContentRequest);
+
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("icnumber", icNumber);
+                map.put("locationCode", parliment[1]);
+                map.put("locationName", parliment[0]);
+                map.put("locationType", "PAR");
+
                 SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
-                surveyPhotoRequest.setIcnumber(icNumber);
-                surveyPhotoRequest.setLocationCode(parliment[1]);
-                surveyPhotoRequest.setLocationName(parliment[0]);
-                surveyPhotoRequest.setLocationType("PAR");
+                surveyPhotoRequest.setStringContent(stringContent);
+                surveyPhotoRequest.setMap(map);
                 surveyPhotoRequest.setParts(listMultipart);
 
                 presenter.onSurveyPhotoRequest(surveyPhotoRequest);
