@@ -6,15 +6,16 @@ package com.app.ecosurvey.ui.Model.Request.ecosurvey;
 
 public class Content {
 
-    private Content content;
-
-    public Content getContent() {
+    public Content[] getContent() {
         return content;
     }
 
-    public void setContent(Content content) {
+    public void setContent(Content[] content) {
         this.content = content;
     }
+
+    private Content content[];
+
 
 
         private String categoryid;

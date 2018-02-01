@@ -1,5 +1,6 @@
 package com.app.ecosurvey.ui.Model.Request.ecosurvey;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -12,17 +13,35 @@ public class PostSurveyRequest {
     private String locationCode;
     private String locationName;
     private String locationType;
+    private String token;
 
-    public List<Content> getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(List<Content> content) {
+    public void setContent(String content) {
         this.content = content;
     }
 
-    private List<Content> content;
-    private String token;
+    private String content;
+
+    HashMap<String, Object> dicmap;
+
+    public HashMap<String, Object> getDicmap() {
+        return dicmap;
+    }
+
+    public void setDicmap(HashMap<String, Object> dicmap) {
+        this.dicmap = dicmap;
+    }
+
+    /*public Content getContent() {
+        return content[];
+    }
+
+    public void setContent(Content content[]) {
+        this.content = content;
+    }*/
 
     public String getIcNumber() {
         return IcNumber;
@@ -65,7 +84,6 @@ public class PostSurveyRequest {
     }
 
 
-
     /*Initiate Class*/
     public PostSurveyRequest() {
 
@@ -78,6 +96,7 @@ public class PostSurveyRequest {
         locationName = data.getLocationName();
         locationType = data.getLocationType();
         token = data.getToken();
+        dicmap = data.getDicmap();
         content = data.getContent();
 
     }

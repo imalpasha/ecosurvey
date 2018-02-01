@@ -10,6 +10,17 @@ public class PostSurveyReceive {
     private String apiStatus;
     private String status;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id;
+
+
     public String getStatus() {
         return status;
     }
@@ -43,5 +54,6 @@ public class PostSurveyReceive {
     public PostSurveyReceive(PostSurveyReceive data) {
         this.status = data.getStatus();
         this.apiStatus = data.getApiStatus();
+        this.id = data.getId();
     }
 }

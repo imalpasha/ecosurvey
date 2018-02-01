@@ -13,6 +13,8 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
+import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
@@ -23,11 +25,18 @@ import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.util.HashMap;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Header;
+import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public class ApiRequestHandler {
 
@@ -86,7 +95,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onLoginRequest(final LoginRequest event) {
 
-        Call<LoginReceive> call = apiService.login(event,"FrsApi "+event.getToken());
+        Call<LoginReceive> call = apiService.login(event, "FrsApi " + event.getToken());
         call.enqueue(new Callback<LoginReceive>() {
 
             //succces retrieve information
@@ -122,7 +131,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onCategoryRequest(final CategoryRequest event) {
 
-        Call<CategoryReceive> call = apiService.category("FrsApi "+event.getToken());
+        Call<CategoryReceive> call = apiService.category("FrsApi " + event.getToken());
         call.enqueue(new Callback<CategoryReceive>() {
 
             //succces retrieve information
@@ -158,7 +167,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onUserInfoRequest(final UserInfoRequest event) {
 
-        Call<UserInfoReceive> call = apiService.userinfo("FrsApi "+event.getToken(),event.getUrl());
+        Call<UserInfoReceive> call = apiService.userinfo("FrsApi " + event.getToken(), event.getUrl());
         call.enqueue(new Callback<UserInfoReceive>() {
 
             //succces retrieve information
@@ -194,7 +203,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostSurveyRequest(final PostSurveyRequest event) {
 
-        Call<PostSurveyReceive> call = apiService.postSurvey(event,"FrsApi "+event.getToken());
+        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(),event.getLocationCode(),event.getLocationName(),event.getLocationType(),event.getContent(), "FrsApi " + event.getToken());
         call.enqueue(new Callback<PostSurveyReceive>() {
 
             //succces retrieve information
@@ -220,7 +229,7 @@ public class ApiRequestHandler {
             public void onFailure(Call<PostSurveyReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", "DOUBLE_N");
+                Log.e("SUCCESS", t.getMessage());
 
             }
         });
@@ -230,7 +239,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onListSurveyRequest(final ListSurveyRequest event) {
 
-        Call<ListSurveyReceive> call = apiService.listSurvey("FrsApi "+event.getToken(),event.getUrl());
+        Call<ListSurveyReceive> call = apiService.listSurvey("FrsApi " + event.getToken(), event.getUrl());
         call.enqueue(new Callback<ListSurveyReceive>() {
 
             //succces retrieve information
@@ -256,16 +265,51 @@ public class ApiRequestHandler {
             public void onFailure(Call<ListSurveyReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS",t.getMessage());
+                Log.e("SUCCESS", t.getMessage());
 
             }
         });
     }
 
+    /*@Subscribe
+    public void onSurveyPhotoRequest(final SurveyPhotoRequest event) {
 
-//call api function - retrofit2.1
-        @Subscribe
-        public void onChecklistRequest(final ChecklistRequest event) {
+
+        Call<SurveyPhotoReceive> call = apiService.surveyPhoto("FrsApi " + event.getToken(), event.getIcnumber(), event.getLocationCode(), event.getLocationName(), "FrsApi " + event.getToken());
+        call.enqueue(new Callback<SurveyPhotoReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<SurveyPhotoReceive> call, Response<SurveyPhotoReceive> response) {
+
+
+                SurveyPhotoReceive user = new SurveyPhotoReceive();
+                //successs call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new SurveyPhotoReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new SurveyPhotoReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<SurveyPhotoReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("SUCCESS", t.getMessage());
+
+            }
+        });
+    }*/
+
+    @Subscribe
+    public void onChecklistRequest(final ChecklistRequest event) {
 
         Call<ChecklistReceive> call = apiService.checklist("FrsApi "+event.getToken(), event.getUrl());
         call.enqueue(new Callback<ChecklistReceive>() {
@@ -298,8 +342,5 @@ public class ApiRequestHandler {
             }
         });
     }
-
-
-
 
 }

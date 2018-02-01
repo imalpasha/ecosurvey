@@ -3,7 +3,9 @@ package com.app.ecosurvey.ui.Activity.survey;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,18 +24,22 @@ import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,6 +49,9 @@ import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class SurveyReviewFragment extends BaseFragment {
 
@@ -158,8 +167,7 @@ public class SurveyReviewFragment extends BaseFragment {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
 
-                                rController.surveyLocalStorageS5(context, randomID, formattedDate,"Completed","", null);
-                                Log.e("role123", preferences.getString("user_role", ""));
+                                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "", null);
 
                                 Intent intent = new Intent(getActivity(), TabActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -217,17 +225,26 @@ public class SurveyReviewFragment extends BaseFragment {
                                         String[] parliment = survey.getSurveyParliment().split("/");
                                         String[] category = survey.getSurveyCategory().split("/");
 
-                                        List<Content> contents = new ArrayList<Content>();
+                                        Log.e("getSurveyCategory", "a" + survey.getSurveyCategory());
+                                        //List<Content> contents = new ArrayList<Content>();
+
                                         Content content = new Content();
                                         content.setCategoryid(category[1]);
                                         content.setIssue(survey.getSurveyIssue());
                                         content.setWishlist(survey.getSurveyWishlist());
-                                        contents.add(content);
+
+                                        gson = new GsonBuilder().disableHtmlEscaping().create();
+                                        String stringContent = gson.toJson(content);
+
+                                        //HashMap<String, Object> dicMap = new HashMap<String, Object>();
+                                        //dicMap.put("content[]", content);
+
+                                        //contents.add(content);
 
                                         postSurveyRequest.setLocationCode(parliment[1]);
                                         postSurveyRequest.setLocationName(parliment[0]);
                                         postSurveyRequest.setLocationType("?");
-                                        postSurveyRequest.setContent(contents);
+                                        postSurveyRequest.setContent(stringContent);
                                         postSurveyRequest.setToken(preferences.getString("temp_token", ""));
 
                                         presenter.onPostSurvey(postSurveyRequest);
@@ -390,9 +407,57 @@ public class SurveyReviewFragment extends BaseFragment {
             try {
 
                 //save info to realm with proper id
-                setSuccess(getActivity(), "Success.", "Survey successfully saved.");
-                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed","Pending PDM Review", "apiID");
+                //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
+                rController.surveyLocalStorageS5(context, randomID, formattedDate, "Completed", "API-STATUS", postSurveyReceive.getId());
 
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Success.")
+                        .setContentText("Survey successfully saved.")
+                        .setConfirmText("Ok")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                Intent intent = new Intent(getActivity(), TabActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                getActivity().startActivity(intent);
+
+                                sDialog.dismiss();
+                            }
+                        })
+                        .show();
+
+                //get saved photo
+                /*List<MultipartBody.Part> listMultipart = new ArrayList<>();
+                Realm realm = rController.getRealmInstanceContext(context);
+                try {
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+                    String imageList = survey.getImagePath();
+
+                    String[] parts = imageList.split("___");
+                    for (int b = 0; b < parts.length; b++) {
+                        if (parts[b] != null) {
+                            Uri myUri = Uri.parse(parts[b]);
+                            listMultipart.add(prepareFilePart("photo", myUri));
+                        }
+                    }
+
+
+                } finally {
+                    realm.close();
+                }
+
+                //submit photo.
+                SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
+                surveyPhotoRequest.setIcnumber("7777");
+                surveyPhotoRequest.setLocationCode("01001");
+                surveyPhotoRequest.setLocationName("PADANG BESAR");
+                surveyPhotoRequest.setLocationType("PAR");
+                surveyPhotoRequest.setParts(listMultipart);*/
+
+
+                //presenter.onSurveyPhotoRequest(surveyPhotoRequest);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -408,6 +473,20 @@ public class SurveyReviewFragment extends BaseFragment {
 
 
     }
+
+    @NonNull
+    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
+        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
+        // use the FileUtils to get the actual file by uri
+        File file = new File(fileUri.getPath());
+
+        // create RequestBody instance from file
+        RequestBody requestFile = RequestBody.create(MediaType.parse(getActivity().getContentResolver().getType(fileUri)), file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

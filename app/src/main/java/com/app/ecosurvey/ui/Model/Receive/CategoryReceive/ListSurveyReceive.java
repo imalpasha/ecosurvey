@@ -1,5 +1,7 @@
 package com.app.ecosurvey.ui.Model.Receive.CategoryReceive;
 
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
+
 import java.util.List;
 
 /**
@@ -23,43 +25,79 @@ public class ListSurveyReceive {
 
     public class Data{
 
-        public String getSurveyID() {
-            return surveyID;
+        private String id;
+        private String icnumber;
+        private String locationCode;
+        private String locationType;
+        private Boolean processed;
+        private String created_at;
+        private String updated_at;
+
+        private List<Content> content;
+
+        public String getId() {
+            return id;
         }
 
-        public void setSurveyID(String surveyID) {
-            this.surveyID = surveyID;
+        public void setId(String id) {
+            this.id = id;
         }
 
-        private String surveyID;
-        private String categoryid;
-        private String issue;
-        private String wishlist;
-
-        public String getCategoryid() {
-            return categoryid;
+        public String getIcnumber() {
+            return icnumber;
         }
 
-        public void setCategoryid(String categoryid) {
-            this.categoryid = categoryid;
+        public void setIcnumber(String icnumber) {
+            this.icnumber = icnumber;
         }
 
-        public String getIssue() {
-            return issue;
+        public String getLocationCode() {
+            return locationCode;
         }
 
-        public void setIssue(String issue) {
-            this.issue = issue;
+        public void setLocationCode(String locationCode) {
+            this.locationCode = locationCode;
         }
 
-        public String getWishlist() {
-            return wishlist;
+        public String getLocationType() {
+            return locationType;
         }
 
-        public void setWishlist(String wishlist) {
-            this.wishlist = wishlist;
+        public void setLocationType(String locationType) {
+            this.locationType = locationType;
         }
 
+        public Boolean getProcessed() {
+            return processed;
+        }
+
+        public void setProcessed(Boolean processed) {
+            this.processed = processed;
+        }
+
+        public String getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(String created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
+
+        public List<Content> getContent() {
+            return content;
+        }
+
+        public void setContent(List<Content> content) {
+            this.content = content;
+        }
     }
 
 
