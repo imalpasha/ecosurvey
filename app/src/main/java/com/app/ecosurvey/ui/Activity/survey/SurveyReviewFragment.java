@@ -124,7 +124,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
     String[] parliment;
     String[] category;
-
+    Realm realm;
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -151,9 +151,8 @@ public class SurveyReviewFragment extends BaseFragment {
         randomID = bundle.getString("LocalSurveyID");
         status = bundle.getString("Status");
 
-        Log.e("localID", bundle.getString("LocalSurveyID"));
+        realm = rController.getRealmInstanceContext(context);
         setupBlock(getActivity(), block6);
-
         setData();
 
         surveySaveBtn.setOnClickListener(new View.OnClickListener() {
@@ -347,7 +346,6 @@ public class SurveyReviewFragment extends BaseFragment {
     public void setData() {
 
         //try fetch realm data.
-        Realm realm = rController.getRealmInstanceContext(context);
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
@@ -385,7 +383,6 @@ public class SurveyReviewFragment extends BaseFragment {
     public void updateStatusData() {
 
         //try fetch realm data.
-        Realm realm = rController.getRealmInstanceContext(context);
         try {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
@@ -430,24 +427,23 @@ public class SurveyReviewFragment extends BaseFragment {
 
                 //get saved photo
                 List<MultipartBody.Part> listMultipart = new ArrayList<>();
-                Realm realm = rController.getRealmInstanceContext(context);
-                try {
-                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
-                    String imageList = survey.getImagePath();
+                //try {
+                LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", postSurveyReceive.getData().getId()).findFirst();
+                String imageList = survey.getImagePath();
 
-                    String[] parts = imageList.split("___");
-                    for (int b = 0; b < parts.length; b++) {
-                        if (parts[b] != null) {
-                            Uri myUri = Uri.parse(parts[b]);
-                            listMultipart.add(prepareFilePart("photo", myUri));
-                        }
+                String[] parts = imageList.split("___");
+                for (int b = 0; b < parts.length; b++) {
+                    if (parts[b] != null) {
+                        Uri myUri = Uri.parse(parts[b]);
+                        listMultipart.add(prepareFilePart("photo[]", myUri));
                     }
-
-                } catch (Exception e) {
-                    Log.e("ERROR_MSG", e.getMessage());
-                } finally {
-                    realm.close();
                 }
+
+                //} catch (Exception e) {
+                //    Log.e("ERROR_MSG", e.getMessage());
+                //} finally {
+                realm.close();
+                //}
 
                 //submit photo.
                 SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
@@ -490,6 +486,7 @@ public class SurveyReviewFragment extends BaseFragment {
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
         // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
         // use the FileUtils to get the actual file by uri
+        Log.e("X", fileUri.toString());
         File file = new File(fileUri.getPath());
 
         // create RequestBody instance from file

@@ -173,13 +173,12 @@ public class SurveyPhotoFragment extends BaseFragment {
                 try {
 
                     String imageList = "";
-
                     //Gson gsonUserInfo = new Gson();
                     //String gsonImage = gsonUserInfo.toJson(list);
                     for (int x = 0; x < list.size(); x++) {
                         imageList += list.get(x).getImagePath() + "___";
                     }
-
+                    Log.e("savedImage",imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
                 } catch (Exception e) {
