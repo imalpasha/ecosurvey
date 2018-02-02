@@ -17,7 +17,11 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.google.gson.Gson;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -297,28 +301,45 @@ public class RealmController {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", surveyID).findFirst();
             if (survey != null) {
 
-                String categoryName, parlimenName;
-                if (listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName() != null)
-                    categoryName = listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName();
-                else
-                    categoryName = "-";
+                Date date = null,date2 = null;
+                try{
+                    DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
+                    date = format.parse(survey.getStatusUpdated());
+                    date2 = format.parse(listSurveyReceive.getData().get(x).getUpdated_at());
 
-                if (listSurveyReceive.getData().get(x).getLocationName() != null)
-                    parlimenName = listSurveyReceive.getData().get(x).getLocationName();
-                else
-                    parlimenName = "-";
+                }catch (Exception e){
+
+                }
+
+                if(date != null && date2 != null){
+                    if(date2.after(date)){
+
+                        String categoryName, parlimenName;
+                        if (listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName() != null)
+                            categoryName = listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName();
+                        else
+                            categoryName = "-";
+
+                        if (listSurveyReceive.getData().get(x).getLocationName() != null)
+                            parlimenName = listSurveyReceive.getData().get(x).getLocationName();
+                        else
+                            parlimenName = "-";
 
 
-                survey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
-                survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
+                        survey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
+                        survey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
 
-                survey.setSurveyCategory(categoryName + "/" + listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
-                survey.setSurveyParliment(parlimenName + "/" + listSurveyReceive.getData().get(x).getLocationCode());
-                survey.setSurveyStatus("API-STATUS");
-                survey.setSurveyLocalProgress("Completed");
+                        survey.setSurveyCategory(categoryName + "/" + listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
+                        survey.setSurveyParliment(parlimenName + "/" + listSurveyReceive.getData().get(x).getLocationCode());
+                        survey.setSurveyStatus("API-STATUS");
+                        survey.setSurveyLocalProgress("Completed");
 
-                survey.setStatusCreated(listSurveyReceive.getData().get(x).getCreated_at());
-                survey.setStatusUpdated(listSurveyReceive.getData().get(x).getUpdated_at());
+                        survey.setStatusCreated(listSurveyReceive.getData().get(x).getCreated_at());
+                        survey.setStatusUpdated(listSurveyReceive.getData().get(x).getUpdated_at());
+
+                    }
+                }
+
 
             } else {
 
@@ -328,8 +349,8 @@ public class RealmController {
                 newSurvey.setSurveyStatus("API-STATUS");
                 newSurvey.setSurveyIssue(listSurveyReceive.getData().get(x).getContent().get(0).getIssue());
                 newSurvey.setSurveyWishlist(listSurveyReceive.getData().get(x).getContent().get(0).getWishlist());
-                newSurvey.setSurveyCategory(listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid() + "/" + listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
-                newSurvey.setSurveyParliment(listSurveyReceive.getData().get(x).getLocationCode() + "/" + listSurveyReceive.getData().get(x).getLocationCode());
+                newSurvey.setSurveyCategory(listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName() + "/" + listSurveyReceive.getData().get(x).getContent().get(0).getCategoryid());
+                newSurvey.setSurveyParliment(listSurveyReceive.getData().get(x).getLocationName() + "/" + listSurveyReceive.getData().get(x).getLocationCode());
 
                 newSurvey.setStatusCreated(listSurveyReceive.getData().get(x).getCreated_at());
                 newSurvey.setStatusUpdated(listSurveyReceive.getData().get(x).getUpdated_at());
