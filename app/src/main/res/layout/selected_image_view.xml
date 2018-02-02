@@ -12,17 +12,33 @@
     android:padding="5dp"
     android:weightSum="1">
 
-    <ImageView
-        android:id="@+id/selectedImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/upload_icon" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/selectedImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/upload_icon" />
+
+        <ProgressBar
+            android:id="@+id/imageLoading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_weight="1" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

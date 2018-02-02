@@ -4,6 +4,7 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
@@ -57,6 +58,17 @@ public interface ApiService {
     @GET
     Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Url String url);
 
+    @FormUrlEncoded
+    @POST("/api/v1/checklist")
+    Call<PostChecklistReceive> postChecklist(
+            @Field("IcNumber") String IcNumber,
+            @Field("locationCode") String locationCode,
+            @Field("locationName") String locationName,
+            @Field("locationType") String locationType,
+            @Field("content[]") String content,
+            @Header("Authorization") String header
+    );
+
     @GET
     Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Url String Url);
 
@@ -84,11 +96,11 @@ public interface ApiService {
 
     //surveyPhoto
     @Multipart
-    @POST("upload")
+    @POST("/api/v1/surveys/photos")
     Call<SurveyPhotoReceive> surveyPhoto(
             @Header("Authorization") String header,
-            @PartMap() Map<String, Object> partMap,
-            @Part("photos[]") List<MultipartBody.Part> files);
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part() List<MultipartBody.Part> files);
 
     /*@Multipart
     @POST("user/updateprofile")

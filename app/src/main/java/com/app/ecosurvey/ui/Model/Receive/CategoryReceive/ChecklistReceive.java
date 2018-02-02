@@ -2,10 +2,6 @@ package com.app.ecosurvey.ui.Model.Receive.CategoryReceive;
 
 import java.util.List;
 
-/**
- * Created by User on 1/26/2018.
- */
-
 public class ChecklistReceive {
 
     private String message;
@@ -22,33 +18,43 @@ public class ChecklistReceive {
 
     public class Data {
 
-        private int checklistid;
-        private String checklist_text;
-        private String progressStatus;
+        private String categoryid;
+        private String issue;
+        private String wishlist;
+        private String id;
         private String comment;
+        private String check;
 
-        public int getChecklistid() {
-            return checklistid;
+        public String getCategoryid() {
+            return categoryid;
         }
 
-        public void setChecklistid(int checklistid) {
-            this.checklistid = checklistid;
+        public void setCategoryid(String categoryid) {
+            this.categoryid = categoryid;
         }
 
-        public String getChecklist_text() {
-            return checklist_text;
+        public String getIssue() {
+            return issue;
         }
 
-        public void setChecklist_text(String checklist_text) {
-            this.checklist_text = checklist_text;
+        public void setIssue(String issue) {
+            this.issue = issue;
         }
 
-        public String getProgressStatus() {
-            return progressStatus;
+        public String getWishlist() {
+            return wishlist;
         }
 
-        public void setProgressStatus(String progressStatus) {
-            this.progressStatus = progressStatus;
+        public void setWishlist(String wishlist) {
+            this.wishlist = wishlist;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
         }
 
         public String getComment() {
@@ -57,6 +63,14 @@ public class ChecklistReceive {
 
         public void setComment(String comment) {
             this.comment = comment;
+        }
+
+        public String getCheck() {
+            return check;
+        }
+
+        public void setCheck(String check) {
+            this.check = check;
         }
 
     }
