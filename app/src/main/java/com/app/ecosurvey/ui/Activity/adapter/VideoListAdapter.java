@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -66,8 +67,35 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         if (f.contains("http")) {
             try {
                 //holder.txtVideoPath.setImageBitmap(retrieveThumbnail(f));
-            } catch (Throwable e) {
+                holder.videoView.setVisibility(View.VISIBLE);
+                holder.videoView.setVideoPath("https://www.demonuts.com/Demonuts/smallvideo.mp4");
 
+                /*MediaController mediaController = new MediaController(activity);
+                mediaController.setAnchorView(holder.videoView);
+                holder.videoView.setMediaController(mediaController);
+                holder.videoView.setVideoURI(Uri.parse("https://www.demonuts.com/Demonuts/smallvideo.mp4"));*/
+
+                holder.play.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.videoView.start();
+                        holder.play.setVisibility(View.GONE);
+                        holder.pause.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                holder.pause.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.videoView.pause();
+                        holder.play.setVisibility(View.VISIBLE);
+                        holder.pause.setVisibility(View.GONE);
+                    }
+                });
+
+
+            } catch (Throwable e) {
+                holder.videoView.setVisibility(View.GONE);
             }
 
         } else {
@@ -121,8 +149,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         final TextView actionRemove;
         final TextView actionChange;
         final ImageView txtVideoPath;
-        final VideoView selectedImage;
-
+        final VideoView videoView;
+        final ImageView play;
+        final ImageView pause;
         final TextView txtVideoPathURL;
 
 
@@ -132,8 +161,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
             actionRemove = (TextView) insideMeal.findViewById(R.id.txtActionRemove);
             txtVideoPath = (ImageView) insideMeal.findViewById(R.id.txtVideoPath);
             actionChange = (TextView) insideMeal.findViewById(R.id.txtActionChange);
-            selectedImage = (VideoView) insideMeal.findViewById(R.id.selectedImage);
+            videoView = (VideoView) insideMeal.findViewById(R.id.videoView);
             txtVideoPathURL = (TextView) insideMeal.findViewById(R.id.txtVideoPathURL);
+            play = (ImageView) insideMeal.findViewById(R.id.play);
+            pause = (ImageView) insideMeal.findViewById(R.id.pause);
 
             actionRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
