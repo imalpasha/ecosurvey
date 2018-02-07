@@ -4,7 +4,7 @@
 
 
     <!-- Login Page -->
-    <string name="txtAuthID">Email</string>
+    <string name="txtAuthID">User ID</string>
     <string name="txtAuthPassword">Kata Laluan</string>
 
 

@@ -95,6 +95,10 @@ public class ProfileFragment extends BaseFragment {
     @Inject
     Context context;
 
+    @Bind(R.id.logout)
+    LinearLayout logout;
+
+
     private View view;
     private SharedPrefManager pref;
     private String randomID;
@@ -114,7 +118,7 @@ public class ProfileFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.my_profile, container, false);
         ButterKnife.bind(this, view);
@@ -123,12 +127,23 @@ public class ProfileFragment extends BaseFragment {
         profileLayout.setVisibility(View.VISIBLE);
         profileLoading.setVisibility(View.GONE);
 
-        /*btnToRetry.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadProfile();
+
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("just_login", false);
+                editor.apply();
+
+                rController.clearLocalSurvey(context);
+
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+
             }
-        });*/
+        });
         loadData();
 
         /*btnLogout.setVisibility(View.GONE);
@@ -171,7 +186,7 @@ public class ProfileFragment extends BaseFragment {
 
             txtName.setText(userInfoReceive.getData().getName());
             txtPhoneNo.setText(userInfoReceive.getData().getPhoneNo());
-            Log.e("phone","phone"+userInfoReceive.getData().getPhoneNo());
+            Log.e("phone", "phone" + userInfoReceive.getData().getPhoneNo());
             txtEmail.setText(userInfoReceive.getData().getEmail());
 
             /*if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)

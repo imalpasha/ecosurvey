@@ -400,4 +400,20 @@ public class RealmController {
         }
 
     }
+
+    public void clearLocalSurvey(Context act) {
+
+        Realm realm = getRealmInstanceContext(act);
+
+        try {
+            final RealmResults<LocalSurvey> result = realm.where(LocalSurvey.class).findAll();
+            realm.beginTransaction();
+            result.clear();
+            realm.commitTransaction();
+            realm.close();
+        } catch (Exception e) {
+            Log.e("clearCached", e.getMessage());
+        }
+
+    }
 }
