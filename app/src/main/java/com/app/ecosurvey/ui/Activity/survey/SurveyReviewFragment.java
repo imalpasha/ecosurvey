@@ -223,6 +223,12 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
                                         postSurveyRequest.setIcNumber(icNumber);
+                                        postSurveyRequest.setIcNumber(icNumber);
+
+                                        if (status.equalsIgnoreCase("EDIT_API")) {
+                                            postSurveyRequest.setId(randomID);
+                                        }
+
 
                                         parliment = survey.getSurveyParliment().split("/");
                                         category = survey.getSurveyCategory().split("/");
