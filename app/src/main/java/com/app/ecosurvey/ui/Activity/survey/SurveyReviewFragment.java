@@ -206,7 +206,7 @@ public class SurveyReviewFragment extends BaseFragment {
                             @Override
                             public void onClick(SweetAlertDialog sDialog) {
 
-                                initiateLoadingMsg(getActivity(),"Submitting Survey...");
+                                initiateLoadingMsg(getActivity(), "Submitting Survey...");
 
                                 realm = rController.getRealmInstanceContext(context);
 
@@ -243,7 +243,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         postSurveyRequest.setLocationCode(parliment[1]);
                                         postSurveyRequest.setLocationName(parliment[0]);
-                                        postSurveyRequest.setLocationType("?");
+                                        postSurveyRequest.setLocationType("PAR");
                                         postSurveyRequest.setContent(stringContent);
                                         postSurveyRequest.setToken(preferences.getString("temp_token", ""));
                                         //postSurveyRequest.setId(randomID);
@@ -403,51 +403,80 @@ public class SurveyReviewFragment extends BaseFragment {
 
                 //save info to realm with proper id
                 //setSuccess(getActivity(), "Success.", "Survey successfully saved.");
-                rController.surveyLocalStorageS5(context, randomID, getDate(), "Completed", "API-STATUS", postSurveyReceive.getData().getId());
+                rController.surveyLocalStorageS5(context, randomID, postSurveyReceive.getData().getUpdated_at(), "Completed", "API-STATUS", postSurveyReceive.getData().getId());
                 randomID = postSurveyReceive.getData().getId();
 
                 //get saved photo
                 List<MultipartBody.Part> listMultipart = new ArrayList<>();
+                String imageList = "";
                 try {
-                LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", postSurveyReceive.getData().getId()).findFirst();
-                String imageList = survey.getImagePath();
-
-                String[] parts = imageList.split("___");
-                for (int b = 0; b < parts.length; b++) {
-                    if (parts[b] != null) {
-                        Uri myUri = Uri.parse(parts[b]);
-                        listMultipart.add(prepareFilePart("photos[]", myUri));
+                    LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", postSurveyReceive.getData().getId()).findFirst();
+                    imageList = survey.getImagePath();
+                    Log.e("no_image", "a" + imageList);
+                    if (!imageList.equalsIgnoreCase("")) {
+                        String[] parts = imageList.split("___");
+                        for (int b = 0; b < parts.length; b++) {
+                            if (parts[b] != null) {
+                                Uri myUri = Uri.parse(parts[b]);
+                                listMultipart.add(prepareFilePart("photos[]", myUri));
+                            }
+                        }
                     }
-                }
+
 
                 } catch (Exception e) {
                     Log.e("ERROR_MSG", e.getMessage());
                 }
 
-                //submit photo.
-                SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
-                surveyPhotoContentRequest.setIcnumber(icNumber);
-                surveyPhotoContentRequest.setLocationCode(parliment[1]);
-                surveyPhotoContentRequest.setLocationName(parliment[0]);
 
-                Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                String stringContent = gson.toJson(surveyPhotoContentRequest);
+                if (!imageList.equalsIgnoreCase("")) {
+                    //submit photo.
+                    SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
+                    surveyPhotoContentRequest.setIcnumber(icNumber);
+                    surveyPhotoContentRequest.setLocationCode(parliment[1]);
+                    surveyPhotoContentRequest.setLocationName(parliment[0]);
 
-                HashMap<String, RequestBody> map = new HashMap<>();
-                map.put("icnumber", toRequestBody(icNumber));
-                map.put("locationCode", toRequestBody(parliment[1]));
-                map.put("locationName", toRequestBody(parliment[0]));
-                map.put("locationType", toRequestBody("PAR"));
-                map.put("id", toRequestBody(postSurveyReceive.getData().getId()));
+                    Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+                    String stringContent = gson.toJson(surveyPhotoContentRequest);
 
-                initiateLoadingMsg(getActivity(),"Uploading Photo...");
-                SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
-                surveyPhotoRequest.setStringContent(stringContent);
-                surveyPhotoRequest.setMap(map);
-                surveyPhotoRequest.setParts(listMultipart);
-                surveyPhotoRequest.setToken(preferences.getString("temp_token", ""));
+                    HashMap<String, RequestBody> map = new HashMap<>();
+                    map.put("icnumber", toRequestBody(icNumber));
+                    map.put("locationCode", toRequestBody(parliment[1]));
+                    map.put("locationName", toRequestBody(parliment[0]));
+                    map.put("locationType", toRequestBody("PAR"));
+                    map.put("id", toRequestBody(postSurveyReceive.getData().getId()));
 
-                presenter.onSurveyPhotoRequest(surveyPhotoRequest);
+                    initiateLoadingMsg(getActivity(), "Uploading Photo...");
+                    SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
+                    surveyPhotoRequest.setStringContent(stringContent);
+                    surveyPhotoRequest.setMap(map);
+                    surveyPhotoRequest.setParts(listMultipart);
+                    surveyPhotoRequest.setToken(preferences.getString("temp_token", ""));
+
+                    presenter.onSurveyPhotoRequest(surveyPhotoRequest);
+                } else {
+
+                    new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("Success.")
+                            .setContentText("Survey successfully saved.")
+                            .setConfirmText("Ok")
+                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sDialog) {
+
+                                    sDialog.dismiss();
+
+                                    Intent intent = new Intent(getActivity(), TabActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                    getActivity().startActivity(intent);
+
+                                }
+                            })
+                            .show();
+
+                }
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -471,7 +500,7 @@ public class SurveyReviewFragment extends BaseFragment {
         if (surveyPhotoReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {
 
-                 new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText("Success.")
                         .setContentText("Survey successfully saved.")
                         .setConfirmText("Ok")
@@ -505,9 +534,9 @@ public class SurveyReviewFragment extends BaseFragment {
 
     }
 
-    public static RequestBody toRequestBody(String val){
+    public RequestBody toRequestBody(String val) {
 
-        RequestBody body = RequestBody.create(MediaType.parse("text/plain"),val);
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), val);
         return body;
     }
 

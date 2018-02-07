@@ -148,7 +148,7 @@ public class BaseFragment extends Fragment {
 
                 } else {
                     new SweetAlertDialog(act, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("xx")
+                            .setTitleText(title)
                             .setContentText(msg)
                             .show();
                 }
@@ -245,7 +245,7 @@ public class BaseFragment extends Fragment {
     public static void connectionError(Activity act) {
 
         dismissLoading();
-        if (MainController.connectionAvailable(act)) {
+        if (!MainController.connectionAvailable(act)) {
             setAlertDialog(act, act.getString(R.string.base_connection_server), act.getString(R.string.base_connection_error));
         } else {
             setAlertDialog(act, act.getString(R.string.base_no_internet), act.getString(R.string.base_connection_error));
@@ -337,8 +337,6 @@ public class BaseFragment extends Fragment {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         formattedDate = df.format(calendar.getTime());
-
-        //2018-02-01 00:06:43
 
         return formattedDate;
     }

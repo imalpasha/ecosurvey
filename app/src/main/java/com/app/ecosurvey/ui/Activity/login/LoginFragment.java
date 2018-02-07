@@ -118,8 +118,6 @@ public class LoginFragment extends BaseFragment {
                 initiateLoading(getActivity());
 
 
-                Log.e("token", token);
-
                 LoginRequest loginRequest = new LoginRequest();
                 loginRequest.setIcnumber(txtAuthID.getText().toString());
                 loginRequest.setPassword(txtAuthPassword.getText().toString());
@@ -156,18 +154,18 @@ public class LoginFragment extends BaseFragment {
             } catch (Exception e) {
                 e.printStackTrace();
                 dismissLoading();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+                setAlertDialog(getActivity(), getString(R.string.err_title), loginReceive.getMessage());
             }
 
         } else {
 
+            Log.e("Dailed", "d");
             dismissLoading();
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("auth_status", false);
             editor.apply();
 
-            String error_msg = loginReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            setAlertDialog(getActivity(), "Invalid Credential", getString(R.string.err_title));
 
         }
 
@@ -216,11 +214,10 @@ public class LoginFragment extends BaseFragment {
                 rController.updateLocalRealm(getActivity(), listSurveyReceive);
             } finally {
 
-                ChecklistRequest checklistRequest = new ChecklistRequest();
-                checklistRequest.setToken(token);
-                checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + txtAuthID.getText().toString());
-                presenter.onChecklistRequest(checklistRequest);
-
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
 
             }
 
@@ -233,8 +230,9 @@ public class LoginFragment extends BaseFragment {
     }
 
 
-    @Subscribe
+    /*@Subscribe
     public void onChecklistReceive(ChecklistReceive checklistReceive) {
+
         dismissLoading();
         if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
@@ -248,7 +246,7 @@ public class LoginFragment extends BaseFragment {
 
             } finally {
                 //update_realm_with_local
-                Log.e("whaTrole",role);
+                Log.e("whaTrole", role);
                 Intent intent = new Intent(getActivity(), TabActivity.class);
                 intent.putExtra("ROLE", role);
                 getActivity().startActivity(intent);
@@ -261,7 +259,7 @@ public class LoginFragment extends BaseFragment {
             String error_msg = checklistReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
         }
-    }
+    }*/
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

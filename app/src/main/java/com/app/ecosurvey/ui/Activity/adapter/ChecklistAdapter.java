@@ -1,6 +1,8 @@
 package com.app.ecosurvey.ui.Activity.adapter;
 
 import android.app.Activity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,10 +33,10 @@ public class ChecklistAdapter extends BaseAdapter {
     private final Activity context;
     private MyWishlistFragment frag;
     private final ChecklistReceive obj;
-    private String i,t,c;
+    private String i, t, c;
     List<CheckList> surveyLists;
 
-    public String statusImage = "NOT_CLICK";
+    public String statusImage;
 
     public ChecklistAdapter(Activity context, MyWishlistFragment fragment, ChecklistReceive obj) {
         this.context = context;
@@ -44,8 +46,8 @@ public class ChecklistAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        Log.e("Size size", String.valueOf(obj.getData().size()));
-        return obj == null ? 0 : obj.getData().size();
+        Log.e("Size size", String.valueOf(obj.getData().getContent().size()));
+        return obj == null ? 0 : obj.getData().getContent().size();
     }
 
     @Override
@@ -85,55 +87,76 @@ public class ChecklistAdapter extends BaseAdapter {
         ButterKnife.bind(vh, view);
         view.setTag(vh);
 
-        /*String t = obj.getData().get(position).getIssue();
-        String c = obj.getData().get(position).getComment();
-        String s = obj.get(position).getSurveyStatus();
-        String d = obj.get(position).getStatusCreated();
-        String u = obj.get(position).getStatusUpdated();
+        i = obj.getData().getContent().get(position).getItemid();
+        t = obj.getData().getContent().get(position).getComment();
+        c = obj.getData().getContent().get(position).getCheck();
 
-        vh.survey_category.setText(c);*/
+        vh.checklist_title.setText("(Item Name) " + i);
+        vh.checklist_title.setTag(i);
 
-        if (obj.getData().get(position).getIssue()!= null){
-            i = obj.getData().get(position).getCategoryid();
-            //i = "A";
-            t = obj.getData().get(position).getIssue();
-            c = obj.getData().get(position).getWishlist();
+        vh.checklist_cont.setText(t);
 
-            vh.checklist_title.setText(t);
-            vh.checklist_cont.setText(c);
-            frag.insertList(position, i,t,vh.checklist_cont.getText().toString());
-
+        if (c.equalsIgnoreCase("yes")) {
+            vh.container.setVisibility(View.VISIBLE);
+            vh.checked_image.setImageResource(R.drawable.check_64);
+            vh.checked_image.setTag("Clicked");
         } else {
-            i = obj.getData().get(position).getId();
-            //i = "B";
-            t = obj.getData().get(position).getComment();
-            c = obj.getData().get(position).getCheck();
-
-            vh.checklist_title.setText(t);
-            vh.checklist_cont.setText(c);
-            frag.insertList(position, i,t,vh.checklist_cont.getText().toString());
+            vh.container.setVisibility(View.GONE);
+            vh.checked_image.setImageResource(R.drawable.box_64);
+            vh.checked_image.setTag("NotClicked");
         }
 
         vh.checked_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (statusImage.equals("NOT_CLICK")) {
+                if (vh.checked_image.getTag().equals("NotClicked")) {
                     vh.checked_image.setImageResource(R.drawable.check_64);
-                    statusImage = "CLICKED";
-                    vh.container.setVisibility(View.VISIBLE);
-                    Log.e("Image Status", statusImage);
+                    vh.checked_image.setTag("Clicked");
 
-                } else if (statusImage.equals("CLICKED")) {
+                    obj.getData().getContent().get(position).setCheck("yes");
+
+                    vh.container.setVisibility(View.VISIBLE);
+
+                } else if (vh.checked_image.getTag().equals("Clicked")) {
                     vh.checked_image.setImageResource(R.drawable.box_64);
-                    statusImage = "NOT_CLICK";
+                    vh.checked_image.setTag("NotClicked");
+
+                    obj.getData().getContent().get(position).setCheck("no");
+
                     vh.container.setVisibility(View.GONE);
-                    Log.e("Image Status", statusImage);
                 }
             }
+        });
+
+        vh.checklist_cont.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                Log.e("vh.txtGivenName " + position, arg0.toString());
+
+                if (!arg0.toString().equals("")) {
+                    obj.getData().getContent().get(position).setComment(arg0.toString().trim());
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
         });
 
         return view;
     }
 
+    public ChecklistReceive checklistObj() {
+        return obj;
+    }
 }
 

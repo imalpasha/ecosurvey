@@ -56,7 +56,7 @@
 
         <activity android:name="com.app.ecosurvey.ui.Activity.login.LoginActivity"/>
 
-        <activity android:name="com.app.ecosurvey.ui.Activity.homepage.TabActivity"/>
+        <activity android:name="com.app.ecosurvey.ui.Activity.homepage.TabActivity" android:windowSoftInputMode="adjustPan"/>
 
         <activity android:name="com.app.ecosurvey.ui.Activity.survey.CategoryParlimenActivity"/>
         <activity

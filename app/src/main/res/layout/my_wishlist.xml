@@ -6,71 +6,89 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:visibility="gone"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/no_list"
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/white"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:gravity="center"
-                android:src="@drawable/smile" />
-
-            <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                android:id="@+id/no_card_available"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingLeft="50dp"
-                android:paddingRight="50dp"
-                android:paddingTop="10dp"
-                android:text="It appears your checklist is empty"
-                android:textColor="@color/dark_lvl4"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/have_list"
-            android:visibility="visible"
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-                <ListView
-                    android:id="@+id/listview"
-                    android:background="@color/white"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:layout_width="match_parent"
-                    android:divider="@null"
-                    android:dividerHeight="0dp"
-                    android:layout_height="match_parent"/>
-
-        </LinearLayout>
+            android:text="Under Maintenance"
+            android:textSize="17sp" />
 
     </LinearLayout>
 
+   <!-- <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible">-->
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/no_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:gravity="center"
+                    android:src="@drawable/smile" />
+
+                <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                    android:id="@+id/no_card_available"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingLeft="50dp"
+                    android:paddingRight="50dp"
+                    android:paddingTop="10dp"
+                    android:text="It appears your checklist is empty"
+                    android:textColor="@color/dark_lvl4"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/have_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:visibility="visible">
+
+                <ListView
+                    android:id="@+id/listview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
     <com.app.ecosurvey.utils.FontStyle.PlayButtonText
         android:id="@+id/updateBtn"
@@ -81,6 +99,7 @@
         android:gravity="center"
         android:text="Submit Checklist"
         android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="visible" />
 
 </LinearLayout>

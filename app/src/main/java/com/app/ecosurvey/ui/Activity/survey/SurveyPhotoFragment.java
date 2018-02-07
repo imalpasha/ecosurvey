@@ -45,8 +45,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -178,7 +182,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                     for (int x = 0; x < list.size(); x++) {
                         imageList += list.get(x).getImagePath() + "___";
                     }
-                    Log.e("savedImage",imageList);
+                    Log.e("savedImage", imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
                 } catch (Exception e) {
@@ -323,7 +327,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         String token = preferences.getString("temp_token", "");
 
-        initiateLoadingMsg(getActivity(),"Fetching photo...");
+        initiateLoadingMsg(getActivity(), "Fetching photo...");
 
         PhotoRequest photoRequest = new PhotoRequest();
         photoRequest.setToken(token);
@@ -503,37 +507,57 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //wait
                 dismissLoading();
 
-                if (true) {
+                Date date = null, date2 = null;
+                if (survey.getPhotoUpdateDate() != null) {
+
+                    try {
+                        DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
+                        date = format.parse(survey.getPhotoUpdateDate());
+                        date2 = format.parse(photoReceive.getData().getUpdated_at());
+
+                    } catch (Exception e) {
+                        Log.e("nuLL", "Y");
+                    }
+
+                    if (date != null && date2 != null) {
+                        if (date2.after(date)) {
+
+                            //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                            for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                                SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                list.add(selectedImagePath);
+                            }
+
+                        } else {
+
+                            String imageList = survey.getImagePath();
+                            if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                                String[] parts = imageList.split("___");
+                                //insert path to object
+                                for (int x = 0; x < parts.length; x++) {
+                                    SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                    selectedImagePath.setImagePath(parts[x]);
+                                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                    list.add(selectedImagePath);
+                                }
+                            }
+                        }
+                    }
+
+
+                } else {
                     //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
-
-                    Log.e("API_DATE", photoReceive.getData().getUpdated_at());
-                    Log.e("LOCAL_DATE", survey.getPhotoUpdateDate());
-
                     for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
                         SelectedImagePath selectedImagePath = new SelectedImagePath();
                         selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
                         selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                        Log.e("pathpath", photoReceive.getData().getContent().getImages().get(x));
                         list.add(selectedImagePath);
                     }
-
-                } else {
-
-                    String imageList = survey.getImagePath();
-                    if (imageList != null && !imageList.equalsIgnoreCase("")) {
-                        String[] parts = imageList.split("___");
-                        //insert path to object
-                        for (int x = 0; x < parts.length; x++) {
-                            SelectedImagePath selectedImagePath = new SelectedImagePath();
-                            selectedImagePath.setImagePath(parts[x]);
-                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                            Log.e("pathpath", parts[x]);
-                            list.add(selectedImagePath);
-                        }
-                    }
                 }
-
                 initiateImageAdapter(list);
+
 
             } catch (Exception e) {
                 e.printStackTrace();

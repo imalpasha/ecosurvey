@@ -1,6 +1,9 @@
 package com.app.ecosurvey;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.utils.SharedPrefManager;
@@ -10,15 +13,15 @@ import com.app.ecosurvey.utils.SharedPrefManager;
  */
 public class MainController extends BaseFragment {
 
-    public static boolean connectionAvailable(Activity act){
+    public static boolean connectionAvailable(Activity act) {
 
-        Boolean internet;
-        //internet = Utils.isNetworkAvailable(act);
+        ConnectivityManager connectivityManager = (ConnectivityManager) act.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
-        return true;
     }
 
-    public static boolean getRequestStatus(String objStatus,String message,Activity act) {
+    public static boolean getRequestStatus(String objStatus, String message, Activity act) {
 
         SharedPrefManager pref;
 
@@ -28,7 +31,7 @@ public class MainController extends BaseFragment {
 
         } else if (objStatus.equals("Error") || objStatus.equals("error_validation")) {
             status = false;
-            setAlertDialog(act, message,"Error");
+            setAlertDialog(act, message, "Error");
 
         }
         return status;

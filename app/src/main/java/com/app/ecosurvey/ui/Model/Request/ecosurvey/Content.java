@@ -11,6 +11,33 @@ public class Content {
     private String wishlist;
     private Content content[];
     private String categoryid;
+    private String itemid;
+    private String comment;
+    private String check;
+
+    public String getItemid() {
+        return itemid;
+    }
+
+    public void setItemid(String itemid) {
+        this.itemid = itemid;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getCheck() {
+        return check;
+    }
+
+    public void setCheck(String check) {
+        this.check = check;
+    }
 
     public Content[] getContent() {
         return content;

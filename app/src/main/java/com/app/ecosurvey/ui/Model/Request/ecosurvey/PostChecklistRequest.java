@@ -1,6 +1,10 @@
 package com.app.ecosurvey.ui.Model.Request.ecosurvey;
 
 import java.util.HashMap;
+import java.util.List;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class PostChecklistRequest {
 
@@ -11,6 +15,48 @@ public class PostChecklistRequest {
     private String token;
     private String id;
     private String content;
+
+    public List<MultipartBody.Part> getParts() {
+        return parts;
+    }
+
+    public void setParts(List<MultipartBody.Part> parts) {
+        this.parts = parts;
+    }
+
+    List<MultipartBody.Part> parts;
+
+    public List<Content> getParts2() {
+        return parts2;
+    }
+
+    public void setParts2(List<Content> parts2) {
+        this.parts2 = parts2;
+    }
+
+    List<Content> parts2;
+
+    HashMap<String, RequestBody> map;
+
+    public HashMap<String, Content> getSecondmap() {
+        return secondmap;
+    }
+
+    public void setSecondmap(HashMap<String, Content> secondmap) {
+        this.secondmap = secondmap;
+    }
+
+    HashMap<String, Content> secondmap;
+
+
+    public HashMap<String, RequestBody> getMap() {
+        return map;
+    }
+
+    public void setMap(HashMap<String, RequestBody> map) {
+        this.map = map;
+    }
+
 
     HashMap<String, Object> dicmap;
 
@@ -92,6 +138,9 @@ public class PostChecklistRequest {
         dicmap = data.getDicmap();
         content = data.getContent();
         id = data.getId();
+        map = data.getMap();
+        secondmap = data.getSecondmap();
+        parts = data.getParts();
 
     }
 }
