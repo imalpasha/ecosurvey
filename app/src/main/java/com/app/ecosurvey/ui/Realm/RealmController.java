@@ -160,6 +160,13 @@ public class RealmController {
     public void saveChecklist(Context context, String checklistReceive) {
 
         Realm realm = getRealmInstanceContext(context);
+
+        //clear user info in realm first.
+        final RealmResults<ChecklistCached> result = realm.where(ChecklistCached.class).findAll();
+        realm.beginTransaction();
+        result.clear();
+        realm.commitTransaction();
+
         realm.beginTransaction();
         ChecklistCached realmObject = realm.createObject(ChecklistCached.class);
         realmObject.setCheckListString(checklistReceive);
@@ -301,18 +308,18 @@ public class RealmController {
             LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", surveyID).findFirst();
             if (survey != null) {
 
-                Date date = null,date2 = null;
-                try{
+                Date date = null, date2 = null;
+                try {
                     DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
                     date = format.parse(survey.getStatusUpdated());
                     date2 = format.parse(listSurveyReceive.getData().get(x).getUpdated_at());
 
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
 
-                if(date != null && date2 != null){
-                    if(date2.after(date)){
+                if (date != null && date2 != null) {
+                    if (date2.after(date)) {
 
                         String categoryName, parlimenName;
                         if (listSurveyReceive.getData().get(x).getContent().get(0).getCategoryName() != null)

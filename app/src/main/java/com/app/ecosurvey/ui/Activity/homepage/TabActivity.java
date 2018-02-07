@@ -67,7 +67,7 @@ public class TabActivity extends MainFragmentActivity {
                 Log.e("xxx", role);
             } else {
                 Numboftabs = 3;
-                title = new String[]{"Profile", "My Survey", "Checklist2"};
+                title = new String[]{"Profile", "My Survey", "Checklist"};
                 Log.e("ademasuksinike", "a" + role);
 
             }

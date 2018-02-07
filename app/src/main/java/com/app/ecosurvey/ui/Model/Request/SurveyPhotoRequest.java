@@ -18,6 +18,9 @@ public class SurveyPhotoRequest {
     private List<MultipartBody.Part> parts;
     private String token;
     HashMap<String, RequestBody> map;
+    public List<MultipartBody.Part> getParts() {
+        return parts;
+    }
 
     public HashMap<String, RequestBody> getMap() {
         return map;
@@ -35,9 +38,6 @@ public class SurveyPhotoRequest {
         this.stringContent = stringContent;
     }
 
-    public List<MultipartBody.Part> getParts() {
-        return parts;
-    }
 
     public void setParts(List<MultipartBody.Part> parts) {
         this.parts = parts;

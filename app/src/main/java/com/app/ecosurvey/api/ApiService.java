@@ -15,6 +15,7 @@ import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.LoginRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 
@@ -35,6 +36,7 @@ import retrofit2.http.HEAD;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
 import retrofit2.http.Query;
@@ -52,21 +54,15 @@ public interface ApiService {
     @GET("/api/v1/categories")
     Call<CategoryReceive> category(@Header("Authorization") String header);
 
-    //@GET("/api/v1/categories")
-    //Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Body  obj);
-
     @GET
     Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Url String url);
 
-    @FormUrlEncoded
+    @Multipart
     @POST("/api/v1/checklist")
     Call<PostChecklistReceive> postChecklist(
-            @Field("IcNumber") String IcNumber,
-            @Field("locationCode") String locationCode,
-            @Field("locationName") String locationName,
-            @Field("locationType") String locationType,
-            @Field("content[]") String content,
-            @Header("Authorization") String header
+            @Header("Authorization") String header,
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part("content[]") List<Content> files
     );
 
     @GET

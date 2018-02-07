@@ -3,13 +3,16 @@ package com.app.ecosurvey.ui.Activity.homepage;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -39,7 +42,9 @@ import com.google.gson.GsonBuilder;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -49,6 +54,9 @@ import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class MyWishlistFragment extends BaseFragment {
 
@@ -78,8 +86,8 @@ public class MyWishlistFragment extends BaseFragment {
     @Bind(R.id.have_list)
     LinearLayout have_list;
 
-    @Bind(R.id.swipeContainer)
-    SwipeRefreshLayout swipeContainer;
+    //@Bind(R.id.swipeContainer)
+    //SwipeRefreshLayout swipeContainer;
 
     @Bind(R.id.updateBtn)
     Button updateBtn;
@@ -87,13 +95,11 @@ public class MyWishlistFragment extends BaseFragment {
     View view;
     String token;
     String userId;
+
     private ChecklistAdapter mAdapter;
     private List<CheckList> surveyLists;
-
-    String[] parliment;
-    String[] category;
-
-    //private String randomID;
+    private String parliment, parlimentCode;
+    private String checklistId, checkListLocation, checkListLocationName;
     private String icNumber;
 
     public static MyWishlistFragment newInstance(Bundle bundle) {
@@ -107,6 +113,8 @@ public class MyWishlistFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainApplication.component(getActivity()).inject(this);
+
+
     }
 
     @Override
@@ -120,26 +128,9 @@ public class MyWishlistFragment extends BaseFragment {
         token = preferences.getString("temp_token", "DEFAULT");
         userId = preferences.getString("user_id", "");
 
-        getData();
-
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                refreshChecklist();
-
-            }
-        });
-
-        swipeContainer.setColorSchemeResources(
-                android.R.color.holo_red_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_green_light,
-                android.R.color.holo_blue_bright);
-
-        mListView.setOnTouchListener(new View.OnTouchListener() {
+        //getData();
+        refreshChecklist();
+        /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return false;
@@ -151,7 +142,7 @@ public class MyWishlistFragment extends BaseFragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 return false;
             }
-        });
+        });*/
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,19 +153,21 @@ public class MyWishlistFragment extends BaseFragment {
         return view;
     }
 
-    public void refreshChecklist(){
+    public void refreshChecklist() {
 
+        initiateLoading(getActivity());
         ChecklistRequest checklistRequest = new ChecklistRequest();
         checklistRequest.setToken(token);
-        checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + userId);
+        checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + preferences.getString("user_id", ""));
         presenter.onChecklistRequest(checklistRequest);
+
     }
 
     @Subscribe
     public void onChecklistReceive(ChecklistReceive checklistReceive) {
 
-        swipeContainer.setRefreshing(false);
-
+        //swipeContainer.setRefreshing(false);
+        dismissLoading();
         if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
             //save to realm
@@ -192,25 +185,27 @@ public class MyWishlistFragment extends BaseFragment {
         }
     }
 
-    public void getData(){
+    public void getData() {
         //call from Realm
 
         Realm realm = rController.getRealmInstanceContext(context);
-        Log.e("TEST", "1");
+
         try {
 
             ChecklistCached checklist = realm.where(ChecklistCached.class).findFirst();
             Gson gson = new Gson();
             ChecklistReceive checklistReceive = gson.fromJson(checklist.getCheckListString(), ChecklistReceive.class);
-            Log.e("TEST", "2");
+
             if (checklistReceive.getData() != null) {
 
-                if (checklistReceive.getData().size() != 0) {
-                    Log.e("TEST", "3");
-                    //Collections.reverse(notificationInfo);
+                if (checklistReceive.getData().getContent().size() > 0) {
+
+                    checklistId = checklistReceive.getData().getId();
+                    checkListLocation = checklistReceive.getData().getLocationCode();
+                    checkListLocationName = checklistReceive.getData().getLocationName();
+
                     mAdapter = new ChecklistAdapter(getActivity(), this, checklistReceive);
                     mListView.setAdapter(mAdapter);
-                /*mAdapter.setMode(Attributes.Mode.Single);*/
 
                 } else {
                     Log.e("TEST", "4");
@@ -234,54 +229,9 @@ public class MyWishlistFragment extends BaseFragment {
             realm.close();
         }
 
-
-
-
-
     }
 
-
-    /*@Subscribe
-    public void onLoginReceive(LoginReceive loginReceive) {
-
-        dismissLoading();
-
-        if (loginReceive.getApiStatus().equalsIgnoreCase("Y")) {
-            try {
-                String status = loginReceive.getStatus();
-
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("status", status);
-                editor.putBoolean("auth_status", true);
-                editor.putBoolean("just_login", true);
-                editor.apply();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
-            }
-
-        } else {
-
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean("auth_status", false);
-            editor.apply();
-
-            String error_msg = loginReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
-
-        }
-
-
-    }*/
-
-    /*@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        fragmentContainerId = ((FragmentContainerActivity) getActivity()).getFragmentContainerId();
-    }*/
-
-    public String showList(){
+    public String showList() {
         List x = checklist();
         Gson gson = new GsonBuilder().disableHtmlEscaping().create();
         String stringContent = gson.toJson(x);
@@ -290,23 +240,23 @@ public class MyWishlistFragment extends BaseFragment {
         return stringContent;
     }
 
-    public void insertList(int position, String i, String t, String c){
+    public void insertList(int position, String i, String t, String c) {
 
         Log.e("position", String.valueOf(position));
         surveyLists = new ArrayList<CheckList>();
 
         for (int p = 0; p <= position; p++) {
 
-        CheckList info = new CheckList();
-        info.setCategoryid(i);
-        info.setIssue(t);
-        info.setWishlist(c);
-        surveyLists.add(info);
+            CheckList info = new CheckList();
+            info.setCategoryid(i);
+            info.setIssue(t);
+            info.setWishlist(c);
+            surveyLists.add(info);
 
         }
     }
 
-    public void submitChecklist(){
+    public void submitChecklist() {
         new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("Eco Survey")
                 .setContentText("Confirm submit this checklist?")
@@ -331,29 +281,39 @@ public class MyWishlistFragment extends BaseFragment {
                                 UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
                                 icNumber = obj.getData().getIcNumber();
 
+                                HashMap<String, RequestBody> map = new HashMap<>();
+                                map.put("IcNumber", toRequestBody(icNumber));
+                                map.put("id", toRequestBody(checklistId));
+                                map.put("locationCode", toRequestBody(checkListLocation));
+                                map.put("locationName", toRequestBody(checkListLocationName));
+                                map.put("locationType", toRequestBody("PAR"));
+
+                                ChecklistReceive obj2 = mAdapter.checklistObj();
+                                List<Content> listMultipart = new ArrayList<>();
+
+                                for (int b = 0; b < obj2.getData().getContent().size(); b++) {
+
+                                    Content content = new Content();
+                                    content.setItemid(obj2.getData().getContent().get(b).getItemid());
+                                    content.setComment(obj2.getData().getContent().get(b).getComment());
+                                    content.setCheck(obj2.getData().getContent().get(b).getCheck());
+
+                                    listMultipart.add(content);
+                                }
+
                                 PostChecklistRequest postChecklistRequest = new PostChecklistRequest();
-                                postChecklistRequest.setIcNumber(icNumber);
+                                postChecklistRequest.setMap(map);
+                                postChecklistRequest.setParts2(listMultipart);
 
-                                //parliment = survey.getSurveyParliment().split("/");
-                                //category = survey.getSurveyCategory().split("/");
-
-                                String content = showList();
-
-                                //postChecklistRequest.setLocationCode(parliment[1]);
-                                postChecklistRequest.setLocationCode("01001");
-                                //postChecklistRequest.setLocationName(parliment[0]);
-                                postChecklistRequest.setLocationName("PADANG BESAR");
-                                postChecklistRequest.setLocationType("PAR");
-                                postChecklistRequest.setContent(content);
                                 postChecklistRequest.setToken(preferences.getString("temp_token", ""));
                                 presenter.onPostChecklist(postChecklistRequest);
+
                             }
 
 
                         } finally {
                             realm2.close();
                         }
-
 
 
                         sDialog.dismiss();
@@ -370,14 +330,35 @@ public class MyWishlistFragment extends BaseFragment {
                 .show();
     }
 
+    public RequestBody toRequestBody(String val) {
+
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"), val);
+        return body;
+    }
+
     @Subscribe
-    public void onPostChecklistReceive(PostChecklistReceive postChecklistReceive) {
+    public void onPostChecklistReceive(PostChecklistReceive obj) {
 
         dismissLoading();
 
-        if (postChecklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+        if (obj.getApiStatus().equalsIgnoreCase("Y")) {
             try {
-                Log.e("POST CHECKLIST", "Success");
+
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Success.")
+                        .setContentText("Checklist successfully saved.")
+                        .setConfirmText("Ok")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                sDialog.dismiss();
+                                refreshChecklist();
+
+                            }
+                        })
+                        .show();
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -386,7 +367,7 @@ public class MyWishlistFragment extends BaseFragment {
 
         } else {
 
-            String error_msg = postChecklistReceive.getMessage();
+            String error_msg = obj.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
 
         }
@@ -394,7 +375,7 @@ public class MyWishlistFragment extends BaseFragment {
 
     }
 
-    public List checklist(){
+    public List checklist() {
         return surveyLists;
     }
 

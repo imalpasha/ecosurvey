@@ -16,10 +16,12 @@ import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Activity.login.LoginActivity;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
+import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
+import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ListSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
@@ -241,6 +243,7 @@ public class SplashFragment extends BaseFragment {
                 intent.putExtra("ROLE", role);
                 getActivity().startActivity(intent);
                 getActivity().finish();
+
             }
 
         } else {
@@ -252,6 +255,34 @@ public class SplashFragment extends BaseFragment {
         }
     }
 
+    /*@Subscribe
+    public void onChecklistReceive(ChecklistReceive checklistReceive) {
+        dismissLoading();
+        if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+
+            try {
+                //save to realm
+                //convert to gsom
+                Gson gson = new Gson();
+                String checklist = gson.toJson(checklistReceive);
+
+                rController.saveChecklist(context, checklist);
+
+            } finally {
+                //update_realm_with_local
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+
+            }
+
+        } else {
+
+            String error_msg = checklistReceive.getMessage();
+            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+        }
+    }*/
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

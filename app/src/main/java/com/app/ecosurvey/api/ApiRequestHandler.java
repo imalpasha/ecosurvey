@@ -114,11 +114,13 @@ public class ApiRequestHandler {
                     user = response.body();
                     user.setApiStatus("Y");
                     bus.post(new LoginReceive(user));
+
                 } else {
                     //success call but with err message
                     user.setApiStatus("N");
-                    user.setMessage("Err_Message");
+                    user.setMessage("Invalid credential");
                     bus.post(new LoginReceive(user));
+
                 }
             }
 
@@ -343,7 +345,7 @@ public class ApiRequestHandler {
             public void onFailure(Call<ChecklistReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", "DOUBLE_N");
+                Log.e("SUCCESS", t.getMessage());
 
             }
         });
@@ -353,7 +355,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostChecklistRequest(final PostChecklistRequest event) {
 
-        Call<PostChecklistReceive> call = apiService.postChecklist(event.getIcNumber(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
+        Call<PostChecklistReceive> call = apiService.postChecklist("FrsApi " + event.getToken(),event.getMap(),event.getParts2());
         call.enqueue(new Callback<PostChecklistReceive>() {
 
             //succces retrieve information

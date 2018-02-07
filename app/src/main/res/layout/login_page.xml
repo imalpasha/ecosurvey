@@ -31,6 +31,7 @@
 
     </LinearLayout>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,7 +77,6 @@
                 android:drawableStart="@mipmap/email"
                 android:gravity="center|left"
                 android:hint="@string/txtAuthID"
-                android:text="7777"
                 android:inputType="textFilter"
                 android:paddingBottom="2dp"
                 android:paddingLeft="8dp"
@@ -116,7 +116,7 @@
                 android:drawableStart="@mipmap/email"
                 android:gravity="center|left"
                 android:hint="@string/txtAuthPassword"
-                android:text="password"
+                android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:paddingBottom="2dp"
                 android:paddingLeft="8dp"

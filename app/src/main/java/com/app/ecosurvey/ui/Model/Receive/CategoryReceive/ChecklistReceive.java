@@ -5,49 +5,42 @@ import java.util.List;
 public class ChecklistReceive {
 
     private String message;
-    private List<Data> data;
     private String apiStatus;
+    private Data data;
 
-    public List<Data> getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(List<Data> data) {
+    public void setData(Data data) {
         this.data = data;
     }
 
+
     public class Data {
 
-        private String categoryid;
-        private String issue;
-        private String wishlist;
+
+        private String locationCode;
+        private String locationName;
         private String id;
-        private String comment;
-        private String check;
+        List<ChecklistContent> content;
 
-        public String getCategoryid() {
-            return categoryid;
+        public String getLocationCode() {
+            return locationCode;
         }
 
-        public void setCategoryid(String categoryid) {
-            this.categoryid = categoryid;
+        public void setLocationCode(String locationCode) {
+            this.locationCode = locationCode;
         }
 
-        public String getIssue() {
-            return issue;
+        public String getLocationName() {
+            return locationName;
         }
 
-        public void setIssue(String issue) {
-            this.issue = issue;
+        public void setLocationName(String locationName) {
+            this.locationName = locationName;
         }
 
-        public String getWishlist() {
-            return wishlist;
-        }
-
-        public void setWishlist(String wishlist) {
-            this.wishlist = wishlist;
-        }
 
         public String getId() {
             return id;
@@ -55,6 +48,31 @@ public class ChecklistReceive {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+
+        public List<ChecklistContent> getContent() {
+            return content;
+        }
+
+        public void setContent(List<ChecklistContent> content) {
+            this.content = content;
+        }
+
+    }
+
+    public class ChecklistContent {
+
+        private String itemid;
+        private String comment;
+        private String check;
+
+        public String getItemid() {
+            return itemid;
+        }
+
+        public void setItemid(String itemid) {
+            this.itemid = itemid;
         }
 
         public String getComment() {

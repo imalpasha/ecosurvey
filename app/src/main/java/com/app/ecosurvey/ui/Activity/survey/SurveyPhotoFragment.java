@@ -182,7 +182,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                     for (int x = 0; x < list.size(); x++) {
                         imageList += list.get(x).getImagePath() + "___";
                     }
-                    Log.e("savedImage",imageList);
+                    Log.e("savedImage", imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
                 } catch (Exception e) {
@@ -327,7 +327,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
         String token = preferences.getString("temp_token", "");
 
-        initiateLoadingMsg(getActivity(),"Fetching photo...");
+        initiateLoadingMsg(getActivity(), "Fetching photo...");
 
         PhotoRequest photoRequest = new PhotoRequest();
         photoRequest.setToken(token);
@@ -508,44 +508,57 @@ public class SurveyPhotoFragment extends BaseFragment {
                 dismissLoading();
 
                 Date date = null, date2 = null;
-                try {
-                    DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
-                    date = format.parse(survey.getStatusUpdated());
-                    date2 = format.parse(photoReceive.getData().getUpdated_at());
+                if (survey.getPhotoUpdateDate() != null) {
 
-                } catch (Exception e) {
+                    try {
+                        DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
+                        date = format.parse(survey.getPhotoUpdateDate());
+                        date2 = format.parse(photoReceive.getData().getUpdated_at());
 
-                }
+                    } catch (Exception e) {
+                        Log.e("nuLL", "Y");
+                    }
 
-                if (date != null && date2 != null) {
-                    if (date2.after(date)) {
+                    if (date != null && date2 != null) {
+                        if (date2.after(date)) {
 
-                        //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
-
-                        for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
-                            SelectedImagePath selectedImagePath = new SelectedImagePath();
-                            selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
-                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                            list.add(selectedImagePath);
-                        }
-
-                    } else {
-
-                        String imageList = survey.getImagePath();
-                        if (imageList != null && !imageList.equalsIgnoreCase("")) {
-                            String[] parts = imageList.split("___");
-                            //insert path to object
-                            for (int x = 0; x < parts.length; x++) {
+                            //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                            for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
                                 SelectedImagePath selectedImagePath = new SelectedImagePath();
-                                selectedImagePath.setImagePath(parts[x]);
+                                selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
                                 selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
                                 list.add(selectedImagePath);
+                            }
+
+                        } else {
+
+                            String imageList = survey.getImagePath();
+                            if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                                String[] parts = imageList.split("___");
+                                //insert path to object
+                                for (int x = 0; x < parts.length; x++) {
+                                    SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                    selectedImagePath.setImagePath(parts[x]);
+                                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                    list.add(selectedImagePath);
+                                }
                             }
                         }
                     }
 
-                    initiateImageAdapter(list);
+
+                } else {
+                    //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                    for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                        SelectedImagePath selectedImagePath = new SelectedImagePath();
+                        selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                        list.add(selectedImagePath);
+                    }
                 }
+                initiateImageAdapter(list);
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
