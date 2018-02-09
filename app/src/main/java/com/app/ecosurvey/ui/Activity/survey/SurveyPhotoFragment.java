@@ -123,9 +123,11 @@ public class SurveyPhotoFragment extends BaseFragment {
     private ImageListAdapter adapter;
     private int changeImagePosition;
     private ArrayList<SelectedImagePath> list = new ArrayList<SelectedImagePath>();
+    private ArrayList<SelectedImagePath> secondlist = new ArrayList<SelectedImagePath>();
+
     private Boolean changeImageTrue = false;
     private Realm realm;
-
+    public static Boolean change = false;
 
     public static SurveyPhotoFragment newInstance(Bundle bundle) {
 
@@ -182,6 +184,16 @@ public class SurveyPhotoFragment extends BaseFragment {
                     for (int x = 0; x < list.size(); x++) {
                         imageList += list.get(x).getImagePath() + "___";
                     }
+
+                    //check for online
+                    if (status.equalsIgnoreCase("EDIT_API")) {
+                        if (secondlist.size() > 0) {
+                            for (int x = 0; x < secondlist.size(); x++) {
+                                imageList += secondlist.get(x).getImagePath() + "___";
+                            }
+                        }
+                    }
+
                     Log.e("savedImage", imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
@@ -430,7 +442,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
-                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -444,7 +456,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                     .limitPickPhoto(5)
                     .singlePhoto(false)
                     .hintOfPick("Maximum image is 5")
-                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -460,20 +472,25 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     public void initiateImageAdapter(ArrayList<SelectedImagePath> array) {
 
-        setImageBlock1.setVisibility(View.GONE);
-        setImageBlock2.setVisibility(View.VISIBLE);
+        if(array.size() > 0){
+            setImageBlock1.setVisibility(View.GONE);
+            setImageBlock2.setVisibility(View.VISIBLE);
 
-        RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
-        myRecyclerView.setHasFixedSize(true);
-        myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+            myRecyclerView.setHasFixedSize(true);
+            myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
-        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+            MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new ImageListAdapter(SurveyPhotoFragment.this, array, getActivity());
+            adapter = new ImageListAdapter(SurveyPhotoFragment.this, array, getActivity());
 
-        myRecyclerView.setAdapter(adapter);
-        myRecyclerView.setLayoutManager(MyLayoutManager);
+            myRecyclerView.setAdapter(adapter);
+            myRecyclerView.setLayoutManager(MyLayoutManager);
+        }else {
+            //do nothing
+        }
+
 
     }
 
@@ -511,13 +528,16 @@ public class SurveyPhotoFragment extends BaseFragment {
                 if (survey.getPhotoUpdateDate() != null) {
 
                     try {
-                        DateFormat format = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ENGLISH);
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
                         date = format.parse(survey.getPhotoUpdateDate());
                         date2 = format.parse(photoReceive.getData().getUpdated_at());
 
                     } catch (Exception e) {
+                        Log.e("date", "a" + date);
+                        Log.e("date2", "b" + date2);
                         Log.e("nuLL", "Y");
                     }
+
 
                     if (date != null && date2 != null) {
                         if (date2.after(date)) {
@@ -551,11 +571,13 @@ public class SurveyPhotoFragment extends BaseFragment {
 
                 } else {
                     //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
-                    for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
-                        SelectedImagePath selectedImagePath = new SelectedImagePath();
-                        selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
-                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                        list.add(selectedImagePath);
+                    if (photoReceive.getData().getContent() != null) {
+                        for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                            SelectedImagePath selectedImagePath = new SelectedImagePath();
+                            selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                            list.add(selectedImagePath);
+                        }
                     }
                 }
                 initiateImageAdapter(list);
@@ -565,7 +587,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
             } finally {
-                realm.close();
+                //realm.close();
             }
 
         } else {
@@ -576,6 +598,16 @@ public class SurveyPhotoFragment extends BaseFragment {
         }
 
 
+    }
+
+    public void setImagePathForHttp(String path) {
+
+        Log.e("filepath", path);
+
+        SelectedImagePath selectedImagePath = new SelectedImagePath();
+        selectedImagePath.setImagePath(path);
+        selectedImagePath.setRandomPathCode("xxx");
+        secondlist.add(selectedImagePath);
     }
 
     //process result
@@ -590,7 +622,7 @@ public class SurveyPhotoFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == SELECT_FILE) {
                 //list of photos of selected
-
+                change = true;
                 List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
 
                 //insert path to object
@@ -611,7 +643,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //list of videos of selected
                 //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
             } else if (requestCode == CHANGE_FILE) {
-
+                change = true;
                 List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
                 Log.e("xxxxx", "a" + photos.get(0));
 
@@ -704,6 +736,7 @@ public class SurveyPhotoFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        change = false;
         presenter.onResume();
         bus.register(this);
     }

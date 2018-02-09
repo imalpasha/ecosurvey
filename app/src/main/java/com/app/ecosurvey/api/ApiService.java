@@ -78,6 +78,7 @@ public interface ApiService {
     @POST("/api/v1/surveys")
     Call<PostSurveyReceive> postSurvey(
             @Field("IcNumber") String IcNumber,
+            @Field("id") String id,
             @Field("locationCode") String locationCode,
             @Field("locationName") String locationName,
             @Field("locationType") String locationType,

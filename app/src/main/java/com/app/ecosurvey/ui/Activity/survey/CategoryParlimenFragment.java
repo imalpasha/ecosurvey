@@ -81,13 +81,21 @@ public class CategoryParlimenFragment extends BaseFragment {
     @Bind(R.id.txtKategori)
     TextView txtKategori;
 
+    @Bind(R.id.parlimenTxt)
+    TextView parlimenTxt;
+
+    @Bind(R.id.parlimentBox)
+    LinearLayout parlimenBox;
+
+
     private String randomID;
     private String status;
 
     private ArrayList<DropDownItem> parlimenList = new ArrayList<>();
     private ArrayList<DropDownItem> kategoriList = new ArrayList<>();
-
+    private String parliment;
     private int fragmentContainerId;
+    private Boolean manual = true;
 
     public static CategoryParlimenFragment newInstance(Bundle bundle) {
 
@@ -123,7 +131,9 @@ public class CategoryParlimenFragment extends BaseFragment {
                 if (manualValidation()) {
 
                     String category = txtKategori.getText().toString() + "/" + txtKategori.getTag().toString();
-                    String parliment = txtParlimen.getText().toString() + "/" + txtParlimen.getTag().toString();
+                    if(manual){
+                        parliment = txtParlimen.getText().toString() + "/" + txtParlimen.getTag().toString();
+                    }
 
                     rController.surveyLocalStorageS1(context, randomID, category, parliment, "local_progress");
 
@@ -255,7 +265,7 @@ public class CategoryParlimenFragment extends BaseFragment {
 
 
                 } finally {
-                    realm.close();
+                    //realm.close();
                 }
             }
         }
@@ -264,30 +274,47 @@ public class CategoryParlimenFragment extends BaseFragment {
 
     public Boolean manualValidation() {
 
-        Boolean status;
+        Boolean status = false;
 
-        if (txtParlimen.getText().toString().equalsIgnoreCase("")) {
-            //setShake(txtParlimen);
+        if (!manual) {
+            if (txtKategori.getText().toString().equalsIgnoreCase("")) {
+                //setShake(txtKategori);
+                txtKategori.setFocusable(true);
+                txtKategori.requestFocus();
+                //txtKategori.setError("Please select kategori");
 
-            txtParlimen.setFocusable(true);
-            txtParlimen.requestFocus();
-            //txtParlimen.setError("Please select parlimen");
+                setError(getActivity(), "Validation Error.", "Please select category");
 
-            setError(getActivity(), "Validation Error.", "Please select parlimen");
-
-            status = false;
-        } else if (txtKategori.getText().toString().equalsIgnoreCase("")) {
-            //setShake(txtKategori);
-            txtKategori.setFocusable(true);
-            txtKategori.requestFocus();
-            //txtKategori.setError("Please select kategori");
-
-            setError(getActivity(), "Validation Error.", "Please select category");
-
-            status = false;
+                status = false;
+            } else {
+                status = true;
+            }
         } else {
-            status = true;
+            if (txtParlimen.getText().toString().equalsIgnoreCase("")) {
+                //setShake(txtParlimen);
+
+                txtParlimen.setFocusable(true);
+                txtParlimen.requestFocus();
+                //txtParlimen.setError("Please select parlimen");
+
+                setError(getActivity(), "Validation Error.", "Please select parlimen");
+
+                status = false;
+            } else if (txtKategori.getText().toString().equalsIgnoreCase("")) {
+                //setShake(txtKategori);
+                txtKategori.setFocusable(true);
+                txtKategori.requestFocus();
+                //txtKategori.setError("Please select kategori");
+
+                setError(getActivity(), "Validation Error.", "Please select category");
+
+                status = false;
+            } else {
+                status = true;
+            }
         }
+
+
         return status;
     }
 
@@ -315,7 +342,7 @@ public class CategoryParlimenFragment extends BaseFragment {
 
 
         } finally {
-            realm.close();
+            //realm.close();
         }
 
         Realm realm2 = rController.getRealmInstanceContext(context);
@@ -353,6 +380,7 @@ public class CategoryParlimenFragment extends BaseFragment {
 
         }
 
+
         for (int i = 0; i < category.size(); i++) {
             DropDownItem itemFlight = new DropDownItem();
 
@@ -362,6 +390,18 @@ public class CategoryParlimenFragment extends BaseFragment {
             itemFlight.setCode(parts[1]);
             kategoriList.add(itemFlight);
 
+        }
+
+        UserInfoCached survey = realm.where(UserInfoCached.class).findFirst();
+        Gson gson = new Gson();
+        UserInfoReceive userInfoReceive = gson.fromJson(survey.getUserInfoString(), UserInfoReceive.class);
+
+        if (userInfoReceive.getData().getRole().equalsIgnoreCase("PDMLeader")) {
+            parlimenTxt.setVisibility(View.GONE);
+            parlimenBox.setVisibility(View.GONE);
+
+            parliment = parlimenList.get(0).getText() + "/" + parlimenList.get(0).getCode();
+            manual = false;
         }
 
     }
@@ -389,7 +429,6 @@ public class CategoryParlimenFragment extends BaseFragment {
 
     }
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -401,6 +440,8 @@ public class CategoryParlimenFragment extends BaseFragment {
         super.onResume();
         presenter.onResume();
         bus.register(this);
+
+        //manual = true;
     }
 
     @Override

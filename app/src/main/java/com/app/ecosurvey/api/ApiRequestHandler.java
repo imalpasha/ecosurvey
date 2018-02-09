@@ -211,7 +211,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostSurveyRequest(final PostSurveyRequest event) {
 
-        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
+        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(),event.getId(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
         call.enqueue(new Callback<PostSurveyReceive>() {
 
             //succces retrieve information

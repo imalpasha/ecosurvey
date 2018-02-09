@@ -62,14 +62,12 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
 
         String f = arrayPromo.get(h).getVideoPath();
 
-        holder.txtVideoPathURL.setText(f);
-
         if (f.contains("http")) {
             try {
                 //holder.txtVideoPath.setImageBitmap(retrieveThumbnail(f));
                 holder.videoView.setVisibility(View.VISIBLE);
-                holder.videoView.setVideoPath("https://www.demonuts.com/Demonuts/smallvideo.mp4");
-
+                holder.videoView.setVideoPath(f);
+                //"https://www.demonuts.com/Demonuts/smallvideo.mp4"
                 /*MediaController mediaController = new MediaController(activity);
                 mediaController.setAnchorView(holder.videoView);
                 holder.videoView.setMediaController(mediaController);
@@ -152,7 +150,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         final VideoView videoView;
         final ImageView play;
         final ImageView pause;
-        final TextView txtVideoPathURL;
 
 
         public MyViewHolder(View insideMeal) {
@@ -162,7 +159,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
             txtVideoPath = (ImageView) insideMeal.findViewById(R.id.txtVideoPath);
             actionChange = (TextView) insideMeal.findViewById(R.id.txtActionChange);
             videoView = (VideoView) insideMeal.findViewById(R.id.videoView);
-            txtVideoPathURL = (TextView) insideMeal.findViewById(R.id.txtVideoPathURL);
             play = (ImageView) insideMeal.findViewById(R.id.play);
             pause = (ImageView) insideMeal.findViewById(R.id.pause);
 

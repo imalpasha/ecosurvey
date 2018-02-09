@@ -14,6 +14,7 @@ public class PostSurveyRequest {
     private String locationName;
     private String locationType;
     private String token;
+    private String id;
 
     public String getId() {
         return id;
@@ -22,8 +23,6 @@ public class PostSurveyRequest {
     public void setId(String id) {
         this.id = id;
     }
-
-    private String id;
 
     public String getContent() {
         return content;
