@@ -544,6 +544,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                                 }
                             }
                         }
+                    } else {
+                        Log.e("Date", "Null");
                     }
 
 
