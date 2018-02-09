@@ -193,8 +193,8 @@ public class SurveyVideoFragment extends BaseFragment {
         openImageAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //dialog.show();
-                Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
+                dialog.show();
+               // Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
                 Log.e("toast","Y");
             }
         });
@@ -202,8 +202,8 @@ public class SurveyVideoFragment extends BaseFragment {
         openImageActionSmall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //dialog.show();
-                Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
+                dialog.show();
+                //Toast.makeText(getActivity(),"Under Maintenance",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -353,7 +353,6 @@ public class SurveyVideoFragment extends BaseFragment {
 
         }
 
-
     }
 
     public void loadVideoFromAPI() {
@@ -364,7 +363,7 @@ public class SurveyVideoFragment extends BaseFragment {
 
         VideoRequest videoRequest = new VideoRequest();
         videoRequest.setToken(token);
-        videoRequest.setUrl("/api/v1/surveys/videos/" + "FFCC12BC-1E9F-3B8B-ADE8-38234BFA5806");
+        videoRequest.setUrl("/api/v1/surveys/videos/" + randomID);
         presenter.onVideoRequest(videoRequest);
 
     }
@@ -509,7 +508,7 @@ public class SurveyVideoFragment extends BaseFragment {
 
             GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
-                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -523,7 +522,7 @@ public class SurveyVideoFragment extends BaseFragment {
                     .limitPickPhoto(5)
                     .singlePhoto(false)
                     .hintOfPick("Maximum image is 5")
-                    .filterMimeTypes(new String[]{"image/jpeg"})
+                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -610,16 +609,16 @@ public class SurveyVideoFragment extends BaseFragment {
             if (requestCode == SELECT_FILE) {
                 //list of videos of selected
 
-                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
-                String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                //String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
 
                 //insert path to object
-                //for (int x = 0; x < videos.size(); x++) {
+                for (int x = 0; x < videos.size(); x++) {
                 SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                selectedVideoPath.setVideoPath(videos);
+                selectedVideoPath.setVideoPath(videos.get(x));
                 selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
                 list.add(selectedVideoPath);
-                //}
+                }
 
                 if (true) {
                     initiateVideoAdapter(list);
@@ -632,9 +631,9 @@ public class SurveyVideoFragment extends BaseFragment {
                 List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
                 Log.e("xxxxx", "a" + videos.get(0));
 
-                SelectedImagePath selectedImagePath = new SelectedImagePath();
-                selectedImagePath.setImagePath(videos.get(0));
-                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(0));
+                SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                selectedVideoPath.setVideoPath(videos.get(0));
+                selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
 
                 //list.remove(changeImagePosition);
                 list.get(changeImagePosition).setVideoPath(videos.get(0));

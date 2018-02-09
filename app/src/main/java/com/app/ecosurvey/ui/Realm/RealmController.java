@@ -149,6 +149,16 @@ public class RealmController {
     public void saveUserInfo(Context context, String userInfoReceive) {
 
         Realm realm = getRealmInstanceContext(context);
+
+        try {
+            final RealmResults<UserInfoCached> result = realm.where(UserInfoCached.class).findAll();
+            realm.beginTransaction();
+            result.clear();
+            realm.commitTransaction();
+        } catch (Exception e) {
+            Log.e("clearCached", e.getMessage());
+        }
+
         realm.beginTransaction();
         UserInfoCached realmObject = realm.createObject(UserInfoCached.class);
         realmObject.setUserInfoString(userInfoReceive);
@@ -391,6 +401,22 @@ public class RealmController {
 
         try {
             final RealmResults<CachedResult> result = realm.where(CachedResult.class).findAll();
+            realm.beginTransaction();
+            result.clear();
+            realm.commitTransaction();
+            realm.close();
+        } catch (Exception e) {
+            Log.e("clearCached", e.getMessage());
+        }
+
+    }
+
+    public void clearLocalSurvey(Context act) {
+
+        Realm realm = getRealmInstanceContext(act);
+
+        try {
+            final RealmResults<LocalSurvey> result = realm.where(LocalSurvey.class).findAll();
             realm.beginTransaction();
             result.clear();
             realm.commitTransaction();

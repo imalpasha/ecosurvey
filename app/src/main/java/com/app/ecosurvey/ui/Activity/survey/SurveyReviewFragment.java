@@ -1,8 +1,10 @@
 package com.app.ecosurvey.ui.Activity.survey;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,10 +38,16 @@ import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Realm.RealmController;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mikepenz.iconics.utils.Utils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +66,9 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Part;
 import retrofit2.http.PartMap;
+
+import static com.app.ecosurvey.ui.Activity.survey.SurveyPhotoFragment.change;
+import static com.crashlytics.android.Crashlytics.log;
 
 public class SurveyReviewFragment extends BaseFragment {
 
@@ -223,9 +234,11 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
                                         postSurveyRequest.setIcNumber(icNumber);
-                                        postSurveyRequest.setIcNumber(icNumber);
 
                                         if (status.equalsIgnoreCase("EDIT_API")) {
+                                            Log.e("status", status);
+                                            Log.e("status", randomID);
+
                                             postSurveyRequest.setId(randomID);
                                         }
 
@@ -258,7 +271,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
 
                                 } finally {
-                                    realm.close();
+                                    //realm.close();
                                 }
 
 
@@ -378,7 +391,7 @@ public class SurveyReviewFragment extends BaseFragment {
             }
 
         } finally {
-            realm.close();
+            //realm.close();
         }
 
     }
@@ -423,8 +436,15 @@ public class SurveyReviewFragment extends BaseFragment {
                         String[] parts = imageList.split("___");
                         for (int b = 0; b < parts.length; b++) {
                             if (parts[b] != null) {
-                                Uri myUri = Uri.parse(parts[b]);
-                                listMultipart.add(prepareFilePart("photos[]", myUri));
+                                if (!parts[b].contains("http")) {
+
+                                    Log.e("all_path", parts[b]);
+                                    Uri myUri = Uri.parse(parts[b]);
+                                    listMultipart.add(prepareFilePart("photos[]", myUri));
+
+                                }
+
+
                             }
                         }
                     }
@@ -434,8 +454,10 @@ public class SurveyReviewFragment extends BaseFragment {
                     Log.e("ERROR_MSG", e.getMessage());
                 }
 
+                Log.e("forphoto", "a" + imageList);
+                Log.e("forphoto", "b" + Boolean.toString(change));
 
-                if (!imageList.equalsIgnoreCase("")) {
+                if (!imageList.equalsIgnoreCase("") && change) {
                     //submit photo.
                     SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
                     surveyPhotoContentRequest.setIcnumber(icNumber);
@@ -558,6 +580,12 @@ public class SurveyReviewFragment extends BaseFragment {
         RequestBody requestFile = RequestBody.create(null, file);
 //MediaType.parse(getActivity().getContentResolver().getType(fileUri)
         // MultipartBody.Part is used to send also the actual file name
+
+        if (fileUri.getPath().contains("imageDir")) {
+            File myImageFile = new File(fileUri.getPath());
+            if (myImageFile.delete()) log("image on the disk deleted successfully!");
+        }
+
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }
 

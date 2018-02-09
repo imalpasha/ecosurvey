@@ -15,24 +15,25 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center">
 
         <VideoView
             android:id="@+id/videoView"
-            android:visibility="visible"
-            android:layout_width="200dp"
-            android:layout_height="120dp"
+            android:layout_width="250dp"
+            android:layout_height="140dp"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:adjustViewBounds="true"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/upload_icon" />
+            android:src="@drawable/upload_icon"
+            android:visibility="visible" />
 
         <LinearLayout
-            android:layout_width="200dp"
-            android:layout_height="120dp"
+            android:layout_width="250dp"
+            android:layout_height="140dp"
             android:gravity="center">
 
             <ImageView
@@ -40,28 +41,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/play_button"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
             <ImageView
                 android:id="@+id/pause"
                 android:layout_width="200dp"
                 android:layout_height="120dp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </LinearLayout>
 
     </RelativeLayout>
-
-
-    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-        android:id="@+id/txtVideoPathURL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginRight="0.5dp"
-        android:background="@color/grey_light"
-        android:paddingRight="10dp"
-        android:textSize="15sp" />
 
     <ImageView
         android:visibility="gone"
@@ -73,9 +63,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="11dp"
         android:background="@color/grey_666666"
-        android:gravity="center"
+        android:gravity="center|bottom"
         android:orientation="horizontal">
 
         <com.app.ecosurvey.utils.FontStyle.PlayTextView

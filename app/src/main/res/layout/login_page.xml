@@ -19,15 +19,13 @@
         android:paddingTop="25dp"
         android:weightSum="1">
 
-        <ImageView
-            android:id="@+id/login_aab_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="TODO"
+        <com.app.ecosurvey.utils.FontStyle.PlayTextView
             android:gravity="center"
-            android:scaleType="centerInside"
-            android:src="@mipmap/logo_black" />
+            android:layout_gravity="center"
+            android:textSize="50sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PSS-R" />
 
     </LinearLayout>
 
