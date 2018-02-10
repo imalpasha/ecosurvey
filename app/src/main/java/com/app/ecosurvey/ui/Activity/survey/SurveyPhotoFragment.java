@@ -157,19 +157,6 @@ public class SurveyPhotoFragment extends BaseFragment {
         setupBlock(getActivity(), block4);
         autoFill2();
 
-        //try fetch realm data.
-        try {
-            LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
-            Log.e("SurveyCategory", survey.getSurveyCategory());
-            Log.e("SurveyParliment", survey.getSurveyParliment());
-            Log.e("SurveyIssue", survey.getSurveyIssue());
-            Log.e("SurveyWishlist", survey.getSurveyWishlist());
-            Log.e("SurveyLocalProgress", survey.getSurveyLocalProgress());
-
-        } finally {
-            realm.close();
-        }
-
         photoBtnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -179,27 +166,16 @@ public class SurveyPhotoFragment extends BaseFragment {
                 try {
 
                     String imageList = "";
-                    //Gson gsonUserInfo = new Gson();
-                    //String gsonImage = gsonUserInfo.toJson(list);
-
-                   // for (int x = 0; x < list.size(); x++) {
-                   //     imageList += list.get(x).getImagePath() + "___";
-                   // }
-
-                    //check for online
-                    //if (status.equalsIgnoreCase("EDIT_API")) {
-                        if (secondlist.size() > 0) {
-                            for (int x = 0; x < secondlist.size(); x++) {
-                                imageList += secondlist.get(x).getImagePath() + "___";
-                            }
+                    if (secondlist.size() > 0) {
+                        for (int x = 0; x < secondlist.size(); x++) {
+                            imageList += secondlist.get(x).getImagePath() + "___";
                         }
-                    //}
+                    }
 
-                    Log.e("savedImage", imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
                 } catch (Exception e) {
-                    Log.e("SaveImage", "Error: " + e.getMessage());
+
                 } finally {
 
                     Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
@@ -303,7 +279,6 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //nd to compare here
 
                 //try fetch realm data.
-                Log.e("edit", "edit");
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
@@ -443,7 +418,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
-                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
+                    .filterMimeTypes(new String[]{"video/mp4", "video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -457,7 +432,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                     .limitPickPhoto(5)
                     .singlePhoto(false)
                     .hintOfPick("Maximum image is 5")
-                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
+                    .filterMimeTypes(new String[]{"video/mp4", "video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -473,7 +448,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     public void initiateImageAdapter(ArrayList<SelectedImagePath> array) {
 
-        if(array.size() > 0){
+        if (array.size() > 0) {
             setImageBlock1.setVisibility(View.GONE);
             setImageBlock2.setVisibility(View.VISIBLE);
 
@@ -488,7 +463,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             myRecyclerView.setAdapter(adapter);
             myRecyclerView.setLayoutManager(MyLayoutManager);
-        }else {
+        } else {
             //do nothing
         }
 
@@ -500,8 +475,8 @@ public class SurveyPhotoFragment extends BaseFragment {
         setImageBlock2.setVisibility(View.GONE);
     }
 
-    public void informTheMainList(int position){
-      //  secondlist.remove(position);
+    public void informTheMainList(int position) {
+        //  secondlist.remove(position);
     }
 
     public void reselectImage(Integer pos) {
@@ -729,18 +704,6 @@ public class SurveyPhotoFragment extends BaseFragment {
     }
 
     //-----------------------------------CONVERT IMAGE TO 64BASE--------------------------------------//
-
-
-    /*public String changeImage(Bitmap bitmap) {
-        *//*BitmapDrawable drawable = (BitmapDrawable) myImgUserDP.getDrawable();
-        Bitmap bitmap = drawable.getBitmap();*//*
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
-        byte[] bb = bos.toByteArray();
-
-        return Base64.encodeToString(bb, 0);
-    }*/
 
 
     @Override

@@ -22,6 +22,7 @@ import com.app.ecosurvey.ui.Model.Realm.Object.CachedCategory;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
 import com.app.ecosurvey.ui.Presenter.MainPresenter;
 import com.app.ecosurvey.ui.Realm.RealmController;
@@ -166,14 +167,6 @@ public class ProfileFragment extends BaseFragment {
     }
 
 
-    //@Subscribe
-    // public void onUserInfoReceive(UserInfoReceive userInfoReceive) {
-
-    //if (userInfoReceive.getApiStatus().equalsIgnoreCase("Y")) {
-    //  try {
-
-    //    profileLoading.setVisibility(View.GONE);
-    //  profileLayout.setVisibility(View.VISIBLE);
 
     public void loadData() {
 

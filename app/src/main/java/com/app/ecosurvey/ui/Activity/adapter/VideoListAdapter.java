@@ -1,7 +1,10 @@
 package com.app.ecosurvey.ui.Activity.adapter;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -25,8 +28,12 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.app.ecosurvey.ui.Activity.survey.SurveyVideoFragment.videoChange;
 
 public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyViewHolder> {
 
@@ -205,6 +212,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         //recycler.removeViewAt(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, arrayPromo.size());
+        videoChange = true;
 
         if (arrayPromo.size() == 0) {
             frag.enableVideoSelection();
@@ -235,5 +243,33 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
             }
         }
         return bitmap;
+    }
+
+    public void getImageFileFromBitmap(Context context, String imageDir, String imageName, ImageView v) {
+
+        ContextWrapper cw = new ContextWrapper(context);
+        final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE);
+
+        final File myImageFile = new File(directory, imageName); // Create image file
+        FileOutputStream fos = null;
+
+        Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
+
+        try {
+            fos = new FileOutputStream(myImageFile);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        frag.setVideoPathForHttp(myImageFile.getAbsolutePath());
+
     }
 }

@@ -19,57 +19,25 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <LinearLayout
+            <com.app.ecosurvey.utils.FontStyle.PlayTextViewBold
+                android:id="@+id/txtHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:weightSum="1">
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:text="TextView"
+                android:textColor="@color/red_btn_bg_color"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-                <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                    android:id="@+id/checklist_title"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.6"
-                    android:text="Issue" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:gravity="end">
-
-                    <ImageView
-                        android:id="@+id/checked_image"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/box_64" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/shadow_box"
-                android:padding="10dp"
-                android:visibility="gone">
-
-                <com.app.ecosurvey.utils.FontStyle.PlayEditText
-                    android:id="@+id/checklist_cont"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:imeOptions="actionDone"
-                    android:paddingBottom="30dp"
-                    android:text="Issue"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
 
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/hasChildLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
 
 
     </LinearLayout>

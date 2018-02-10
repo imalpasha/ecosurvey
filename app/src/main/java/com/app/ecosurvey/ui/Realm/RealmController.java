@@ -185,6 +185,25 @@ public class RealmController {
 
     }
 
+    public void saveInitChecklist(Context context, String initchecklistReceive) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        //clear user info in realm first.
+        final RealmResults<ChecklistCached> result = realm.where(ChecklistCached.class).findAll();
+        realm.beginTransaction();
+        result.clear();
+        realm.commitTransaction();
+
+        realm.beginTransaction();
+        ChecklistCached realmObject = realm.createObject(ChecklistCached.class);
+        realmObject.setCheckListString(initchecklistReceive);
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
+
     public void surveyLocalStorageS0(Context context, String surveyID, String progress, String date) {
 
         Realm realm = getRealmInstanceContext(context);

@@ -25,12 +25,17 @@ import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.FragmentContainerActivity;
 import com.app.ecosurvey.ui.Activity.adapter.ChecklistAdapter;
 import com.app.ecosurvey.ui.Model.Adapter.Object.CheckList;
+import com.app.ecosurvey.ui.Model.Adapter.Object.ChecklistMerge;
+import com.app.ecosurvey.ui.Model.Adapter.Object.ChildList;
+import com.app.ecosurvey.ui.Model.Adapter.Object.MergeList;
 import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
+import com.app.ecosurvey.ui.Model.Request.InitChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.Content;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostChecklistRequest;
@@ -129,7 +134,7 @@ public class MyWishlistFragment extends BaseFragment {
         userId = preferences.getString("user_id", "");
 
         //getData();
-        refreshChecklist();
+        getCheckList();
         /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -153,15 +158,46 @@ public class MyWishlistFragment extends BaseFragment {
         return view;
     }
 
+    public void getCheckList() {
+
+        initiateLoadingMsg(getActivity(),"Loading...");
+        InitChecklistRequest initChecklistRequest = new InitChecklistRequest();
+        initChecklistRequest.setToken(token);
+        initChecklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist");
+        presenter.onInitChecklistRequest(initChecklistRequest);
+
+    }
+
     public void refreshChecklist() {
 
-        initiateLoading(getActivity());
         ChecklistRequest checklistRequest = new ChecklistRequest();
         checklistRequest.setToken(token);
         checklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist/submission/" + preferences.getString("user_id", ""));
         presenter.onChecklistRequest(checklistRequest);
 
     }
+
+
+    @Subscribe
+    public void onInitChecklistReceive(InitChecklistReceive initChecklistReceive) {
+
+        if (initChecklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
+            try {
+
+                Gson gson = new Gson();
+                String checklist = gson.toJson(initChecklistReceive);
+
+                rController.saveInitChecklist(context, checklist);
+                //getData();
+
+                refreshChecklist();
+
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
 
     @Subscribe
     public void onChecklistReceive(ChecklistReceive checklistReceive) {
@@ -170,13 +206,7 @@ public class MyWishlistFragment extends BaseFragment {
         dismissLoading();
         if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
-            //save to realm
-            //convert to gson
-            Gson gson = new Gson();
-            String checklist = gson.toJson(checklistReceive);
-
-            rController.saveChecklist(context, checklist);
-            getData();
+            getData(checklistReceive);
 
         } else {
 
@@ -185,7 +215,7 @@ public class MyWishlistFragment extends BaseFragment {
         }
     }
 
-    public void getData() {
+    public void getData(ChecklistReceive checklistReceive) {
         //call from Realm
 
         Realm realm = rController.getRealmInstanceContext(context);
@@ -194,39 +224,66 @@ public class MyWishlistFragment extends BaseFragment {
 
             ChecklistCached checklist = realm.where(ChecklistCached.class).findFirst();
             Gson gson = new Gson();
-            ChecklistReceive checklistReceive = gson.fromJson(checklist.getCheckListString(), ChecklistReceive.class);
+            InitChecklistReceive obj = gson.fromJson(checklist.getCheckListString(), InitChecklistReceive.class);
 
-            if (checklistReceive.getData() != null) {
+            //create another set of object to manage the checklist
+            ArrayList<MergeList> listsMerge = new ArrayList<MergeList>();
 
-                if (checklistReceive.getData().getContent().size() > 0) {
+            Log.e("sub", Integer.toString(obj.getData().size()));
 
-                    checklistId = checklistReceive.getData().getId();
-                    checkListLocation = checklistReceive.getData().getLocationCode();
-                    checkListLocationName = checklistReceive.getData().getLocationName();
+            for (int sub = 0; sub < obj.getData().size(); sub++) {
+                if (obj.getData().get(sub).getParent_id().equalsIgnoreCase("0")) {
+                    MergeList mergeList = new MergeList();
+                    mergeList.setHeader(obj.getData().get(sub).getText());
+                    mergeList.setId(obj.getData().get(sub).getId());
 
-                    mAdapter = new ChecklistAdapter(getActivity(), this, checklistReceive);
-                    mListView.setAdapter(mAdapter);
+                    for (int sub2 = 0; sub2 < obj.getData().size(); sub2++) {
 
-                } else {
-                    Log.e("TEST", "4");
-                    have_list.setVisibility(View.GONE);
-                    no_list.setVisibility(View.VISIBLE);
+                        if (obj.getData().get(sub2).getParent_id().equalsIgnoreCase(obj.getData().get(sub).getId())) {
+
+                            ChildList childList2 = new ChildList();
+                            childList2.setCheck("no");
+                            childList2.setTxtComment("no");
+                            childList2.setTxtID(obj.getData().get(sub2).getId());
+                            childList2.setTxtName(obj.getData().get(sub2).getText());
+
+                            mergeList.getChildLists().add(childList2);
+                        }
+                    }
+                    listsMerge.add(mergeList);
                 }
 
-            } else {
-                Log.e("TEST", "5");
-                have_list.setVisibility(View.GONE);
-                no_list.setVisibility(View.VISIBLE);
             }
+
+            //set the selected
+            for (int sub3 = 0; sub3 < checklistReceive.getData().getContent().size(); sub3++) {
+                for (int header = 0; header < listsMerge.size(); header++) {
+                    for (int child = 0; child < listsMerge.get(header).getChildLists().size(); child++) {
+                        if (listsMerge.get(header).getChildLists().get(child).getTxtID().equalsIgnoreCase(checklistReceive.getData().getContent().get(sub3).getItemid())) {
+
+                            listsMerge.get(header).getChildLists().get(child).setTxtComment(checklistReceive.getData().getContent().get(sub3).getComment());
+                            listsMerge.get(header).getChildLists().get(child).setCheck(checklistReceive.getData().getContent().get(sub3).getCheck());
+
+                        }
+                    }
+                }
+            }
+
+            checklistId = checklistReceive.getData().getId();
+            checkListLocation = checklistReceive.getData().getLocationCode();
+            checkListLocationName = checklistReceive.getData().getLocationName();
+
+            mAdapter = new ChecklistAdapter(getActivity(), this, listsMerge);
+            mListView.setAdapter(mAdapter);
 
         } catch (Exception e) {
 
-            Log.e("UnableToLoad", "Y");
+            Log.e("UnableToLoad", e.getMessage());
             have_list.setVisibility(View.GONE);
             no_list.setVisibility(View.VISIBLE);
         } finally {
 
-            realm.close();
+            //realm.close();
         }
 
     }
@@ -266,7 +323,7 @@ public class MyWishlistFragment extends BaseFragment {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
 
-                        initiateLoading(getActivity());
+                        initiateLoadingMsg(getActivity(),"Submitting checklist...");
 
                         Realm realm2 = rController.getRealmInstanceContext(context);
 
@@ -288,17 +345,20 @@ public class MyWishlistFragment extends BaseFragment {
                                 map.put("locationName", toRequestBody(checkListLocationName));
                                 map.put("locationType", toRequestBody("PAR"));
 
-                                ChecklistReceive obj2 = mAdapter.checklistObj();
+                                ArrayList<MergeList> listsMerge = mAdapter.checklistObj();
                                 List<Content> listMultipart = new ArrayList<>();
 
-                                for (int b = 0; b < obj2.getData().getContent().size(); b++) {
+                                for(int total = 0 ; total < listsMerge.size() ; total++){
+                                    for(int toSend = 0 ; toSend < listsMerge.get(total).getChildLists().size(); toSend++){
 
-                                    Content content = new Content();
-                                    content.setItemid(obj2.getData().getContent().get(b).getItemid());
-                                    content.setComment(obj2.getData().getContent().get(b).getComment());
-                                    content.setCheck(obj2.getData().getContent().get(b).getCheck());
+                                        Content content = new Content();
+                                        content.setItemid(listsMerge.get(total).getChildLists().get(toSend).getTxtID());
+                                        content.setComment(listsMerge.get(total).getChildLists().get(toSend).getTxtComment());
+                                        content.setCheck(listsMerge.get(total).getChildLists().get(toSend).getCheck());
 
-                                    listMultipart.add(content);
+                                        listMultipart.add(content);
+
+                                    }
                                 }
 
                                 PostChecklistRequest postChecklistRequest = new PostChecklistRequest();
@@ -353,6 +413,7 @@ public class MyWishlistFragment extends BaseFragment {
                             public void onClick(SweetAlertDialog sDialog) {
 
                                 sDialog.dismiss();
+                                initiateLoadingMsg(getActivity(),"Updating checklist...");
                                 refreshChecklist();
 
                             }

@@ -213,7 +213,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
 
         frag.setImagePathForHttp(myImageFile.getAbsolutePath());
 
-
     }
 
     private Target picassoImageTarget(Context context, final String imageDir, final String imageName, final ImageView v) {

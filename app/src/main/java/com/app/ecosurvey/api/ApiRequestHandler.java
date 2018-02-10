@@ -14,9 +14,11 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
+import com.app.ecosurvey.ui.Model.Request.InitChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.VideoRequest;
@@ -342,6 +344,40 @@ public class ApiRequestHandler {
             //failed to retreive information
             @Override
             public void onFailure(Call<ChecklistReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+
+            }
+        });
+    }
+
+    @Subscribe
+    public void onInitChecklistRequest(final InitChecklistRequest event) {
+
+        Call<InitChecklistReceive> call = apiService.initchecklist("FrsApi " + event.getToken(), event.getUrl());
+        call.enqueue(new Callback<InitChecklistReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<InitChecklistReceive> call, Response<InitChecklistReceive> response) {
+
+                InitChecklistReceive user = new InitChecklistReceive();
+                //success call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new InitChecklistReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new InitChecklistReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<InitChecklistReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
 

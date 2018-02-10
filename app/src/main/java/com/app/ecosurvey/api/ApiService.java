@@ -8,6 +8,7 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostSurveyReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.TokenReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
+import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
@@ -67,6 +68,10 @@ public interface ApiService {
 
     @GET
     Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Url String Url);
+
+    @GET
+    Call<InitChecklistReceive> initchecklist(@Header("Authorization") String header, @Url String Url);
+
 
     @GET
     Call<PhotoReceive> photoRequest(@Header("Authorization") String header, @Url String Url);

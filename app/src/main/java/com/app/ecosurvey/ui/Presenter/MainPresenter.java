@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.app.ecosurvey.api.ApiRequestHandler;
 import com.app.ecosurvey.application.MainApplication;
+import com.app.ecosurvey.ui.Model.Request.InitChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.VideoRequest;
@@ -62,6 +63,10 @@ public class MainPresenter {
 
     public void onChecklistRequest(ChecklistRequest data){
         apiRequestHandler.onChecklistRequest(data);
+    }
+
+    public void onInitChecklistRequest(InitChecklistRequest data){
+        apiRequestHandler.onInitChecklistRequest(data);
     }
 
     public void onPostChecklist(PostChecklistRequest dicMap) {

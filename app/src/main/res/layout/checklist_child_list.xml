@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/childLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="10dp"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/checklist_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.6"
+                android:text="Issue" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                android:gravity="end">
+
+                <ImageView
+                    android:id="@+id/checked_image"
+                    android:layout_width="20dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/box_64" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shadow_box"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <com.app.ecosurvey.utils.FontStyle.PlayEditText
+            android:id="@+id/checklist_cont"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:imeOptions="actionDone"
+            android:paddingBottom="30dp"
+            android:text="Issue"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
