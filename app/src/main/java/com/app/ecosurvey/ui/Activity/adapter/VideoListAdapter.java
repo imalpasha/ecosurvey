@@ -72,34 +72,35 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
                 mediaController.setAnchorView(holder.videoView);
                 holder.videoView.setMediaController(mediaController);
                 holder.videoView.setVideoURI(Uri.parse("https://www.demonuts.com/Demonuts/smallvideo.mp4"));*/
-
-                holder.play.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.videoView.start();
-                        holder.play.setVisibility(View.GONE);
-                        holder.pause.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                holder.pause.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.videoView.pause();
-                        holder.play.setVisibility(View.VISIBLE);
-                        holder.pause.setVisibility(View.GONE);
-                    }
-                });
-
-
             } catch (Throwable e) {
                 holder.videoView.setVisibility(View.GONE);
             }
 
         } else {
-            Bitmap bMap = ThumbnailUtils.createVideoThumbnail(f, MediaStore.Video.Thumbnails.MINI_KIND);
-            holder.txtVideoPath.setImageBitmap(bMap);
+            //Bitmap bMap = ThumbnailUtils.createVideoThumbnail(f, MediaStore.Video.Thumbnails.MINI_KIND);
+            //holder.txtVideoPath.setImageBitmap(bMap);
+            holder.videoView.setVisibility(View.VISIBLE);
+            holder.videoView.setVideoPath(f);
+
         }
+
+        holder.play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.videoView.start();
+                holder.play.setVisibility(View.GONE);
+                holder.pause.setVisibility(View.VISIBLE);
+            }
+        });
+
+        holder.pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.videoView.pause();
+                holder.play.setVisibility(View.VISIBLE);
+                holder.pause.setVisibility(View.GONE);
+            }
+        });
 
 
         //holder.selectedImage.setVideoURI(Uri.parse(f));

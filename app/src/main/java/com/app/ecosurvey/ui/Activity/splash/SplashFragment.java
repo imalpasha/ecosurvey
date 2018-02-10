@@ -151,6 +151,8 @@ public class SplashFragment extends BaseFragment {
 
 
                 } else {
+                    dismissLoading();
+
                     Intent intent = new Intent(getActivity(), LoginActivity.class);
                     getActivity().startActivity(intent);
                     getActivity().finish();
@@ -230,7 +232,6 @@ public class SplashFragment extends BaseFragment {
     @Subscribe
     public void onListSurveyReceive(ListSurveyReceive listSurveyReceive) {
 
-        dismissLoading();
 
         if (listSurveyReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
@@ -238,6 +239,8 @@ public class SplashFragment extends BaseFragment {
             try {
                 rController.updateLocalRealm(getActivity(), listSurveyReceive);
             } finally {
+
+                dismissLoading();
 
                 Intent intent = new Intent(getActivity(), TabActivity.class);
                 intent.putExtra("ROLE", role);

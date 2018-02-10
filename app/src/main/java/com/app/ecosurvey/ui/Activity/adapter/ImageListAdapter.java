@@ -179,6 +179,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, arrayPromo.size());
         change = true;
+
+        frag.informTheMainList(position);
         if (arrayPromo.size() == 0) {
             frag.enablePhotoSelection();
         }

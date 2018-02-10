@@ -237,7 +237,6 @@ public class ApiRequestHandler {
             public void onFailure(Call<PostSurveyReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", t.getMessage());
 
             }
         });
@@ -310,7 +309,7 @@ public class ApiRequestHandler {
             public void onFailure(Call<SurveyPhotoReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", t.getMessage());
+                Log.e("failure", t.getMessage());
 
             }
         });
@@ -345,7 +344,6 @@ public class ApiRequestHandler {
             public void onFailure(Call<ChecklistReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", t.getMessage());
 
             }
         });
