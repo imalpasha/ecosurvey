@@ -454,14 +454,17 @@ public class SurveyReviewFragment extends BaseFragment {
                     Log.e("ERROR_MSG", e.getMessage());
                 }
 
-                Log.e("forphoto", "a" + imageList);
-                Log.e("forphoto", "b" + Boolean.toString(change));
+                if(change == null){
+                    change = false;
+                }
 
                 if (!imageList.equalsIgnoreCase("") && change) {
                     //submit photo.
                     SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
                     surveyPhotoContentRequest.setIcnumber(icNumber);
                     surveyPhotoContentRequest.setLocationCode(parliment[1]);
+                    surveyPhotoContentRequest.setLocationName(parliment[0]);
+                    surveyPhotoContentRequest.setLocationName(parliment[0]);
                     surveyPhotoContentRequest.setLocationName(parliment[0]);
 
                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
@@ -581,10 +584,10 @@ public class SurveyReviewFragment extends BaseFragment {
 //MediaType.parse(getActivity().getContentResolver().getType(fileUri)
         // MultipartBody.Part is used to send also the actual file name
 
-        if (fileUri.getPath().contains("imageDir")) {
-            File myImageFile = new File(fileUri.getPath());
-            if (myImageFile.delete()) log("image on the disk deleted successfully!");
-        }
+        //if (fileUri.getPath().contains("imageDir")) {
+        //    File myImageFile = new File(fileUri.getPath());
+        //    if (myImageFile.delete()) log("image on the disk deleted successfully!");
+        //}
 
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }

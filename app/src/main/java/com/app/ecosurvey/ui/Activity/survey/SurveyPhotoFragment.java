@@ -127,7 +127,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     private Boolean changeImageTrue = false;
     private Realm realm;
-    public static Boolean change = false;
+    public static Boolean change;
 
     public static SurveyPhotoFragment newInstance(Bundle bundle) {
 
@@ -181,18 +181,19 @@ public class SurveyPhotoFragment extends BaseFragment {
                     String imageList = "";
                     //Gson gsonUserInfo = new Gson();
                     //String gsonImage = gsonUserInfo.toJson(list);
-                    for (int x = 0; x < list.size(); x++) {
-                        imageList += list.get(x).getImagePath() + "___";
-                    }
+
+                   // for (int x = 0; x < list.size(); x++) {
+                   //     imageList += list.get(x).getImagePath() + "___";
+                   // }
 
                     //check for online
-                    if (status.equalsIgnoreCase("EDIT_API")) {
+                    //if (status.equalsIgnoreCase("EDIT_API")) {
                         if (secondlist.size() > 0) {
                             for (int x = 0; x < secondlist.size(); x++) {
                                 imageList += secondlist.get(x).getImagePath() + "___";
                             }
                         }
-                    }
+                    //}
 
                     Log.e("savedImage", imageList);
                     rController.surveyLocalStorageS4(context, randomID, imageList);
@@ -442,7 +443,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
-                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
+                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -456,7 +457,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                     .limitPickPhoto(5)
                     .singlePhoto(false)
                     .hintOfPick("Maximum image is 5")
-                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
+                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -497,6 +498,10 @@ public class SurveyPhotoFragment extends BaseFragment {
     public void enablePhotoSelection() {
         setImageBlock1.setVisibility(View.VISIBLE);
         setImageBlock2.setVisibility(View.GONE);
+    }
+
+    public void informTheMainList(int position){
+      //  secondlist.remove(position);
     }
 
     public void reselectImage(Integer pos) {
@@ -631,6 +636,8 @@ public class SurveyPhotoFragment extends BaseFragment {
                     selectedImagePath.setImagePath(photos.get(x));
                     selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
                     list.add(selectedImagePath);
+                    secondlist.add(selectedImagePath);
+
                 }
 
                 if (true) {
@@ -654,6 +661,9 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //list.remove(changeImagePosition);
                 list.get(changeImagePosition).setImagePath(photos.get(0));
                 list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
+
+                secondlist.get(changeImagePosition).setImagePath(photos.get(0));
+                secondlist.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
 
                 adapter.retrieveNewObject(changeImagePosition, list);
 
@@ -687,6 +697,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
             if (list.size() == 0) {
                 list.add(selectedImagePath);
+                secondlist.add(selectedImagePath);
 
                 rController.surveyPhotoUpdate(context, randomID, getDate());
                 initiateImageAdapter(list);
@@ -695,9 +706,14 @@ public class SurveyPhotoFragment extends BaseFragment {
                     list.get(changeImagePosition).setImagePath(destination.toString());
                     list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
 
+                    secondlist.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
+                    secondlist.get(changeImagePosition).setImagePath(destination.toString());
+
                     adapter.retrieveNewObject(changeImagePosition, list);
                 } else {
                     list.add(selectedImagePath);
+                    secondlist.add(selectedImagePath);
+
                     adapter.retrieveNewObject(null, list);
                 }
 
@@ -736,7 +752,6 @@ public class SurveyPhotoFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        change = false;
         presenter.onResume();
         bus.register(this);
     }

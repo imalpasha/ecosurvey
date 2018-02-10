@@ -508,7 +508,7 @@ public class SurveyVideoFragment extends BaseFragment {
 
             GalleryConfig config = new GalleryConfig.Build()
                     .singlePhoto(true)
-                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
+                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -522,7 +522,7 @@ public class SurveyVideoFragment extends BaseFragment {
                     .limitPickPhoto(5)
                     .singlePhoto(false)
                     .hintOfPick("Maximum image is 5")
-                    .filterMimeTypes(new String[]{"video/mp4","video/3gp"})
+                    .filterMimeTypes(new String[]{"image/jpeg","image/png"})
                     .build();
 
             //GalleryActivityV2.openActivity(getActivity(), SELECT_FILE, config);
@@ -609,16 +609,16 @@ public class SurveyVideoFragment extends BaseFragment {
             if (requestCode == SELECT_FILE) {
                 //list of videos of selected
 
-                List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
-                //String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
 
                 //insert path to object
-                for (int x = 0; x < videos.size(); x++) {
+                //for (int x = 0; x < videos.size(); x++) {
                 SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                selectedVideoPath.setVideoPath(videos.get(x));
+                selectedVideoPath.setVideoPath(videos);
                 selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
                 list.add(selectedVideoPath);
-                }
+                //}
 
                 if (true) {
                     initiateVideoAdapter(list);
@@ -628,15 +628,16 @@ public class SurveyVideoFragment extends BaseFragment {
                 //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
             } else if (requestCode == CHANGE_FILE) {
 
-                List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
-                Log.e("xxxxx", "a" + videos.get(0));
+                //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
+                //Log.e("xxxxx", "a" + videos.get(0));
+                String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
 
                 SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                selectedVideoPath.setVideoPath(videos.get(0));
+                selectedVideoPath.setVideoPath(videos);
                 selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(1));
 
                 //list.remove(changeImagePosition);
-                list.get(changeImagePosition).setVideoPath(videos.get(0));
+                list.get(changeImagePosition).setVideoPath(videos);
                 list.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
 
                 adapter.retrieveNewObject(changeImagePosition, list);
