@@ -60,7 +60,7 @@ public class NetModule {
         //interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
         OkHttpClient defaultHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(90, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .addInterceptor(new Interceptor() {
                     @Override

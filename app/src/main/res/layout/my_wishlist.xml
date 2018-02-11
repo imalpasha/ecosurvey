@@ -7,9 +7,10 @@
     android:weightSum="1">
 
     <LinearLayout
+        android:id="@+id/checklistload"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="vertical">
 
         <TextView
@@ -18,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Under Maintenance"
+            android:text="Loading Checklist..."
             android:textSize="17sp" />
 
     </LinearLayout>

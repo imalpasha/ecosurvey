@@ -19,7 +19,6 @@ public class MainApplication extends Application {
     private static Activity instance;
     private AppComponent mDataComponent;
     private Context context;
-    public static Boolean loadChecklist = true;
 
     @Override
     public void onCreate() {

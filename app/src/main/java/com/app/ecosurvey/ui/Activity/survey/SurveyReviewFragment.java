@@ -462,8 +462,12 @@ public class SurveyReviewFragment extends BaseFragment {
                     change = false;
                 }
 
-                if(status.equalsIgnoreCase("EDIT")){
+                if (status.equalsIgnoreCase("EDIT")) {
                     change = true;
+                }
+
+                if (videoChange == null) {
+                    videoChange = false;
                 }
 
                 if (change) {
@@ -493,6 +497,8 @@ public class SurveyReviewFragment extends BaseFragment {
                     surveyPhotoRequest.setToken(preferences.getString("temp_token", ""));
 
                     presenter.onSurveyPhotoRequest(surveyPhotoRequest);
+                } else if (videoChange) {
+                        submitVideo(postSurveyReceive.getData().getId());
                 } else {
 
                     new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
@@ -537,97 +543,43 @@ public class SurveyReviewFragment extends BaseFragment {
 
         dismissLoading();
         if (surveyPhotoReceive.getApiStatus().equalsIgnoreCase("Y")) {
-            try {
+            //try {
 
-
-                if (videoChange == null) {
-                    videoChange = false;
-                }
-
-                if (videoChange) {
-
-                    //get saved photo
-                    List<MultipartBody.Part> listMultipart = new ArrayList<>();
-                    String imageList = "";
-                    try {
-                        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", surveyPhotoReceive.getData().getId()).findFirst();
-                        imageList = survey.getVideoPath();
-                        Log.e("no_video", "a" + imageList);
-                        if (!imageList.equalsIgnoreCase("")) {
-                            String[] parts = imageList.split("___");
-                            for (int b = 0; b < parts.length; b++) {
-                                if (parts[b] != null) {
-                                    if (!parts[b].contains("http")) {
-
-                                        Log.e("all_path", parts[b]);
-                                        Uri myUri = Uri.parse(parts[b]);
-                                        listMultipart.add(prepareFilePart("video[]", myUri));
-
-                                    }
-
-                                }
-                            }
-                        }
-
-
-                    } catch (Exception e) {
-                        Log.e("ERROR_MSG", e.getMessage());
-                    }
-
-                    //upload_video_if_available
-                    SurveyVideoContentRequest surveyVideoContentRequest = new SurveyVideoContentRequest();
-                    surveyVideoContentRequest.setIcnumber(icNumber);
-                    surveyVideoContentRequest.setLocationCode(parliment[1]);
-                    surveyVideoContentRequest.setLocationName(parliment[0]);
-                    surveyVideoContentRequest.setLocationName(parliment[0]);
-                    surveyVideoContentRequest.setLocationName(parliment[0]);
-
-                    Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                    String stringContent = gson.toJson(surveyVideoContentRequest);
-
-                    HashMap<String, RequestBody> map = new HashMap<>();
-                    map.put("icnumber", toRequestBody(icNumber));
-                    map.put("locationCode", toRequestBody(parliment[1]));
-                    map.put("locationName", toRequestBody(parliment[0]));
-                    map.put("locationType", toRequestBody("PAR"));
-                    map.put("id", toRequestBody(surveyPhotoReceive.getData().getId()));
-
-                    initiateLoadingMsg(getActivity(), "Uploading Video...");
-                    SurveyVideoRequest surveyVideoRequest = new SurveyVideoRequest();
-                    surveyVideoRequest.setStringContent(stringContent);
-                    surveyVideoRequest.setMap(map);
-                    surveyVideoRequest.setParts(listMultipart);
-                    surveyVideoRequest.setToken(preferences.getString("temp_token", ""));
-
-                    presenter.onSurveyVideoRequest(surveyVideoRequest);
-
-                } else {
-
-                    new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("Success.")
-                            .setContentText("Survey successfully saved.")
-                            .setConfirmText("Ok")
-                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sDialog) {
-
-                                    sDialog.dismiss();
-
-                                    Intent intent = new Intent(getActivity(), TabActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.putExtra("ROLE", preferences.getString("user_role", ""));
-                                    getActivity().startActivity(intent);
-
-                                }
-                            })
-                            .show();
-
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            if (videoChange == null) {
+                videoChange = false;
             }
+
+            if (videoChange) {
+
+              submitVideo(surveyPhotoReceive.getData().getId());
+
+            } else {
+
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("Success.")
+                        .setContentText("Survey successfully saved.")
+                        .setConfirmText("Ok")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+
+                                sDialog.dismiss();
+
+                                Intent intent = new Intent(getActivity(), TabActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                                getActivity().startActivity(intent);
+
+                            }
+                        })
+                        .show();
+
+            }
+
+            //} catch (Exception e) {
+            //    e.printStackTrace();
+            //    setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
+            //}
 
         } else {
 
@@ -636,6 +588,65 @@ public class SurveyReviewFragment extends BaseFragment {
 
         }
 
+
+    }
+
+    public void submitVideo(String id){
+
+        //get saved photo
+        List<MultipartBody.Part> listMultipart = new ArrayList<>();
+        String imageList = "";
+        //try {
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        imageList = survey.getVideoPath();
+        Log.e("no_video", "a" + imageList);
+        if (!imageList.equalsIgnoreCase("")) {
+            String[] parts = imageList.split("___");
+            for (int b = 0; b < parts.length; b++) {
+                if (parts[b] != null) {
+                    if (!parts[b].contains("http")) {
+
+                        Log.e("all_path", parts[b]);
+                        Uri myUri = Uri.parse(parts[b]);
+                        listMultipart.add(prepareFilePart("videos[]", myUri));
+
+                    }
+
+                }
+            }
+        }
+
+
+        //} catch (Exception e) {
+        //    Log.e("ERROR_MSG", e.getMessage());
+        //}
+
+        //upload_video_if_available
+        SurveyVideoContentRequest surveyVideoContentRequest = new SurveyVideoContentRequest();
+        surveyVideoContentRequest.setIcnumber(icNumber);
+        surveyVideoContentRequest.setLocationCode(parliment[1]);
+        surveyVideoContentRequest.setLocationName(parliment[0]);
+        surveyVideoContentRequest.setLocationName(parliment[0]);
+        surveyVideoContentRequest.setLocationName(parliment[0]);
+
+        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        String stringContent = gson.toJson(surveyVideoContentRequest);
+
+        HashMap<String, RequestBody> map = new HashMap<>();
+        map.put("icnumber", toRequestBody(icNumber));
+        map.put("locationCode", toRequestBody(parliment[1]));
+        map.put("locationName", toRequestBody(parliment[0]));
+        map.put("locationType", toRequestBody("PAR"));
+        map.put("id", toRequestBody(id));
+
+        initiateLoadingMsg(getActivity(), "Uploading Video...");
+        SurveyVideoRequest surveyVideoRequest = new SurveyVideoRequest();
+        surveyVideoRequest.setStringContent(stringContent);
+        surveyVideoRequest.setMap(map);
+        surveyVideoRequest.setParts(listMultipart);
+        surveyVideoRequest.setToken(preferences.getString("temp_token", ""));
+
+        presenter.onSurveyVideoRequest(surveyVideoRequest);
 
     }
 
