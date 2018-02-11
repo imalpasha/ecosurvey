@@ -10,6 +10,8 @@ import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.Image;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.SavedChecklist;
+import com.app.ecosurvey.ui.Model.Realm.Object.SavedChecklistRealm;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
@@ -180,6 +182,24 @@ public class RealmController {
         realm.beginTransaction();
         ChecklistCached realmObject = realm.createObject(ChecklistCached.class);
         realmObject.setCheckListString(checklistReceive);
+        realm.commitTransaction();
+        realm.close();
+
+    }
+
+    public void savedChecklist(Context context, String checkListSved) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        //clear user info in realm first.
+        final RealmResults<SavedChecklist> result = realm.where(SavedChecklist.class).findAll();
+        realm.beginTransaction();
+        result.clear();
+        realm.commitTransaction();
+
+        realm.beginTransaction();
+        SavedChecklistRealm realmObject = realm.createObject(SavedChecklistRealm.class);
+        realmObject.setSavedChecklist(checkListSved);
         realm.commitTransaction();
         realm.close();
 

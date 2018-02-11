@@ -91,15 +91,29 @@
     <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
     <com.app.ecosurvey.utils.FontStyle.PlayButtonText
+        android:id="@+id/checklistSaveBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="2dp"
+        android:background="@color/green_tick"
+        android:gravity="center"
+        android:text="Save Checklist"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
+    <com.app.ecosurvey.utils.FontStyle.PlayButtonText
         android:id="@+id/updateBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/green_tick"
+        android:background="@color/default_theme_colour"
         android:gravity="center"
         android:text="Submit Checklist"
         android:textColor="@color/white"
         android:textStyle="bold"
         android:visibility="visible" />
+
+
 
 </LinearLayout>

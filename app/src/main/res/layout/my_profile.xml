@@ -6,9 +6,9 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@color/grey_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/grey_light"
         android:orientation="vertical">
 
 
@@ -94,117 +94,19 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/charcoal_end"
                         android:textSize="16sp" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="15dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Parlimen Info."
-                    android:textColor="@color/default_theme_colour" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical">
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Parlimen"
-                        android:textColor="@color/grey" />
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/txtParlimen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/charcoal_end"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical">
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dun"
-                        android:textColor="@color/grey" />
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/txtDun"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/charcoal_end"
-                        android:textSize="16sp" />
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical">
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/textView4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="State"
-                        android:textColor="@color/grey" />
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/txtState"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/charcoal_end"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:orientation="vertical">
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PDM"
-                        android:textColor="@color/grey" />
-
-                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                        android:id="@+id/txtPDM"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/charcoal_end"
-                        android:textSize="16sp" />
-                </LinearLayout>
-
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="10dp"
                 android:background="@color/white"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -241,6 +143,115 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Parlimen Info."
+                    android:textColor="@color/default_theme_colour" />
+
+                <LinearLayout
+                    android:id="@+id/addParliment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="6dp"
+                        android:text="Parlimen"
+                        android:textColor="@color/grey"
+                        android:visibility="visible" />
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtParlimen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/charcoal_end"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Dun"
+                        android:textColor="@color/grey" />
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtDun"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/charcoal_end"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/textView4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="State"
+                        android:textColor="@color/grey" />
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtState"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/charcoal_end"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PDM"
+                        android:textColor="@color/grey" />
+
+                    <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                        android:id="@+id/txtPDM"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/charcoal_end"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -311,23 +322,23 @@
         </LinearLayout>
 
         <LinearLayout
-            android:background="@color/white"
             android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                android:textColor="@color/red_btn_bg_color"
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:textSize="14sp"
                 android:padding="15dp"
-                android:text="Logout" />
+                android:text="Logout"
+                android:textColor="@color/red_btn_bg_color"
+                android:textSize="14sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"

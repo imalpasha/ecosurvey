@@ -30,6 +30,7 @@ import com.app.ecosurvey.ui.Model.Adapter.Object.ChildList;
 import com.app.ecosurvey.ui.Model.Adapter.Object.MergeList;
 import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
+import com.app.ecosurvey.ui.Model.Realm.Object.SavedChecklist;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
@@ -99,6 +100,9 @@ public class MyWishlistFragment extends BaseFragment {
     @Bind(R.id.updateBtn)
     Button updateBtn;
 
+    @Bind(R.id.checklistSaveBtn)
+    Button checklistSaveBtn;
+
     View view;
     String token;
     String userId;
@@ -136,10 +140,10 @@ public class MyWishlistFragment extends BaseFragment {
         userId = preferences.getString("user_id", "");
 
         //getData();
-        if (loadChecklist != null && loadChecklist) {
+        //if (loadChecklist != null && loadChecklist) {
             getCheckList();
-            loadChecklist = false;
-        }
+        //    loadChecklist = false;
+        //}
 
         /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -161,6 +165,15 @@ public class MyWishlistFragment extends BaseFragment {
                 submitChecklist();
             }
         });
+
+        checklistSaveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveChecklist();
+            }
+        });
+
+
         return view;
     }
 
@@ -381,6 +394,41 @@ public class MyWishlistFragment extends BaseFragment {
                             realm2.close();
                         }
 
+
+                        sDialog.dismiss();
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                        sweetAlertDialog.dismiss();
+
+                    }
+                })
+                .show();
+    }
+
+    public void saveChecklist() {
+        new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("Eco Survey")
+                .setContentText("Confirm save this checklist?")
+                .setCancelText("No")
+                .setConfirmText("Yes")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+
+                        Realm realm2 = rController.getRealmInstanceContext(context);
+                        ArrayList<MergeList> listsMerge = mAdapter.checklistObj();
+
+                        SavedChecklist savedChecklist = new SavedChecklist();
+                        savedChecklist.setListsMerge(listsMerge);
+
+                        Gson gson = new Gson();
+                        String savedChecklistString = gson.toJson(savedChecklist);
+
+                        rController.savedChecklist(getActivity(), savedChecklistString);
 
                         sDialog.dismiss();
                     }

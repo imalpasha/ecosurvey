@@ -99,6 +99,8 @@ public class ProfileFragment extends BaseFragment {
     @Bind(R.id.logout)
     LinearLayout logout;
 
+    @Bind(R.id.addParliment)
+    LinearLayout addParliment;
 
     private View view;
     private SharedPrefManager pref;
@@ -167,7 +169,6 @@ public class ProfileFragment extends BaseFragment {
     }
 
 
-
     public void loadData() {
 
         Realm realm = rController.getRealmInstanceContext(context);
@@ -182,9 +183,20 @@ public class ProfileFragment extends BaseFragment {
             Log.e("phone", "phone" + userInfoReceive.getData().getPhoneNo());
             txtEmail.setText(userInfoReceive.getData().getEmail());
 
-            /*if (userInfoReceive.getData().getParlimen() != null && userInfoReceive.getData().getParlimenCode() != null)
-                txtParlimen.setText(userInfoReceive.getData().getParlimen() + " (" + userInfoReceive.getData().getParlimenCode() + ")");
+            LayoutInflater inflater = getActivity().getLayoutInflater();
 
+            for (int x = 0; x < userInfoReceive.getData().getLocations().size(); x++) {
+
+                View childView = inflater.inflate(R.layout.txt_parliment, null, false);
+                TextView txtPar = (TextView) childView.findViewById(R.id.txtPar);
+                txtPar.setText(userInfoReceive.getData().getLocations().get(x).getParlimen() + " (" + userInfoReceive.getData().getLocations().get(x).getParlimenCode() + ")");
+
+                addParliment.addView(childView);
+            }
+
+
+
+            /*
             if (userInfoReceive.getData().getDun() != null && userInfoReceive.getData().getDuncode() != null)
                 txtDun.setText(userInfoReceive.getData().getDun() + " (" + userInfoReceive.getData().getDuncode() + ")");
 
