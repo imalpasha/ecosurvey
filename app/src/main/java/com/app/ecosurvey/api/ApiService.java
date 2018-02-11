@@ -11,6 +11,7 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
+import com.app.ecosurvey.ui.Model.Receive.SurveyVideoReceive;
 import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
@@ -103,6 +104,15 @@ public interface ApiService {
             @Header("Authorization") String header,
             @PartMap() Map<String, RequestBody> partMap,
             @Part() List<MultipartBody.Part> files);
+
+
+    @Multipart
+    @POST("/api/v1/surveys/videos")
+    Call<SurveyVideoReceive> surveyVideo(
+            @Header("Authorization") String header,
+            @PartMap() Map<String, RequestBody> partMap,
+            @Part() List<MultipartBody.Part> files);
+
 
     /*@Multipart
     @POST("user/updateprofile")

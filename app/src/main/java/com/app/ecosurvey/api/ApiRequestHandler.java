@@ -17,10 +17,12 @@ import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.UserInfoReceive;
 import com.app.ecosurvey.ui.Model.Receive.InitChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.PhotoReceive;
 import com.app.ecosurvey.ui.Model.Receive.SurveyPhotoReceive;
+import com.app.ecosurvey.ui.Model.Receive.SurveyVideoReceive;
 import com.app.ecosurvey.ui.Model.Receive.VideoReceive;
 import com.app.ecosurvey.ui.Model.Request.InitChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
+import com.app.ecosurvey.ui.Model.Request.SurveyVideoRequest;
 import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
@@ -315,6 +317,46 @@ public class ApiRequestHandler {
             }
         });
     }
+
+    @Subscribe
+    public void onSurveyVideoRequest(final SurveyVideoRequest event) {
+
+
+        Call<SurveyVideoReceive> call = apiService.surveyVideo("FrsApi " + event.getToken(), event.getMap(), event.getParts());
+        call.enqueue(new Callback<SurveyVideoReceive>() {
+
+            //succces retrieve information
+            @Override
+            public void onResponse(Call<SurveyVideoReceive> call, Response<SurveyVideoReceive> response) {
+
+
+                SurveyVideoReceive user = new SurveyVideoReceive();
+                //successs call
+                if (response.isSuccessful()) {
+                    user = response.body();
+                    user.setApiStatus("Y");
+                    bus.post(new SurveyVideoReceive(user));
+                } else {
+                    //success call but with err message
+                    user.setApiStatus("N");
+                    user.setMessage("Err_Message");
+                    bus.post(new SurveyVideoReceive(user));
+                }
+            }
+
+            //failed to retreive information
+            @Override
+            public void onFailure(Call<SurveyVideoReceive> call, Throwable t) {
+                // handle execution failures like no internet connectivity
+                BaseFragment.connectionError(MainFragmentActivity.getContext());
+                Log.e("failure", t.getMessage());
+
+            }
+        });
+    }
+
+
+
 
     @Subscribe
     public void onChecklistRequest(final ChecklistRequest event) {

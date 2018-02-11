@@ -41,6 +41,7 @@ import static com.app.ecosurvey.ui.Activity.survey.SurveyPhotoFragment.change;
 public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyViewHolder> {
 
     private Activity activity;
+
     private ArrayList<SelectedImagePath> arrayPromo;
     private ArrayList<String> viewItemList = new ArrayList<String>();
     SurveyPhotoFragment frag;
@@ -175,16 +176,23 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
         int position = Integer.parseInt(pos);
 
         arrayPromo.remove(position);
+        viewItemList.add(pos);
+
         //recycler.removeViewAt(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, arrayPromo.size());
         change = true;
+
 
         frag.informTheMainList(position);
         if (arrayPromo.size() == 0) {
             frag.enablePhotoSelection();
         }
 
+    }
+
+    public ArrayList<String> getRemoveItem() {
+        return viewItemList;
     }
 
     public void getImageFileFromBitmap(Context context, String imageDir, String imageName, ImageView v) {

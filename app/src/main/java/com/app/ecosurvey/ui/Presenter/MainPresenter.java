@@ -7,6 +7,7 @@ import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.ui.Model.Request.InitChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.PhotoRequest;
 import com.app.ecosurvey.ui.Model.Request.SurveyPhotoRequest;
+import com.app.ecosurvey.ui.Model.Request.SurveyVideoRequest;
 import com.app.ecosurvey.ui.Model.Request.VideoRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.CategoryRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.ChecklistRequest;
@@ -59,6 +60,10 @@ public class MainPresenter {
 
     public void onSurveyPhotoRequest(SurveyPhotoRequest data) {
         apiRequestHandler.onSurveyPhotoRequest(data);
+    }
+
+    public void onSurveyVideoRequest(SurveyVideoRequest data) {
+        apiRequestHandler.onSurveyVideoRequest(data);
     }
 
     public void onChecklistRequest(ChecklistRequest data){
