@@ -292,8 +292,9 @@ public class SurveyVideoFragment extends BaseFragment {
                             SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
                             selectedVideoPath.setVideoPath(parts[x]);
                             selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
-                            Log.e("pathpath", parts[x]);
+
                             list.add(selectedVideoPath);
+                            secondlist.add(selectedVideoPath);
                         }
 
                         initiateVideoAdapter(list);
@@ -317,32 +318,6 @@ public class SurveyVideoFragment extends BaseFragment {
     public void onVideoReceive(VideoReceive videoReceive) {
 
         dismissLoading();
-
-        if (videoReceive.getApiStatus().equalsIgnoreCase("Y")) {
-            try {
-
-                for (int x = 0; x < videoReceive.getData().getContent().getVideos().size(); x++) {
-                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                    selectedVideoPath.setVideoPath(videoReceive.getData().getContent().getVideos().get(x));
-                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
-                    Log.e("pathpath", videoReceive.getData().getContent().getVideos().get(x));
-                    list.add(selectedVideoPath);
-                }
-
-                initiateVideoAdapter(list);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
-            }
-
-        } else {
-
-            String error_msg = videoReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
-
-        }
-
         //////////
 
         //compare api date with local date.
@@ -359,11 +334,11 @@ public class SurveyVideoFragment extends BaseFragment {
                 dismissLoading();
 
                 Date date = null, date2 = null;
-                if (survey.getPhotoUpdateDate() != null) {
+                if (survey.getVideoUpdateDate() != null) {
 
                     try {
                         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                        date = format.parse(survey.getPhotoUpdateDate());
+                        date = format.parse(survey.getVideoUpdateDate());
                         date2 = format.parse(videoReceive.getData().getUpdated_at());
 
                     } catch (Exception e) {
@@ -554,6 +529,8 @@ public class SurveyVideoFragment extends BaseFragment {
         selectedVideoPath.setVideoPath(String.valueOf(data.getData()));
         selectedVideoPath.setRandomPathCode("xxx");
 
+        rController.surveyVideoUpdate(context, randomID, getDate());
+
         if (list.size() == 0) {
             list.add(selectedVideoPath);
             initiateVideoAdapter(list);
@@ -706,6 +683,8 @@ public class SurveyVideoFragment extends BaseFragment {
                 //}
 
                 if (true) {
+
+                    rController.surveyVideoUpdate(context, randomID, getDate());
                     initiateVideoAdapter(list);
                 }
 
@@ -730,6 +709,7 @@ public class SurveyVideoFragment extends BaseFragment {
                 secondlist.get(changeImagePosition).setVideoPath(videos);
                 secondlist.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
 
+                rController.surveyVideoUpdate(context, randomID, getDate());
                 adapter.retrieveNewObject(changeImagePosition, list);
 
             } else if (requestCode == REQUEST_VIDEO_CAPTURE) {

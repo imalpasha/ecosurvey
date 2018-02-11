@@ -64,7 +64,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-import static com.app.ecosurvey.application.MainApplication.loadChecklist;
+import static android.view.View.GONE;
 
 public class MyWishlistFragment extends BaseFragment {
 
@@ -103,6 +103,10 @@ public class MyWishlistFragment extends BaseFragment {
     @Bind(R.id.checklistSaveBtn)
     Button checklistSaveBtn;
 
+    @Bind(R.id.checklistload)
+    LinearLayout checklistload;
+
+
     View view;
     String token;
     String userId;
@@ -139,11 +143,8 @@ public class MyWishlistFragment extends BaseFragment {
         token = preferences.getString("temp_token", "DEFAULT");
         userId = preferences.getString("user_id", "");
 
-        //getData();
-        //if (loadChecklist != null && loadChecklist) {
-            getCheckList();
-        //    loadChecklist = false;
-        //}
+
+        getCheckList();
 
         /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -179,7 +180,6 @@ public class MyWishlistFragment extends BaseFragment {
 
     public void getCheckList() {
 
-        initiateLoadingMsg(getActivity(), "Loading...");
         InitChecklistRequest initChecklistRequest = new InitChecklistRequest();
         initChecklistRequest.setToken(token);
         initChecklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist");
@@ -209,6 +209,7 @@ public class MyWishlistFragment extends BaseFragment {
                 rController.saveInitChecklist(context, checklist);
                 //getData();
 
+                checklistload.setVisibility(GONE);
                 refreshChecklist();
 
             } catch (Exception e) {
@@ -298,7 +299,7 @@ public class MyWishlistFragment extends BaseFragment {
         } catch (Exception e) {
 
             Log.e("UnableToLoad", e.getMessage());
-            have_list.setVisibility(View.GONE);
+            have_list.setVisibility(GONE);
             no_list.setVisibility(View.VISIBLE);
         } finally {
 

@@ -66,5 +66,6 @@ public class SurveyPhotoReceive {
         this.status = data.getStatus();
         this.apiStatus = data.getApiStatus();
         this.message = data.getMessage();
+        this.data = data.getData();
     }
 }

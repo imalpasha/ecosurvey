@@ -434,6 +434,19 @@ public class RealmController {
         realm.close();
     }
 
+    public void surveyVideoUpdate(Context context, String id, String time) {
+
+        Realm realm = getRealmInstanceContext(context);
+
+        realm.beginTransaction();
+        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
+        survey.setVideoUpdateDate(time);
+        realm.commitTransaction();
+        realm.close();
+    }
+
+
+
     public void clearCachedResult(Context act) {
 
         Realm realm = getRealmInstanceContext(act);

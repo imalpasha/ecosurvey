@@ -165,7 +165,12 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //save list of photo
 
                 ArrayList<String> removeList = new ArrayList<String>();
-                removeList = adapter.getRemoveItem();
+                try{
+                    removeList = adapter.getRemoveItem();
+                }catch (Exception e){
+                    //adapter_not_set
+                }
+
 
                 try {
 
@@ -308,6 +313,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                             selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
                             Log.e("pathpath", parts[x]);
                             list.add(selectedImagePath);
+                            secondlist.add(selectedImagePath);
                         }
                         initiateImageAdapter(list);
                     }
@@ -655,6 +661,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                 secondlist.get(changeImagePosition).setImagePath(photos.get(0));
                 secondlist.get(changeImagePosition).setRandomPathCode("xxx" + Integer.toString(0));
 
+                rController.surveyPhotoUpdate(context, randomID, getDate());
                 adapter.retrieveNewObject(changeImagePosition, list);
 
             } else if (requestCode == REQUEST_CAMERA) {

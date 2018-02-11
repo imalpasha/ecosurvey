@@ -47,13 +47,11 @@ public class TabActivity extends MainFragmentActivity {
 
         preferences = this.getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
-        Log.e("Oncreata", "Y");
 
         try {
 
             Bundle bundle = getIntent().getExtras();
             role = bundle.getString("ROLE");
-            Log.e("Role", role);
 
             //save to pref.
             //SharedPreferences.Editor editor = preferences.edit();
