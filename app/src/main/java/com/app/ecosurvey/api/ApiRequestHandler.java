@@ -311,7 +311,6 @@ public class ApiRequestHandler {
             public void onFailure(Call<SurveyPhotoReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
                 BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("failure", t.getMessage());
 
             }
         });

@@ -293,6 +293,7 @@ public class SurveyPhotoFragment extends BaseFragment {
                             selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
                             Log.e("pathpath", parts[x]);
                             list.add(selectedImagePath);
+                            secondlist.add(selectedImagePath);
                         }
                         initiateImageAdapter(list);
                     }

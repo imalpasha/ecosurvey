@@ -458,6 +458,10 @@ public class SurveyReviewFragment extends BaseFragment {
                     change = false;
                 }
 
+                if(status.equalsIgnoreCase("EDIT")){
+                    change = true;
+                }
+
                 if (!imageList.equalsIgnoreCase("") && change) {
                     //submit photo.
                     SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
