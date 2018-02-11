@@ -1,24 +1,24 @@
 package com.app.ecosurvey.ui.Model.Receive;
 
 /**
- * Created by imalpasha on 30/01/2018.
+ * Created by imalpasha on 11/02/2018.
  */
 
-public class SurveyPhotoReceive {
+public class SurveyVideoReceive {
 
     private String status;
     private String apiStatus;
     private String message;
 
-    public Data getData() {
+    public SurveyPhotoReceive.Data getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(SurveyPhotoReceive.Data data) {
         this.data = data;
     }
 
-    private Data data;
+    private SurveyPhotoReceive.Data data;
 
     public class Data{
         public String getId() {
@@ -58,13 +58,14 @@ public class SurveyPhotoReceive {
     }
 
 
-    public SurveyPhotoReceive() {
+    public SurveyVideoReceive() {
 
     }
 
-    public SurveyPhotoReceive(SurveyPhotoReceive data) {
+    public SurveyVideoReceive(SurveyVideoReceive data) {
         this.status = data.getStatus();
         this.apiStatus = data.getApiStatus();
         this.message = data.getMessage();
     }
+
 }
