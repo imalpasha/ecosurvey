@@ -63,6 +63,8 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
+import static com.app.ecosurvey.application.MainApplication.loadChecklist;
+
 public class MyWishlistFragment extends BaseFragment {
 
     private int fragmentContainerId;
@@ -134,7 +136,11 @@ public class MyWishlistFragment extends BaseFragment {
         userId = preferences.getString("user_id", "");
 
         //getData();
-        getCheckList();
+        if (loadChecklist != null && loadChecklist) {
+            getCheckList();
+            loadChecklist = false;
+        }
+
         /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -160,7 +166,7 @@ public class MyWishlistFragment extends BaseFragment {
 
     public void getCheckList() {
 
-        initiateLoadingMsg(getActivity(),"Loading...");
+        initiateLoadingMsg(getActivity(), "Loading...");
         InitChecklistRequest initChecklistRequest = new InitChecklistRequest();
         initChecklistRequest.setToken(token);
         initChecklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist");
@@ -323,7 +329,7 @@ public class MyWishlistFragment extends BaseFragment {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
 
-                        initiateLoadingMsg(getActivity(),"Submitting checklist...");
+                        initiateLoadingMsg(getActivity(), "Submitting checklist...");
 
                         Realm realm2 = rController.getRealmInstanceContext(context);
 
@@ -348,8 +354,8 @@ public class MyWishlistFragment extends BaseFragment {
                                 ArrayList<MergeList> listsMerge = mAdapter.checklistObj();
                                 List<Content> listMultipart = new ArrayList<>();
 
-                                for(int total = 0 ; total < listsMerge.size() ; total++){
-                                    for(int toSend = 0 ; toSend < listsMerge.get(total).getChildLists().size(); toSend++){
+                                for (int total = 0; total < listsMerge.size(); total++) {
+                                    for (int toSend = 0; toSend < listsMerge.get(total).getChildLists().size(); toSend++) {
 
                                         Content content = new Content();
                                         content.setItemid(listsMerge.get(total).getChildLists().get(toSend).getTxtID());
@@ -413,7 +419,7 @@ public class MyWishlistFragment extends BaseFragment {
                             public void onClick(SweetAlertDialog sDialog) {
 
                                 sDialog.dismiss();
-                                initiateLoadingMsg(getActivity(),"Updating checklist...");
+                                initiateLoadingMsg(getActivity(), "Updating checklist...");
                                 refreshChecklist();
 
                             }

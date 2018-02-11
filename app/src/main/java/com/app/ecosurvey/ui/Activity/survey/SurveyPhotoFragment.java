@@ -163,12 +163,27 @@ public class SurveyPhotoFragment extends BaseFragment {
 
                 Log.e("TEST", "NEXT_CLICK");
                 //save list of photo
+
+                ArrayList<String> removeList = new ArrayList<String>();
+                removeList = adapter.getRemoveItem();
+
                 try {
 
                     String imageList = "";
                     if (secondlist.size() > 0) {
                         for (int x = 0; x < secondlist.size(); x++) {
-                            imageList += secondlist.get(x).getImagePath() + "___";
+                            //if removed list not empty
+                            if (removeList.size() > 0) {
+                                for (int l = 0; l < removeList.size(); l++) {
+                                    if (!removeList.get(l).equalsIgnoreCase(Integer.toString(x))) {
+                                        imageList += secondlist.get(x).getImagePath() + "___";
+                                    }
+                                }
+                            } else {
+                                imageList += secondlist.get(x).getImagePath() + "___";
+                            }
+
+
                         }
                     }
 

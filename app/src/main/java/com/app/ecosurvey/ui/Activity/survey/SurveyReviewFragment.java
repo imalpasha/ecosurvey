@@ -458,7 +458,7 @@ public class SurveyReviewFragment extends BaseFragment {
                     change = false;
                 }
 
-                if (!imageList.equalsIgnoreCase("") && change) {
+                if (change) {
                     //submit photo.
                     SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
                     surveyPhotoContentRequest.setIcnumber(icNumber);

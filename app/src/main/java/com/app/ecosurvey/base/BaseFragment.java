@@ -66,7 +66,6 @@ public class BaseFragment extends Fragment {
     static MediaPlayer backgroundMP;
     static MediaPlayer backgroundPageSelection;
 
-
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
