@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
@@ -165,9 +166,9 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //save list of photo
 
                 ArrayList<String> removeList = new ArrayList<String>();
-                try{
+                try {
                     removeList = adapter.getRemoveItem();
-                }catch (Exception e){
+                } catch (Exception e) {
                     //adapter_not_set
                 }
 
@@ -326,7 +327,34 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //survey from api.since api data more updated.
                 //nd tp call image to validate with local image.
                 //later check internet connection
-                loadImageFromAPI();
+                if (MainController.connectionAvailable(getActivity())) {
+                    loadImageFromAPI();
+                } else {
+
+                    try {
+                        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                        String imageList = survey.getImagePath();
+
+                        if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                            String[] parts = imageList.split("___");
+                            //insert path to object
+                            for (int x = 0; x < parts.length; x++) {
+                                SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                selectedImagePath.setImagePath(parts[x]);
+                                selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                Log.e("pathpath", parts[x]);
+                                list.add(selectedImagePath);
+                                secondlist.add(selectedImagePath);
+                            }
+                            initiateImageAdapter(list);
+                        }
+
+                    } finally {
+
+                    }
+
+                }
             }
         }
 
@@ -515,9 +543,6 @@ public class SurveyPhotoFragment extends BaseFragment {
         //compare api date with local date.
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
-        if (survey.getPhotoUpdateDate() != null) {
-            Log.e("LOCAL_DATE", survey.getPhotoUpdateDate());
-        }
 
         if (photoReceive.getApiStatus().equalsIgnoreCase("Y")) {
             try {

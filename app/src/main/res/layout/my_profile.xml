@@ -172,7 +172,7 @@
                         android:layout_marginBottom="6dp"
                         android:text="Parlimen"
                         android:textColor="@color/grey"
-                        android:visibility="visible" />
+                        android:visibility="gone" />
 
                     <com.app.ecosurvey.utils.FontStyle.PlayTextView
                         android:id="@+id/txtParlimen"

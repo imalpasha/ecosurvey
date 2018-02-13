@@ -9,12 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
 import com.app.ecosurvey.ui.Activity.login.LoginActivity;
+import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.CategoryReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ListSurveyReceive;
@@ -36,6 +38,7 @@ import com.squareup.otto.Subscribe;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class SplashFragment extends BaseFragment {
 
@@ -60,6 +63,7 @@ public class SplashFragment extends BaseFragment {
     SharedPrefManager pref;
     private String token;
     private String role;
+    private Boolean proceed = true;
 
     public static SplashFragment newInstance(Bundle bundle) {
 
@@ -83,9 +87,47 @@ public class SplashFragment extends BaseFragment {
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
         //get_token
 
-        initiateLoading(getActivity());
-        TokenRequest tokenRequest = new TokenRequest();
-        presenter.onTokenRequest(tokenRequest);
+
+        //if no internet.but user already login.
+        //redirect to tab activity
+        Log.e("Internet", Boolean.toString(MainController.connectionAvailable(getActivity())));
+        Log.e("Login", Boolean.toString(preferences.getBoolean("just_login", false)));
+
+        if (!MainController.connectionAvailable(getActivity()) && preferences.getBoolean("just_login", false)) {
+
+            Realm realm = rController.getRealmInstanceContext(context);
+            proceed = false;
+
+            UserInfoCached survey = realm.where(UserInfoCached.class).findFirst();
+            if (survey != null) {
+                Gson gson = new Gson();
+                UserInfoReceive userInfoReceive = gson.fromJson(survey.getUserInfoString(), UserInfoReceive.class);
+                String role = userInfoReceive.getData().getRole();
+
+                Log.e("Role", role);
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.putExtra("ROLE", role);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+            } else {
+
+            }
+
+        } else if (MainController.connectionAvailable(getActivity()) && !preferences.getBoolean("just_login", false)) {
+            proceed = true;
+        } else {
+            proceed = true;
+        }
+
+
+        if (proceed) {
+
+            initiateLoading(getActivity());
+            TokenRequest tokenRequest = new TokenRequest();
+            presenter.onTokenRequest(tokenRequest);
+
+        }
+
 
         //Intent intent = new Intent(getActivity(), LoginActivity.class);
         //getActivity().startActivity(intent);

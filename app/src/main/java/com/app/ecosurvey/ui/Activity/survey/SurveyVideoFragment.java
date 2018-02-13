@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
@@ -308,7 +309,34 @@ public class SurveyVideoFragment extends BaseFragment {
                 //survey from api.since api data more updated.
                 //nd tp call image to validate with local image.
                 //later check internet connection
-                loadVideoFromAPI();
+                if (MainController.connectionAvailable(getActivity())) {
+                    loadVideoFromAPI();
+                } else {
+                    try {
+                        LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
+
+                        String videoList = survey.getVideoPath();
+
+                        if (videoList != null && !videoList.equalsIgnoreCase("")) {
+                            String[] parts = videoList.split("___");
+                            //insert path to object
+                            for (int x = 0; x < parts.length; x++) {
+                                SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                                selectedVideoPath.setVideoPath(parts[x]);
+                                selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+
+                                list.add(selectedVideoPath);
+                                secondlist.add(selectedVideoPath);
+                            }
+
+                            initiateVideoAdapter(list);
+                        }
+
+                    } finally {
+                        // realm.close();
+                    }
+                }
+
             }
         }
 

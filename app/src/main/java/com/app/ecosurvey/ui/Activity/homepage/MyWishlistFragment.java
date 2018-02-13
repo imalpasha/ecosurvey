@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.app.ecosurvey.MainController;
 import com.app.ecosurvey.R;
 import com.app.ecosurvey.api.ApiEndpoint;
 import com.app.ecosurvey.application.MainApplication;
@@ -31,6 +32,7 @@ import com.app.ecosurvey.ui.Model.Adapter.Object.MergeList;
 import com.app.ecosurvey.ui.Model.Realm.Object.ChecklistCached;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.SavedChecklist;
+import com.app.ecosurvey.ui.Model.Realm.Object.SavedChecklistRealm;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.ChecklistReceive;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.PostChecklistReceive;
@@ -49,9 +51,13 @@ import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -144,7 +150,31 @@ public class MyWishlistFragment extends BaseFragment {
         userId = preferences.getString("user_id", "");
 
 
-        getCheckList();
+        if (MainController.connectionAvailable(getActivity())) {
+
+            checklistload.setVisibility(View.VISIBLE);
+            getCheckList();
+
+        } else {
+
+            checklistload.setVisibility(GONE);
+
+            Realm realm = rController.getRealmInstanceContext(context);
+            SavedChecklistRealm savedChecklistRealm = realm.where(SavedChecklistRealm.class).findFirst();
+
+            if (savedChecklistRealm != null) {
+                Gson gson = new Gson();
+                SavedChecklist obj = gson.fromJson(savedChecklistRealm.getSavedChecklist(), SavedChecklist.class);
+
+                checklistId = obj.getChecklistID();
+                checkListLocation = obj.getChecklistLocation();
+                checkListLocationName = obj.getChecklistLocationName();
+
+                mAdapter = new ChecklistAdapter(getActivity(), this, obj.getListsMerge());
+                mListView.setAdapter(mAdapter);
+
+            }
+        }
 
         /*mListView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -160,14 +190,18 @@ public class MyWishlistFragment extends BaseFragment {
             }
         });*/
 
-        updateBtn.setOnClickListener(new View.OnClickListener() {
+        updateBtn.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View view) {
                 submitChecklist();
             }
         });
 
-        checklistSaveBtn.setOnClickListener(new View.OnClickListener() {
+        checklistSaveBtn.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View view) {
                 saveChecklist();
@@ -180,10 +214,12 @@ public class MyWishlistFragment extends BaseFragment {
 
     public void getCheckList() {
 
+
         InitChecklistRequest initChecklistRequest = new InitChecklistRequest();
         initChecklistRequest.setToken(token);
         initChecklistRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/checklist");
         presenter.onInitChecklistRequest(initChecklistRequest);
+
 
     }
 
@@ -226,10 +262,54 @@ public class MyWishlistFragment extends BaseFragment {
         dismissLoading();
         if (checklistReceive.getApiStatus().equalsIgnoreCase("Y")) {
 
-            getData(checklistReceive);
+            //compare local & api.
+            Realm realm = rController.getRealmInstanceContext(context);
+            SavedChecklistRealm savedChecklistRealm = realm.where(SavedChecklistRealm.class).findFirst();
+            if (savedChecklistRealm != null) {
 
+                Gson gson = new Gson();
+                SavedChecklist obj = gson.fromJson(savedChecklistRealm.getSavedChecklist(), SavedChecklist.class);
+
+                Date dateApi = null;
+                Date dateLocal = null;
+
+                try {
+                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                    dateLocal = format.parse(obj.getUpdatedAt());
+                    dateApi = format.parse(checklistReceive.getData().getUpdated_at());
+
+                } catch (Exception e) {
+                    Log.e("date", "a" + dateLocal);
+                    Log.e("date2", "b" + dateApi);
+                    Log.e("nuLL", "Y");
+                }
+
+                Log.e("datelocal",dateLocal.toString());
+                Log.e("dateApi",dateApi.toString());
+
+                if (dateApi != null && dateLocal != null) {
+                    if (dateLocal.after(dateApi)) {
+
+                        checklistId = obj.getChecklistID();
+                        checkListLocation = obj.getChecklistLocation();
+                        checkListLocationName = obj.getChecklistLocationName();
+
+                        mAdapter = new ChecklistAdapter(getActivity(), this, obj.getListsMerge());
+                        mListView.setAdapter(mAdapter);
+
+                    } else {
+                        getData(checklistReceive);
+                    }
+
+                } else {
+                    getData(checklistReceive);
+                }
+
+
+            } else {
+                getData(checklistReceive);
+            }
         } else {
-
             String error_msg = checklistReceive.getMessage();
             setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
         }
@@ -237,6 +317,8 @@ public class MyWishlistFragment extends BaseFragment {
 
     public void getData(ChecklistReceive checklistReceive) {
         //call from Realm
+
+        checklistload.setVisibility(View.GONE);
 
         Realm realm = rController.getRealmInstanceContext(context);
 
@@ -248,8 +330,6 @@ public class MyWishlistFragment extends BaseFragment {
 
             //create another set of object to manage the checklist
             ArrayList<MergeList> listsMerge = new ArrayList<MergeList>();
-
-            Log.e("sub", Integer.toString(obj.getData().size()));
 
             for (int sub = 0; sub < obj.getData().size(); sub++) {
                 if (obj.getData().get(sub).getParent_id().equalsIgnoreCase("0")) {
@@ -425,6 +505,10 @@ public class MyWishlistFragment extends BaseFragment {
 
                         SavedChecklist savedChecklist = new SavedChecklist();
                         savedChecklist.setListsMerge(listsMerge);
+                        savedChecklist.setChecklistID(checklistId);
+                        savedChecklist.setUpdatedAt(getDate());
+                        savedChecklist.setChecklistLocation(checkListLocation);
+                        savedChecklist.setChecklistLocationName(checkListLocationName);
 
                         Gson gson = new Gson();
                         String savedChecklistString = gson.toJson(savedChecklist);
@@ -432,6 +516,29 @@ public class MyWishlistFragment extends BaseFragment {
                         rController.savedChecklist(getActivity(), savedChecklistString);
 
                         sDialog.dismiss();
+
+                        new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE)
+                                .setTitleText("PSS-R")
+                                .setContentText("Checklist Saved.")
+                                .setConfirmText("Close")
+                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sDialog) {
+
+                                        sDialog.dismiss();
+                                    }
+                                })
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+
+                                        sweetAlertDialog.dismiss();
+
+                                    }
+                                })
+                                .show();
+
+
                     }
                 })
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {

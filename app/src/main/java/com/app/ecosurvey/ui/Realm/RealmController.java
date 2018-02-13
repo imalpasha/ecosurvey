@@ -192,7 +192,7 @@ public class RealmController {
         Realm realm = getRealmInstanceContext(context);
 
         //clear user info in realm first.
-        final RealmResults<SavedChecklist> result = realm.where(SavedChecklist.class).findAll();
+        final RealmResults<SavedChecklistRealm> result = realm.where(SavedChecklistRealm.class).findAll();
         realm.beginTransaction();
         result.clear();
         realm.commitTransaction();

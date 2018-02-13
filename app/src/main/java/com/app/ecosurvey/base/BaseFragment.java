@@ -37,6 +37,7 @@ import com.app.ecosurvey.utils.Utils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -334,8 +335,11 @@ public class BaseFragment extends Fragment {
 
         Calendar calendar = Calendar.getInstance();
 
+        Date currentTime = Calendar.getInstance().getTime();
+
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        formattedDate = df.format(calendar.getTime());
+        formattedDate = df.format(currentTime);
+
 
         return formattedDate;
     }

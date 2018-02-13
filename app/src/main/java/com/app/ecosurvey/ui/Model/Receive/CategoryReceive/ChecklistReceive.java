@@ -19,11 +19,19 @@ public class ChecklistReceive {
 
     public class Data {
 
-
+        private String updated_at;
         private String locationCode;
         private String locationName;
         private String id;
         List<ChecklistContent> content;
+
+        public String getUpdated_at() {
+            return updated_at;
+        }
+
+        public void setUpdated_at(String updated_at) {
+            this.updated_at = updated_at;
+        }
 
         public String getLocationCode() {
             return locationCode;
