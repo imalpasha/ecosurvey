@@ -209,6 +209,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         int position = Integer.parseInt(pos);
 
         arrayPromo.remove(position);
+        viewItemList.add(pos);
+
         //recycler.removeViewAt(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, arrayPromo.size());
@@ -217,6 +219,10 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.MyVi
         if (arrayPromo.size() == 0) {
             frag.enableVideoSelection();
         }
+    }
+
+    public ArrayList<String> getRemoveItem() {
+        return viewItemList;
     }
 
     public static Bitmap retrieveThumbnail(String videoPath)

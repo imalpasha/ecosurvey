@@ -165,14 +165,30 @@ public class SurveyVideoFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                ArrayList<String> removeList = new ArrayList<String>();
+                try {
+                    removeList = adapter.getRemoveItem();
+                } catch (Exception e) {
+                    //adapter_not_set
+                }
+
                 try {
 
                     String videoList = "";
-
-                    String imageList = "";
                     if (secondlist.size() > 0) {
                         for (int x = 0; x < secondlist.size(); x++) {
-                            videoList += secondlist.get(x).getVideoPath() + "___";
+                            //if removed list not empty
+                            if (removeList.size() > 0) {
+                                for (int l = 0; l < removeList.size(); l++) {
+                                    if (!removeList.get(l).equalsIgnoreCase(Integer.toString(x))) {
+                                        videoList += secondlist.get(x).getVideoPath() + "___";
+                                    }
+                                }
+                            } else {
+                                videoList += secondlist.get(x).getVideoPath() + "___";
+                            }
+
+
                         }
                     }
 
