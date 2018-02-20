@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.app.ecosurvey.ui.Activity.survey.SurveyPhotoFragment.change;
@@ -43,7 +44,6 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
     private Activity activity;
 
     private ArrayList<SelectedImagePath> arrayPromo;
-    private ArrayList<String> viewItemList = new ArrayList<String>();
     SurveyPhotoFragment frag;
 
     public ImageListAdapter(SurveyPhotoFragment frag, ArrayList<SelectedImagePath> data, Activity act) {
@@ -67,9 +67,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int h) {
 
-        holder.actionRemove.setTag(Integer.toString(h));
 
-        File f = new File(arrayPromo.get(h).getImagePath());
+        final File f = new File(arrayPromo.get(h).getImagePath());
         Picasso.with(activity)
                 .load(f)
                 //.resize(330, 200)
@@ -101,7 +100,8 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
                                     public void onSuccess() {
                                         Log.v("Picasso", "Fetch image");
                                         holder.imageLoading.setVisibility(View.GONE);
-                                        getImageFileFromBitmap(activity, "imageDir", randomImageName, holder.selectedImage);
+
+                                        getImageFileFromBitmap(activity, "imageDir", randomImageName, holder.selectedImage, arrayPromo.get(h).getImagePath());
                                     }
 
                                     @Override
@@ -112,6 +112,7 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
                     }
                 });
 
+        holder.actionRemove.setTag(Integer.toString(h));
 
     }
 
@@ -173,15 +174,16 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
 
     public void removeItem(String pos) {
 
+
         int position = Integer.parseInt(pos);
+        Log.e("remove_From_list", pos);
 
         arrayPromo.remove(position);
-        viewItemList.add(pos);
 
         //recycler.removeViewAt(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, arrayPromo.size());
-        change = true;
+        //change = true;
 
 
         frag.informTheMainList(position);
@@ -191,36 +193,34 @@ public class ImageListAdapter extends RecyclerView.Adapter<ImageListAdapter.MyVi
 
     }
 
-    public ArrayList<String> getRemoveItem() {
-        return viewItemList;
-    }
+    public void getImageFileFromBitmap(Context context, String imageDir, String imageName, ImageView v, String f) {
 
-    public void getImageFileFromBitmap(Context context, String imageDir, String imageName, ImageView v) {
+        if (frag.checkImageAdapter(f)) {
 
-        ContextWrapper cw = new ContextWrapper(context);
-        final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE);
+            ContextWrapper cw = new ContextWrapper(context);
+            final File directory = cw.getDir(imageDir, Context.MODE_PRIVATE);
 
-        final File myImageFile = new File(directory, imageName); // Create image file
-        FileOutputStream fos = null;
+            final File myImageFile = new File(directory, imageName); // Create image file
+            FileOutputStream fos = null;
 
-        Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) v.getDrawable()).getBitmap();
 
-        try {
-            fos = new FileOutputStream(myImageFile);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
             try {
-                fos.close();
-
+                fos = new FileOutputStream(myImageFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    fos.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
+            frag.setImagePathForHttp(myImageFile.getAbsolutePath());
         }
-
-        frag.setImagePathForHttp(myImageFile.getAbsolutePath());
-
     }
 
     private Target picassoImageTarget(Context context, final String imageDir, final String imageName, final ImageView v) {

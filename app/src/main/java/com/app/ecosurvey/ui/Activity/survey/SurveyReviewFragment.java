@@ -23,6 +23,7 @@ import com.app.ecosurvey.R;
 import com.app.ecosurvey.application.MainApplication;
 import com.app.ecosurvey.base.BaseFragment;
 import com.app.ecosurvey.ui.Activity.homepage.TabActivity;
+import com.app.ecosurvey.ui.Model.Realm.Object.CachedResult;
 import com.app.ecosurvey.ui.Model.Realm.Object.LocalSurvey;
 import com.app.ecosurvey.ui.Model.Realm.Object.UserInfoCached;
 import com.app.ecosurvey.ui.Model.Receive.CategoryReceive.LoginReceive;
@@ -111,9 +112,6 @@ public class SurveyReviewFragment extends BaseFragment {
     @Bind(R.id.block6)
     LinearLayout block6;
 
-    @Bind(R.id.txtParlimen)
-    TextView txtParlimen;
-
     @Bind(R.id.txtKategori)
     TextView txtKategori;
 
@@ -135,6 +133,15 @@ public class SurveyReviewFragment extends BaseFragment {
     @Bind(R.id.surveySubmitBtn)
     Button surveySubmitBtn;
 
+    @Bind(R.id.surveyListingBtn)
+    Button surveyListingBtn;
+
+    @Bind(R.id.txtParliment)
+    TextView txtParliment;
+
+    @Bind(R.id.txtParlimenVal)
+    TextView txtParlimenVal;
+
     private String randomID;
     private String status;
     private String icNumber;
@@ -142,6 +149,8 @@ public class SurveyReviewFragment extends BaseFragment {
     String[] parliment;
     String[] category;
     Realm realm;
+    Gson gson = new Gson();
+    UserInfoReceive obj;
 
     public static SurveyReviewFragment newInstance(Bundle bundle) {
 
@@ -154,6 +163,8 @@ public class SurveyReviewFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MainApplication.component(getActivity()).inject(this);
+        rController.clearCachedResult(getActivity());
+
     }
 
     @Override
@@ -162,7 +173,14 @@ public class SurveyReviewFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.survey_review, container, false);
         ButterKnife.bind(this, view);
 
+        Log.e("videoChange", Boolean.toString(videoChange));
+
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
+
+        realm = rController.getRealmInstanceContext(context);
+        final RealmResults<UserInfoCached> infoCached = realm.where(UserInfoCached.class).findAll();
+        obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
+
 
         Bundle bundle = getArguments();
         randomID = bundle.getString("LocalSurveyID");
@@ -170,6 +188,20 @@ public class SurveyReviewFragment extends BaseFragment {
 
         setupBlock(getActivity(), block6);
         setData();
+
+        surveyListingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Intent intent = new Intent(getActivity(), TabActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("ROLE", preferences.getString("user_role", ""));
+                getActivity().startActivity(intent);
+
+
+            }
+        });
 
         surveySaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -223,17 +255,13 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                 initiateLoadingMsg(getActivity(), "Submitting Survey...");
 
-                                realm = rController.getRealmInstanceContext(context);
 
                                 try {
 
-                                    RealmResults<UserInfoCached> infoCached = realm.where(UserInfoCached.class).findAll();
                                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
                                     if (infoCached.size() > 0) {
 
-                                        Gson gson = new Gson();
-                                        UserInfoReceive obj = gson.fromJson(infoCached.get(0).getUserInfoString(), UserInfoReceive.class);
                                         icNumber = obj.getData().getIcNumber();
 
                                         PostSurveyRequest postSurveyRequest = new PostSurveyRequest();
@@ -266,7 +294,15 @@ public class SurveyReviewFragment extends BaseFragment {
 
                                         postSurveyRequest.setLocationCode(parliment[1]);
                                         postSurveyRequest.setLocationName(parliment[0]);
-                                        postSurveyRequest.setLocationType("PAR");
+                                        if (preferences.getString("user_role", "").equalsIgnoreCase("ParlimentSurveyor")) {
+                                            //pdm
+                                            postSurveyRequest.setLocationType("PAR");
+
+                                        } else {
+                                            //parlimen
+                                            postSurveyRequest.setLocationType("PDM");
+
+                                        }
                                         postSurveyRequest.setContent(stringContent);
                                         postSurveyRequest.setToken(preferences.getString("temp_token", ""));
                                         //postSurveyRequest.setId(randomID);
@@ -379,7 +415,17 @@ public class SurveyReviewFragment extends BaseFragment {
             String[] parliment = survey.getSurveyParliment().split("/");
             String[] category = survey.getSurveyCategory().split("/");
 
-            txtParlimen.setText(parliment[0]);
+            if (preferences.getString("user_role", "").equalsIgnoreCase("ParlimentSurveyor")) {
+                txtParliment.setText("Parlimen");
+                txtParlimenVal.setText(parliment[0]);
+            } else {
+                txtParliment.setText("PDM");
+                if (obj.getData().getLocations().get(0).getPdm() != null)
+                    txtParlimenVal.setText(obj.getData().getLocations().get(0).getPdm());
+
+            }
+
+
             txtKategori.setText(category[0]);
             txtSurveyIssue.setText(survey.getSurveyIssue());
 
@@ -458,47 +504,60 @@ public class SurveyReviewFragment extends BaseFragment {
                     Log.e("ERROR_MSG", e.getMessage());
                 }
 
-                if (change == null) {
-                    change = false;
-                }
+                //check image & video changes
+
 
                 if (status.equalsIgnoreCase("EDIT")) {
-                    change = true;
+
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean("image_change", true);
+                    editor.putBoolean("video_change", true);
+                    editor.apply();
                 }
 
-                if (videoChange == null) {
-                    videoChange = false;
-                }
+                Log.e("videoChange", Boolean.toString(videoChange));
 
-                if (change) {
+                if (preferences.getBoolean("image_change", false)) {
                     //submit photo.
-                    SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
+                    /*SurveyPhotoContentRequest surveyPhotoContentRequest = new SurveyPhotoContentRequest();
                     surveyPhotoContentRequest.setIcnumber(icNumber);
                     surveyPhotoContentRequest.setLocationCode(parliment[1]);
                     surveyPhotoContentRequest.setLocationName(parliment[0]);
                     surveyPhotoContentRequest.setLocationName(parliment[0]);
-                    surveyPhotoContentRequest.setLocationName(parliment[0]);
+                    surveyPhotoContentRequest.setLocationName(parliment[0]);*/
 
                     Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-                    String stringContent = gson.toJson(surveyPhotoContentRequest);
+                    //String stringContent = gson.toJson(surveyPhotoContentRequest);
 
                     HashMap<String, RequestBody> map = new HashMap<>();
                     map.put("icnumber", toRequestBody(icNumber));
                     map.put("locationCode", toRequestBody(parliment[1]));
                     map.put("locationName", toRequestBody(parliment[0]));
-                    map.put("locationType", toRequestBody("PAR"));
+
+                    if (preferences.getString("user_role", "").equalsIgnoreCase("ParlimentSurveyor")) {
+                        //pdm
+                        map.put("locationType", toRequestBody("PAR"));
+
+                    } else {
+                        //parlimen
+                        map.put("locationType", toRequestBody("PDM"));
+
+                    }
+
+
                     map.put("id", toRequestBody(postSurveyReceive.getData().getId()));
 
                     initiateLoadingMsg(getActivity(), "Uploading Photo...");
                     SurveyPhotoRequest surveyPhotoRequest = new SurveyPhotoRequest();
-                    surveyPhotoRequest.setStringContent(stringContent);
+                    //surveyPhotoRequest.setStringContent(stringContent);
+                    surveyPhotoRequest.setId(randomID);
                     surveyPhotoRequest.setMap(map);
                     surveyPhotoRequest.setParts(listMultipart);
                     surveyPhotoRequest.setToken(preferences.getString("temp_token", ""));
 
                     presenter.onSurveyPhotoRequest(surveyPhotoRequest);
-                } else if (videoChange) {
-                        submitVideo(postSurveyReceive.getData().getId());
+                } else if (preferences.getBoolean("video_change", false)) {
+                    submitVideo(postSurveyReceive.getData().getId());
                 } else {
 
                     new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
@@ -545,13 +604,9 @@ public class SurveyReviewFragment extends BaseFragment {
         if (surveyPhotoReceive.getApiStatus().equalsIgnoreCase("Y")) {
             //try {
 
-            if (videoChange == null) {
-                videoChange = false;
-            }
+            if (preferences.getBoolean("video_change", false)) {
 
-            if (videoChange) {
-
-              submitVideo(surveyPhotoReceive.getData().getId());
+                submitVideo(surveyPhotoReceive.getData().getId());
 
             } else {
 
@@ -591,7 +646,7 @@ public class SurveyReviewFragment extends BaseFragment {
 
     }
 
-    public void submitVideo(String id){
+    public void submitVideo(String id) {
 
         //get saved photo
         List<MultipartBody.Part> listMultipart = new ArrayList<>();
@@ -599,7 +654,7 @@ public class SurveyReviewFragment extends BaseFragment {
         //try {
         LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", id).findFirst();
         imageList = survey.getVideoPath();
-        Log.e("no_video", "a" + imageList);
+
         if (!imageList.equalsIgnoreCase("")) {
             String[] parts = imageList.split("___");
             for (int b = 0; b < parts.length; b++) {
@@ -622,26 +677,33 @@ public class SurveyReviewFragment extends BaseFragment {
         //}
 
         //upload_video_if_available
-        SurveyVideoContentRequest surveyVideoContentRequest = new SurveyVideoContentRequest();
+        /*SurveyVideoContentRequest surveyVideoContentRequest = new SurveyVideoContentRequest();
         surveyVideoContentRequest.setIcnumber(icNumber);
         surveyVideoContentRequest.setLocationCode(parliment[1]);
         surveyVideoContentRequest.setLocationName(parliment[0]);
         surveyVideoContentRequest.setLocationName(parliment[0]);
-        surveyVideoContentRequest.setLocationName(parliment[0]);
+        surveyVideoContentRequest.setLocationName(parliment[0]);*/
 
-        Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-        String stringContent = gson.toJson(surveyVideoContentRequest);
+        //Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+        //String stringContent = gson.toJson(surveyVideoContentRequest);
 
         HashMap<String, RequestBody> map = new HashMap<>();
         map.put("icnumber", toRequestBody(icNumber));
         map.put("locationCode", toRequestBody(parliment[1]));
         map.put("locationName", toRequestBody(parliment[0]));
-        map.put("locationType", toRequestBody("PAR"));
+
+        if (preferences.getString("user_role", "").equalsIgnoreCase("ParlimentSurveyor")) {
+            //pdm
+            map.put("locationType", toRequestBody("PAR"));
+        } else {
+            //parlimen
+            map.put("locationType", toRequestBody("PDM"));
+        }
+
         map.put("id", toRequestBody(id));
 
         initiateLoadingMsg(getActivity(), "Uploading Video...");
         SurveyVideoRequest surveyVideoRequest = new SurveyVideoRequest();
-        surveyVideoRequest.setStringContent(stringContent);
         surveyVideoRequest.setMap(map);
         surveyVideoRequest.setParts(listMultipart);
         surveyVideoRequest.setToken(preferences.getString("temp_token", ""));
@@ -692,21 +754,12 @@ public class SurveyReviewFragment extends BaseFragment {
 
     @NonNull
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-        // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
-        // use the FileUtils to get the actual file by uri
-        Log.e("X", fileUri.toString());
+
         File file = new File(fileUri.getPath());
-        Log.e("X", Long.toString(file.length()));
 
         // create RequestBody instance from file
         RequestBody requestFile = RequestBody.create(null, file);
-//MediaType.parse(getActivity().getContentResolver().getType(fileUri)
-        // MultipartBody.Part is used to send also the actual file name
 
-        //if (fileUri.getPath().contains("imageDir")) {
-        //    File myImageFile = new File(fileUri.getPath());
-        //    if (myImageFile.delete()) log("image on the disk deleted successfully!");
-        //}
 
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }
@@ -732,6 +785,30 @@ public class SurveyReviewFragment extends BaseFragment {
         super.onResume();
         presenter.onResume();
         bus.register(this);
+
+        RealmResults<CachedResult> result = rController.getCachedResult(context);
+        if (result.size() > 0) {
+
+            Gson gson = new Gson();
+            if (result.get(0).getCachedAPI() != null) {
+                if (result.get(0).getCachedAPI().equals("PostSurveyReceive")) {
+                    Log.e("CachedData", result.get(0).getCachedResult().toString());
+                    PostSurveyReceive obj = gson.fromJson(result.get(0).getCachedResult(), PostSurveyReceive.class);
+                    onPostSurveyReceive(obj);
+
+                } else if (result.get(0).getCachedAPI().equals("SurveyPhotoReceive")) {
+                    Log.e("CachedData", result.get(0).getCachedResult().toString());
+                    SurveyPhotoReceive obj = gson.fromJson(result.get(0).getCachedResult(), SurveyPhotoReceive.class);
+                    onSurveyPhotoReceive(obj);
+
+                } else if (result.get(0).getCachedAPI().equals("SurveyVideoReceive")) {
+                    Log.e("CachedData", result.get(0).getCachedResult().toString());
+                    SurveyVideoReceive obj = gson.fromJson(result.get(0).getCachedResult(), SurveyVideoReceive.class);
+                    onSurveyVideoReceive(obj);
+                }
+            }
+        }
+
     }
 
     @Override

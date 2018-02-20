@@ -57,7 +57,7 @@ public interface ApiService {
     Call<CategoryReceive> category(@Header("Authorization") String header);
 
     @GET
-    Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Url String url);
+    Call<UserInfoReceive> userinfo(@Header("Authorization") String header, @Header("User-Token") String header2, @Url String url);
 
     @Multipart
     @POST("/api/v1/checklist")
@@ -68,7 +68,7 @@ public interface ApiService {
     );
 
     @GET
-    Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Url String Url);
+    Call<ChecklistReceive> checklist(@Header("Authorization") String header, @Header("User-Token") String header2, @Url String Url);
 
     @GET
     Call<InitChecklistReceive> initchecklist(@Header("Authorization") String header, @Url String Url);
@@ -94,7 +94,7 @@ public interface ApiService {
 
 
     @GET
-    Call<ListSurveyReceive> listSurvey(@Header("Authorization") String header, @Url String url);
+    Call<ListSurveyReceive> listSurvey(@Header("Authorization") String header,@Header("User-Token") String header2, @Url String url);
 
 
     //surveyPhoto

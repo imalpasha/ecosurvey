@@ -177,20 +177,13 @@ public class SurveyVideoFragment extends BaseFragment {
                     String videoList = "";
                     if (secondlist.size() > 0) {
                         for (int x = 0; x < secondlist.size(); x++) {
-                            //if removed list not empty
-                            if (removeList.size() > 0) {
-                                for (int l = 0; l < removeList.size(); l++) {
-                                    if (!removeList.get(l).equalsIgnoreCase(Integer.toString(x))) {
-                                        videoList += secondlist.get(x).getVideoPath() + "___";
-                                    }
-                                }
-                            } else {
-                                videoList += secondlist.get(x).getVideoPath() + "___";
-                            }
 
+                            videoList += secondlist.get(x).getVideoPath() + "___";
 
                         }
                     }
+
+                    Log.e("videolist", "a" + videoList);
 
                     rController.surveyLocalStorageS6(context, randomID, videoList);
 
@@ -295,12 +288,14 @@ public class SurveyVideoFragment extends BaseFragment {
         if (status != null) {
             if (status.equalsIgnoreCase("EDIT")) {
 
+                Log.e("status", "edit");
                 //try fetch realm data.
                 realm = rController.getRealmInstanceContext(context);
                 try {
                     LocalSurvey survey = realm.where(LocalSurvey.class).equalTo("localSurveyID", randomID).findFirst();
 
                     String videoList = survey.getVideoPath();
+                    Log.e("video", "video" + videoList);
 
                     if (videoList != null && !videoList.equalsIgnoreCase("")) {
                         String[] parts = videoList.split("___");
@@ -354,6 +349,8 @@ public class SurveyVideoFragment extends BaseFragment {
                 }
 
             }
+        } else {
+            Log.e("status", "null");
         }
 
     }
@@ -377,65 +374,73 @@ public class SurveyVideoFragment extends BaseFragment {
                 //wait
                 dismissLoading();
 
-                Date date = null, date2 = null;
-                if (survey.getVideoUpdateDate() != null) {
+                if (videoReceive.getData().getContent() != null) {
 
-                    try {
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                        date = format.parse(survey.getVideoUpdateDate());
-                        date2 = format.parse(videoReceive.getData().getUpdated_at());
+                    Date date = null, date2 = null;
+                    if (survey.getVideoUpdateDate() != null) {
 
-                    } catch (Exception e) {
-                        Log.e("date", "a" + date);
-                        Log.e("date2", "b" + date2);
-                        Log.e("nuLL", "Y");
-                    }
+                        try {
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                            date = format.parse(survey.getVideoUpdateDate());
+                            date2 = format.parse(videoReceive.getData().getUpdated_at());
+
+                        } catch (Exception e) {
+                            Log.e("date", "a" + date);
+                            Log.e("date2", "b" + date2);
+                            Log.e("nuLL", "Y");
+                        }
 
 
-                    if (date != null && date2 != null) {
-                        if (date2.after(date)) {
+                        if (date != null && date2 != null) {
+                            if (date2.after(date)) {
 
-                            //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                                //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                                for (int x = 0; x < videoReceive.getData().getContent().getVideos().size(); x++) {
+                                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                                    selectedVideoPath.setVideoPath(videoReceive.getData().getContent().getVideos().get(x));
+                                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+                                    list.add(selectedVideoPath);
+                                    secondlist.add(selectedVideoPath);
+
+                                }
+
+                            } else {
+
+                                String imageList = survey.getImagePath();
+                                if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                                    String[] parts = imageList.split("___");
+                                    //insert path to object
+                                    for (int x = 0; x < parts.length; x++) {
+                                        SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
+                                        selectedVideoPath.setVideoPath(parts[x]);
+                                        selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
+                                        list.add(selectedVideoPath);
+                                        secondlist.add(selectedVideoPath);
+
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e("Date", "Null");
+                        }
+
+
+                    } else {
+                        //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                        if (videoReceive.getData().getContent() != null) {
                             for (int x = 0; x < videoReceive.getData().getContent().getVideos().size(); x++) {
                                 SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
                                 selectedVideoPath.setVideoPath(videoReceive.getData().getContent().getVideos().get(x));
                                 selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
                                 list.add(selectedVideoPath);
-                            }
+                                secondlist.add(selectedVideoPath);
 
-                        } else {
-
-                            String imageList = survey.getImagePath();
-                            if (imageList != null && !imageList.equalsIgnoreCase("")) {
-                                String[] parts = imageList.split("___");
-                                //insert path to object
-                                for (int x = 0; x < parts.length; x++) {
-                                    SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                                    selectedVideoPath.setVideoPath(parts[x]);
-                                    selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
-                                    list.add(selectedVideoPath);
-                                }
                             }
                         }
-                    } else {
-                        Log.e("Date", "Null");
                     }
+                    initiateVideoAdapter(list);
 
-
-                } else {
-                    //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
-                    if (videoReceive.getData().getContent() != null) {
-                        for (int x = 0; x < videoReceive.getData().getContent().getVideos().size(); x++) {
-                            SelectedVideoPath selectedVideoPath = new SelectedVideoPath();
-                            selectedVideoPath.setVideoPath(videoReceive.getData().getContent().getVideos().get(x));
-                            selectedVideoPath.setRandomPathCode("xxx" + Integer.toString(x));
-                            list.add(selectedVideoPath);
-                        }
-                    }
                 }
-                initiateVideoAdapter(list);
-
-
             } catch (Exception e) {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
@@ -594,6 +599,18 @@ public class SurveyVideoFragment extends BaseFragment {
 
     }
 
+    public void informTheMainList(int pos) {
+        //secondlist.remove(position);
+        //viewItemList.add(removePath);;
+
+        Log.e("remove", Integer.toString(pos));
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("video_change", true);
+        editor.apply();
+
+        secondlist.remove(pos);
+    }
+
     //gallery feature
     private void galleryIntent() {
 
@@ -636,21 +653,22 @@ public class SurveyVideoFragment extends BaseFragment {
 
     public void initiateVideoAdapter(ArrayList<SelectedVideoPath> array) {
 
-        setImageBlock1.setVisibility(View.GONE);
-        setImageBlock2.setVisibility(View.VISIBLE);
+        if (array.size() > 0) {
+            setImageBlock1.setVisibility(View.GONE);
+            setImageBlock2.setVisibility(View.VISIBLE);
 
-        RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
-        myRecyclerView.setHasFixedSize(true);
-        myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            RecyclerView myRecyclerView = (RecyclerView) view.findViewById(R.id.cardView);
+            myRecyclerView.setHasFixedSize(true);
+            myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
 
-        LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
-        MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+            LinearLayoutManager MyLayoutManager = new LinearLayoutManager(getActivity());
+            MyLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        adapter = new VideoListAdapter(SurveyVideoFragment.this, array, getActivity());
+            adapter = new VideoListAdapter(SurveyVideoFragment.this, array, getActivity());
 
-        myRecyclerView.setAdapter(adapter);
-        myRecyclerView.setLayoutManager(MyLayoutManager);
-
+            myRecyclerView.setAdapter(adapter);
+            myRecyclerView.setLayoutManager(MyLayoutManager);
+        }
     }
 
     public void enableVideoSelection() {
@@ -713,6 +731,14 @@ public class SurveyVideoFragment extends BaseFragment {
             if (requestCode == SELECT_FILE) {
                 //list of videos of selected
                 videoChange = true;
+
+                //just use pref.
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("video_change", true);
+                editor.apply();
+
+                Log.e("xx", Boolean.toString(videoChange));
+
                 //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
                 String videos = (String) data.getSerializableExtra(GalleryActivityV2.VIDEO);
 
@@ -737,6 +763,11 @@ public class SurveyVideoFragment extends BaseFragment {
             } else if (requestCode == CHANGE_FILE) {
 
                 videoChange = true;
+
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("video_change", true);
+                editor.apply();
+                Log.e("xx", Boolean.toString(videoChange));
 
                 //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
                 //Log.e("xxxxx", "a" + videos.get(0));
@@ -771,6 +802,8 @@ public class SurveyVideoFragment extends BaseFragment {
         super.onResume();
         presenter.onResume();
         bus.register(this);
+        videoChange = false;
+
     }
 
     @Override
@@ -778,6 +811,8 @@ public class SurveyVideoFragment extends BaseFragment {
         super.onPause();
         presenter.onPause();
         bus.unregister(this);
+        videoChange = false;
+
     }
 
 }

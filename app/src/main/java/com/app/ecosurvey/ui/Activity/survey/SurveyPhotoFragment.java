@@ -49,6 +49,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -125,6 +126,8 @@ public class SurveyPhotoFragment extends BaseFragment {
     private int changeImagePosition;
     private ArrayList<SelectedImagePath> list = new ArrayList<SelectedImagePath>();
     private ArrayList<SelectedImagePath> secondlist = new ArrayList<SelectedImagePath>();
+    private ArrayList<String> listtobe = new ArrayList<String>();
+    private ArrayList<String> viewItemList = new ArrayList<String>();
 
     private Boolean changeImageTrue = false;
     private Realm realm;
@@ -144,7 +147,7 @@ public class SurveyPhotoFragment extends BaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.survey_photo, container, false);
         ButterKnife.bind(this, view);
@@ -158,46 +161,37 @@ public class SurveyPhotoFragment extends BaseFragment {
         setupBlock(getActivity(), block4);
         autoFill2();
 
+
         photoBtnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Log.e("TEST", "NEXT_CLICK");
-                //save list of photo
-
-                ArrayList<String> removeList = new ArrayList<String>();
-                try {
-                    removeList = adapter.getRemoveItem();
-                } catch (Exception e) {
-                    //adapter_not_set
-                }
-
 
                 try {
 
                     String imageList = "";
                     if (secondlist.size() > 0) {
                         for (int x = 0; x < secondlist.size(); x++) {
-                            //if removed list not empty
-                            if (removeList.size() > 0) {
-                                for (int l = 0; l < removeList.size(); l++) {
-                                    if (!removeList.get(l).equalsIgnoreCase(Integer.toString(x))) {
-                                        imageList += secondlist.get(x).getImagePath() + "___";
-                                    }
-                                }
-                            } else {
-                                imageList += secondlist.get(x).getImagePath() + "___";
-                            }
+
+                            imageList += secondlist.get(x).getImagePath() + "___";
+                            Log.e("only_path", secondlist.get(x).getImagePath());
 
 
                         }
+
                     }
+                    Log.e("imageList", imageList);
 
                     rController.surveyLocalStorageS4(context, randomID, imageList);
 
-                } catch (Exception e) {
+                } catch (Exception e)
 
-                } finally {
+                {
+
+                } finally
+
+                {
 
                     Intent intent = new Intent(getActivity(), SurveyVideoActivity.class);
                     intent.putExtra("LocalSurveyID", randomID);
@@ -208,7 +202,9 @@ public class SurveyPhotoFragment extends BaseFragment {
             }
         });
 
-        openImageAction.setOnClickListener(new View.OnClickListener() {
+        openImageAction.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 dialog.show();
@@ -216,7 +212,9 @@ public class SurveyPhotoFragment extends BaseFragment {
             }
         });
 
-        openImageActionSmall.setOnClickListener(new View.OnClickListener() {
+        openImageActionSmall.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 dialog.show();
@@ -227,7 +225,9 @@ public class SurveyPhotoFragment extends BaseFragment {
         //init camera & gallery
         captureImageInitialization();
 
-        if (status != null) {
+        if (status != null)
+
+        {
             if (status.equalsIgnoreCase("EDIT") || status.equalsIgnoreCase("EDIT_API")) {
 
                 block1.setOnClickListener(new View.OnClickListener() {
@@ -524,8 +524,16 @@ public class SurveyPhotoFragment extends BaseFragment {
         setImageBlock2.setVisibility(View.GONE);
     }
 
-    public void informTheMainList(int position) {
-        //  secondlist.remove(position);
+    public void informTheMainList(int pos) {
+        //secondlist.remove(position);
+        //viewItemList.add(removePath);;
+
+        Log.e("remove", Integer.toString(pos));
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("image_change", true);
+        editor.apply();
+
+        secondlist.remove(pos);
     }
 
     public void reselectImage(Integer pos) {
@@ -550,65 +558,67 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //wait
                 dismissLoading();
 
-                Date date = null, date2 = null;
-                if (survey.getPhotoUpdateDate() != null) {
-
-                    try {
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
-                        date = format.parse(survey.getPhotoUpdateDate());
-                        date2 = format.parse(photoReceive.getData().getUpdated_at());
-
-                    } catch (Exception e) {
-                        Log.e("date", "a" + date);
-                        Log.e("date2", "b" + date2);
-                        Log.e("nuLL", "Y");
-                    }
+                if (photoReceive.getData().getContent() != null) {
 
 
-                    if (date != null && date2 != null) {
-                        if (date2.after(date)) {
+                    Date date = null, date2 = null;
+                    if (survey.getPhotoUpdateDate() != null) {
 
-                            //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                        try {
+                            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+                            date = format.parse(survey.getPhotoUpdateDate());
+                            date2 = format.parse(photoReceive.getData().getUpdated_at());
+
+                        } catch (Exception e) {
+                            Log.e("date", "a" + date);
+                            Log.e("date2", "b" + date2);
+                            Log.e("nuLL", "Y");
+                        }
+
+
+                        if (date != null && date2 != null) {
+                            if (date2.after(date)) {
+
+                                //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                                for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
+                                    SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                    selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
+                                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                    list.add(selectedImagePath);
+                                }
+
+                            } else {
+
+                                String imageList = survey.getImagePath();
+                                if (imageList != null && !imageList.equalsIgnoreCase("")) {
+                                    String[] parts = imageList.split("___");
+                                    //insert path to object
+                                    for (int x = 0; x < parts.length; x++) {
+                                        SelectedImagePath selectedImagePath = new SelectedImagePath();
+                                        selectedImagePath.setImagePath(parts[x]);
+                                        selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
+                                        list.add(selectedImagePath);
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.e("Date", "Null");
+                        }
+
+
+                    } else {
+                        //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
+                        if (photoReceive.getData().getContent() != null) {
                             for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
                                 SelectedImagePath selectedImagePath = new SelectedImagePath();
                                 selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
                                 selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
                                 list.add(selectedImagePath);
                             }
-
-                        } else {
-
-                            String imageList = survey.getImagePath();
-                            if (imageList != null && !imageList.equalsIgnoreCase("")) {
-                                String[] parts = imageList.split("___");
-                                //insert path to object
-                                for (int x = 0; x < parts.length; x++) {
-                                    SelectedImagePath selectedImagePath = new SelectedImagePath();
-                                    selectedImagePath.setImagePath(parts[x]);
-                                    selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                                    list.add(selectedImagePath);
-                                }
-                            }
-                        }
-                    } else {
-                        Log.e("Date", "Null");
-                    }
-
-
-                } else {
-                    //if (photoReceive.getData().getUpdated_at() > survey.getPhotoUpdateDate()) {
-                    if (photoReceive.getData().getContent() != null) {
-                        for (int x = 0; x < photoReceive.getData().getContent().getImages().size(); x++) {
-                            SelectedImagePath selectedImagePath = new SelectedImagePath();
-                            selectedImagePath.setImagePath(photoReceive.getData().getContent().getImages().get(x));
-                            selectedImagePath.setRandomPathCode("xxx" + Integer.toString(x));
-                            list.add(selectedImagePath);
                         }
                     }
+                    initiateImageAdapter(list);
                 }
-                initiateImageAdapter(list);
-
-
             } catch (Exception e) {
                 e.printStackTrace();
                 setAlertDialog(getActivity(), getString(R.string.err_title), "Read Error");
@@ -626,6 +636,45 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     }
 
+
+    {
+
+    }
+
+
+    public Boolean checkImageAdapter(String thisPath) {
+
+        Boolean image_added = false;
+        Boolean add_to_list_status = false;
+
+        //iterate_list_to_be
+        for (int x = 0; x < listtobe.size(); x++) {
+            if (listtobe.get(x).equalsIgnoreCase(thisPath)) {
+                image_added = true;
+                break;
+            }
+        }
+
+        //image not added
+        if (!image_added) {
+
+            //add now
+            listtobe.add(thisPath);
+            add_to_list_status = true;
+            Log.e("this_path", "adding" + thisPath);
+
+        } else {
+
+            //image exist.ignore
+            add_to_list_status = false;
+            Log.e("this_path", "already_Exist" + thisPath);
+
+
+        }
+
+        return add_to_list_status;
+    }
+
     public void setImagePathForHttp(String path) {
 
         Log.e("filepath", path);
@@ -634,6 +683,8 @@ public class SurveyPhotoFragment extends BaseFragment {
         selectedImagePath.setImagePath(path);
         selectedImagePath.setRandomPathCode("xxx");
         secondlist.add(selectedImagePath);
+
+        Log.e("secondlist", Integer.toString(secondlist.size()));
     }
 
     //process result
@@ -649,6 +700,12 @@ public class SurveyPhotoFragment extends BaseFragment {
             if (requestCode == SELECT_FILE) {
                 //list of photos of selected
                 change = true;
+
+                //just use pref.
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("image_change", true);
+                editor.apply();
+
                 List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
 
                 //insert path to object
@@ -672,6 +729,12 @@ public class SurveyPhotoFragment extends BaseFragment {
                 //List<String> videos = (List<String>) data.getSerializableExtra(GalleryActivityV2.VIDEO);
             } else if (requestCode == CHANGE_FILE) {
                 change = true;
+
+                //just use pref.
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("image_change", true);
+                editor.apply();
+
                 List<String> photos = (List<String>) data.getSerializableExtra(GalleryActivityV2.PHOTOS);
                 Log.e("xxxxx", "a" + photos.get(0));
 
@@ -750,7 +813,7 @@ public class SurveyPhotoFragment extends BaseFragment {
 
     }
 
-    //-----------------------------------CONVERT IMAGE TO 64BASE--------------------------------------//
+//-----------------------------------CONVERT IMAGE TO 64BASE--------------------------------------//
 
 
     @Override
@@ -764,6 +827,8 @@ public class SurveyPhotoFragment extends BaseFragment {
         super.onResume();
         presenter.onResume();
         bus.register(this);
+        change = false;
+        Log.e("onresume", "y");
     }
 
     @Override
@@ -771,6 +836,9 @@ public class SurveyPhotoFragment extends BaseFragment {
         super.onPause();
         presenter.onPause();
         bus.unregister(this);
+        change = false;
+        Log.e("onpause", "y");
+
     }
 
 }

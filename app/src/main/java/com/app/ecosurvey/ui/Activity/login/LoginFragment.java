@@ -143,6 +143,8 @@ public class LoginFragment extends BaseFragment {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("just_login", true);
                 editor.putString("user_id", txtAuthID.getText().toString());
+                editor.putString("user_token", loginReceive.getData().getToken());
+
                 editor.apply();
 
                 UserInfoRequest userInfoRequest = new UserInfoRequest();

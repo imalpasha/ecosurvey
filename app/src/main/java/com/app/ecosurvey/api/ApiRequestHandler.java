@@ -32,6 +32,8 @@ import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostChecklistRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.PostSurveyRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.TokenRequest;
 import com.app.ecosurvey.ui.Model.Request.ecosurvey.UserInfoRequest;
+import com.app.ecosurvey.ui.Realm.RealmController;
+import com.google.gson.Gson;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -55,6 +57,9 @@ public class ApiRequestHandler {
 
     @Inject
     Bus bus;
+
+    @Inject
+    RealmController rController;
 
     Context act;
 
@@ -179,7 +184,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onUserInfoRequest(final UserInfoRequest event) {
 
-        Call<UserInfoReceive> call = apiService.userinfo("FrsApi " + event.getToken(), event.getUrl());
+        Call<UserInfoReceive> call = apiService.userinfo("FrsApi " + event.getToken(), event.getToken(), event.getUrl());
         call.enqueue(new Callback<UserInfoReceive>() {
 
             //succces retrieve information
@@ -195,7 +200,7 @@ public class ApiRequestHandler {
                 } else {
                     //success call but with err message
                     user.setApiStatus("N");
-                    user.setMessage("Err_Message");
+                    user.setMessage("You are not authorised to do access the endpoint");
                     bus.post(new UserInfoReceive(user));
                 }
             }
@@ -215,7 +220,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostSurveyRequest(final PostSurveyRequest event) {
 
-        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(),event.getId(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
+        Call<PostSurveyReceive> call = apiService.postSurvey(event.getIcNumber(), event.getId(), event.getLocationCode(), event.getLocationName(), event.getLocationType(), event.getContent(), "FrsApi " + event.getToken());
         call.enqueue(new Callback<PostSurveyReceive>() {
 
             //succces retrieve information
@@ -234,6 +239,9 @@ public class ApiRequestHandler {
                     user.setMessage("Err_Message");
                     bus.post(new PostSurveyReceive(user));
                 }
+
+                rController.cachedResult(MainFragmentActivity.getContext(), (new Gson()).toJson(user), "PostSurveyReceive");
+
             }
 
             //failed to retreive information
@@ -250,7 +258,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onListSurveyRequest(final ListSurveyRequest event) {
 
-        Call<ListSurveyReceive> call = apiService.listSurvey("FrsApi " + event.getToken(), event.getUrl());
+        Call<ListSurveyReceive> call = apiService.listSurvey("FrsApi " + event.getToken(), event.getToken(), event.getUrl());
         call.enqueue(new Callback<ListSurveyReceive>() {
 
             //succces retrieve information
@@ -266,7 +274,7 @@ public class ApiRequestHandler {
                 } else {
                     //success call but with err message
                     user.setApiStatus("N");
-                    user.setMessage("Err_Message");
+                    user.setMessage("You are not authorised to do access the endpoint");
                     bus.post(new ListSurveyReceive(user));
                 }
             }
@@ -306,6 +314,9 @@ public class ApiRequestHandler {
                     user.setMessage("Err_Message");
                     bus.post(new SurveyPhotoReceive(user));
                 }
+
+                rController.cachedResult(MainFragmentActivity.getContext(), (new Gson()).toJson(user), "SurveyPhotoReceive");
+
             }
 
             //failed to retreive information
@@ -342,6 +353,9 @@ public class ApiRequestHandler {
                     user.setMessage("Err_Message");
                     bus.post(new SurveyVideoReceive(user));
                 }
+
+                rController.cachedResult(MainFragmentActivity.getContext(), (new Gson()).toJson(user), "SurveyVideoReceive");
+
             }
 
             //failed to retreive information
@@ -356,12 +370,10 @@ public class ApiRequestHandler {
     }
 
 
-
-
     @Subscribe
     public void onChecklistRequest(final ChecklistRequest event) {
 
-        Call<ChecklistReceive> call = apiService.checklist("FrsApi " + event.getToken(), event.getUrl());
+        Call<ChecklistReceive> call = apiService.checklist("FrsApi " + event.getToken(), event.getToken(), event.getUrl());
         call.enqueue(new Callback<ChecklistReceive>() {
 
             //succces retrieve information
@@ -377,7 +389,7 @@ public class ApiRequestHandler {
                 } else {
                     //success call but with err message
                     user.setApiStatus("N");
-                    user.setMessage("Err_Message");
+                    user.setMessage("You are not authorised to do access the endpoint");
                     bus.post(new ChecklistReceive(user));
                 }
             }
@@ -430,7 +442,7 @@ public class ApiRequestHandler {
     @Subscribe
     public void onPostChecklistRequest(final PostChecklistRequest event) {
 
-        Call<PostChecklistReceive> call = apiService.postChecklist("FrsApi " + event.getToken(),event.getMap(),event.getParts2());
+        Call<PostChecklistReceive> call = apiService.postChecklist("FrsApi " + event.getToken(), event.getMap(), event.getParts2());
         call.enqueue(new Callback<PostChecklistReceive>() {
 
             //succces retrieve information
@@ -490,8 +502,8 @@ public class ApiRequestHandler {
             @Override
             public void onFailure(Call<PhotoReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
-                BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", "DOUBLE_N");
+                BaseFragment.dismissLoading();
+                //Log.e("SUCCESS", "DOUBLE_N");
 
             }
         });
@@ -525,8 +537,8 @@ public class ApiRequestHandler {
             @Override
             public void onFailure(Call<VideoReceive> call, Throwable t) {
                 // handle execution failures like no internet connectivity
-                BaseFragment.connectionError(MainFragmentActivity.getContext());
-                Log.e("SUCCESS", "DOUBLE_N");
+                BaseFragment.dismissLoading();
+                //Log.e("SUCCESS", "DOUBLE_N");
 
             }
         });

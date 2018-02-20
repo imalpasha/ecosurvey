@@ -64,6 +64,7 @@ public class SplashFragment extends BaseFragment {
     private String token;
     private String role;
     private Boolean proceed = true;
+    private String user_token;
 
     public static SplashFragment newInstance(Bundle bundle) {
 
@@ -86,7 +87,7 @@ public class SplashFragment extends BaseFragment {
 
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
         //get_token
-
+        user_token = preferences.getString("user_token", "DEFAULT");
 
         //if no internet.but user already login.
         //redirect to tab activity
@@ -151,6 +152,7 @@ public class SplashFragment extends BaseFragment {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString("temp_token", token);
                 editor.apply();
+
 
                 //load category_daily
                 //get_categories
@@ -228,7 +230,7 @@ public class SplashFragment extends BaseFragment {
         String userId = preferences.getString("user_id", "");
 
         UserInfoRequest userInfoRequest = new UserInfoRequest();
-        userInfoRequest.setToken(token);
+        userInfoRequest.setToken(user_token);
         userInfoRequest.setUrl(ApiEndpoint.getUrl() + "/api/v1/user/" + userId);
         presenter.onUserInfoRequest(userInfoRequest);
 
@@ -257,7 +259,7 @@ public class SplashFragment extends BaseFragment {
 
             //call existing survey
             ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
-            listSurveyRequest.setToken(token);
+            listSurveyRequest.setToken(user_token);
             listSurveyRequest.setUrl("/api/v1/surveys/" + userId);
             presenter.onListSurveyRequest(listSurveyRequest);
 
@@ -265,7 +267,7 @@ public class SplashFragment extends BaseFragment {
         } else {
 
             String error_msg = userInfoReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            setAlertDialog(getActivity(), error_msg, getString(R.string.err_title));
             dismissLoading();
 
         }

@@ -15,7 +15,7 @@ public class UserInfoReceive {
     private Data data;
 
     public UserInfoReceive(UserInfoReceive data) {
-        message = data.getMessage();
+        this.message = data.getMessage();
         this.apiStatus = data.getApiStatus();
         this.data = data.getData();
     }
@@ -25,7 +25,7 @@ public class UserInfoReceive {
     }
 
     public void setMessage(String message) {
-        message = message;
+        this.message = message;
     }
 
     public UserInfoReceive.Data getData() {
@@ -116,6 +116,24 @@ public class UserInfoReceive {
         private String State;
         private String Duncode;
         private String Dun;
+        private String PdmCode;
+        private String Pdm;
+
+        public String getPdmCode() {
+            return PdmCode;
+        }
+
+        public void setPdmCode(String pdmCode) {
+            PdmCode = pdmCode;
+        }
+
+        public String getPdm() {
+            return Pdm;
+        }
+
+        public void setPdm(String pdm) {
+            Pdm = pdm;
+        }
 
         public String getStateid() {
             return Stateid;

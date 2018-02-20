@@ -56,11 +56,11 @@ public class NetModule {
         int KEEP_ALIVE_DURATION_MS = 3 * 60 * 1000;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         //interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
 
         OkHttpClient defaultHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(90, TimeUnit.SECONDS)
+                .connectTimeout(150, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .addInterceptor(new Interceptor() {
                     @Override

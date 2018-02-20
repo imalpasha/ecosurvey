@@ -173,6 +173,7 @@
                 android:textSize="13sp" />
 
             <com.app.ecosurvey.utils.FontStyle.PlayTextView
+                android:id="@+id/txtParliment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -188,7 +189,7 @@
                 android:orientation="vertical">
 
                 <com.app.ecosurvey.utils.FontStyle.PlayTextView
-                    android:id="@+id/txtParlimen"
+                    android:id="@+id/txtParlimenVal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="1dp"
@@ -293,17 +294,40 @@
         </LinearLayout>
     </ScrollView>
 
-    <com.app.ecosurvey.utils.FontStyle.PlayButtonText
-        android:id="@+id/surveySaveBtn"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="2dp"
-        android:background="@color/green_tick"
-        android:gravity="center"
-        android:text="Save Survey"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
+        android:orientation="horizontal">
+
+        <com.app.ecosurvey.utils.FontStyle.PlayButtonText
+            android:id="@+id/surveySaveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:background="@color/green_tick"
+            android:gravity="center"
+            android:text="Save Survey"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <com.app.ecosurvey.utils.FontStyle.PlayButtonText
+            android:id="@+id/surveyListingBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="1"
+            android:background="@color/md_blue_800"
+            android:gravity="center"
+            android:text="Survey Listing"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
     <com.app.ecosurvey.utils.FontStyle.PlayButtonText
         android:id="@+id/surveySubmitBtn"

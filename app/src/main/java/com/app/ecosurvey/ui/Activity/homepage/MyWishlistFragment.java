@@ -146,7 +146,7 @@ public class MyWishlistFragment extends BaseFragment {
 
         preferences = getActivity().getSharedPreferences("SurveyPreferences", Context.MODE_PRIVATE);
 
-        token = preferences.getString("temp_token", "DEFAULT");
+        token = preferences.getString("user_token", "DEFAULT");
         userId = preferences.getString("user_id", "");
 
 
@@ -311,7 +311,7 @@ public class MyWishlistFragment extends BaseFragment {
             }
         } else {
             String error_msg = checklistReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            setAlertDialog(getActivity(), error_msg,getString(R.string.err_title));
         }
     }
 
@@ -443,7 +443,14 @@ public class MyWishlistFragment extends BaseFragment {
                                 map.put("id", toRequestBody(checklistId));
                                 map.put("locationCode", toRequestBody(checkListLocation));
                                 map.put("locationName", toRequestBody(checkListLocationName));
-                                map.put("locationType", toRequestBody("PAR"));
+
+                                if (preferences.getString("user_role", "").equalsIgnoreCase("ParlimentSurveyor")) {
+                                    //pdm
+                                    map.put("locationType", toRequestBody("PAR"));
+                                } else {
+                                    //parlimen
+                                    map.put("locationType", toRequestBody("PDM"));
+                                }
 
                                 ArrayList<MergeList> listsMerge = mAdapter.checklistObj();
                                 List<Content> listMultipart = new ArrayList<>();

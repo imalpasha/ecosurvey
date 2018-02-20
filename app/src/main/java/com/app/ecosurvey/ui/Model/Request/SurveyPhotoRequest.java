@@ -15,11 +15,20 @@ import okhttp3.RequestBody;
 public class SurveyPhotoRequest {
 
     private String stringContent;
+    private String id;
     private List<MultipartBody.Part> parts;
     private String token;
     HashMap<String, RequestBody> map;
     public List<MultipartBody.Part> getParts() {
         return parts;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public HashMap<String, RequestBody> getMap() {

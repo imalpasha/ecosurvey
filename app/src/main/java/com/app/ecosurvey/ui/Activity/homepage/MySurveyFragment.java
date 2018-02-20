@@ -117,6 +117,12 @@ public class MySurveyFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
 
+                //just use pref.
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("image_change", false);
+                editor.putBoolean("video_change", false);
+                editor.apply();
+
                 String randomID = UUID.randomUUID().toString();
                 rController.surveyLocalStorageS0(context, randomID, "local_progress", getDate());
 
@@ -207,7 +213,14 @@ public class MySurveyFragment extends BaseFragment {
 
     }
 
-    public void editData(String randomID,String status) {
+    public void editData(String randomID, String status) {
+
+        //just use pref.
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("image_change", false);
+        editor.putBoolean("video_change", false);
+        editor.apply();
+
         Intent intent = new Intent(getActivity(), CategoryParlimenActivity.class);
         intent.putExtra("LocalSurveyID", randomID);
         if (status.equalsIgnoreCase("")) {
@@ -221,7 +234,7 @@ public class MySurveyFragment extends BaseFragment {
     public void reloadList() {
 
         String userId = preferences.getString("user_id", "");
-        String token = preferences.getString("temp_token", "");
+        String token = preferences.getString("user_token", "");
 
         ListSurveyRequest listSurveyRequest = new ListSurveyRequest();
         listSurveyRequest.setToken(token);
@@ -247,7 +260,7 @@ public class MySurveyFragment extends BaseFragment {
         } else {
 
             String error_msg = listSurveyReceive.getMessage();
-            setAlertDialog(getActivity(), getString(R.string.err_title), error_msg);
+            setAlertDialog(getActivity(), error_msg, getString(R.string.err_title));
         }
     }
 
